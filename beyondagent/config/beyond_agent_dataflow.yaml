@@ -10,7 +10,7 @@ data:
   max_prompt_length: 1024
   max_response_length: 1024
   train_batch_size: 256
-  val_batch_size: 2
+  val_batch_size: 256
   return_raw_chat: True
 
 actor_rollout_ref:

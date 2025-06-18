@@ -17,18 +17,26 @@ class EnvWorker(object):
         self.thread_index: int = thread_index
 
     def execute(self, data_id: str, rollout_id: str, agent_flow: BaseAgentFlow, **kwargs) -> Trajectory:
-        init_response = self.env.create_instance(env_type=self.env_type,
-                                                 task_id=self.task_id,
-                                                 instance_id=self.instance_id)
+        
+        try:
+            init_response = self.env.create_instance(env_type=self.env_type,
+                                                    task_id=self.task_id,
+                                                    instance_id=self.instance_id)
+            state_message: dict = init_response["state"]
+            trajectory: Trajectory = Trajectory(data_id=data_id,
+                                                rollout_id=rollout_id,
+                                                steps=[state_message],
+                                                query=state_message["content"])
+            trajectory: Trajectory = agent_flow.execute(trajectory=trajectory, env=self.env, instance_id=self.instance_id, **kwargs)
 
-        state_message: dict = init_response["state"]
-        trajectory: Trajectory = Trajectory(data_id=data_id,
-                                            rollout_id=rollout_id,
-                                            steps=[state_message],
-                                            query=state_message["content"])
-
-        trajectory: Trajectory = agent_flow.execute(trajectory=trajectory, env=self.env, instance_id=self.instance_id, **kwargs)
-
-        self.env.release_instance(self.instance_id)
+            self.env.release_instance(self.instance_id)
+        
+        except Exception as e:
+            print("Error in EnvWorker: ", e)
+            trajectory = Trajectory(data_id=data_id, rollout_id=rollout_id, steps=[], query="")
+            try:
+                self.env.release_instance(self.instance_id)
+            except Exception as e:
+                print(f"Env instance has been released: {self.instance_id}; Error: {e}")
 
         return trajectory
