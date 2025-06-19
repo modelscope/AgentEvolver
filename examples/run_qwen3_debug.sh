@@ -28,7 +28,7 @@ python3 -m beyondagent.main_ppo \
     actor_rollout_ref.rollout.response_length=2048 \
     actor_rollout_ref.rollout.max_model_len=20480 \
     actor_rollout_ref.rollout.temperature=0.9 \
-    actor_rollout_ref.model.path=/mnt/data_cpfs/xielipeng.xlp/models/Qwen3-8B \
+    actor_rollout_ref.model.path=/mnt/data_cpfs/xielipeng.xlp/models/Qwen3-4B \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=16 \

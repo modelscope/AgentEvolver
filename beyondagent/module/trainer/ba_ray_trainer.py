@@ -316,7 +316,7 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                                     ) for i in range(len(gen_batch))]
                             trajectories = self.env_manager.rollout(tasks, mode="sample")
                             gen_batch_output = self.env_manager.to_dataproto(trajectories)
-                            
+                            # breakpoint()
                             num_term_traj = sum([traj.is_terminated  for traj in trajectories])
                             num_not_none_traj = sum([len(traj.steps)>0  for traj in trajectories])
 

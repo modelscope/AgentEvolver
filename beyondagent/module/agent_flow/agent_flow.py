@@ -47,6 +47,8 @@ class AgentFlow(BaseAgentFlow):
 
             env_output = env.step(instance_id, llm_output[0])
             # convert role_tool to role_user message
+            # breakpoint()
+            
             if env_output["state"]["role"] == "tool":
                 env_output["state"] = convert_tool_to_user_message(env_output["state"], self.tokenizer, format="qwen")
             
