@@ -43,7 +43,7 @@ class AgentFlow(BaseAgentFlow):
                 break
 
             # callback llm server, messages.size=1
-            llm_output = self.llm_chat_fn(trajectory.steps, custom_sampling_params={"max_tokens": self.max_model_len-current_token_len})
+            llm_output = self.llm_chat_fn(trajectory.steps, custom_sampling_params={"max_completion_tokens": self.max_model_len-current_token_len})
             assert len(llm_output) == 1
             trajectory.steps.extend(llm_output)
 
