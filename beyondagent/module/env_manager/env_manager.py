@@ -8,6 +8,7 @@ from loguru import logger
 from omegaconf import DictConfig
 from tensordict import TensorDict
 from torch.nn.utils.rnn import pad_sequence
+from tqdm import tqdm
 from verl import DataProto
 from verl.utils.model import compute_position_id_with_mask
 from verl.utils.torch_functional import (pad_sequence_to_length)
@@ -98,7 +99,7 @@ class ParallelEnvManager(object):
                                              rollout_id=str(rollout_id), mode=mode, thread_index=thread_index)
                     futures.append(future)
 
-            for future in futures:
+            for future in tqdm(futures):
                 # do not fail silently
                 result = future.result()
                 trajectory_list.append(result)

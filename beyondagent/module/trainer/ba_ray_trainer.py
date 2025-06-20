@@ -168,7 +168,9 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                             query=test_gen_batch_padded.non_tensor_batch["raw_prompt"][i],
                             env_type=self.config.env_service.env_type
                          ) for i in range(len(test_gen_batch_padded))]
+                print("=" * 10 + "start validate rollout" + "=" * 10)
                 trajectories = self.env_manager.rollout(tasks, mode="validate")
+                print("=" * 10 + "end validate rollout" + "=" * 10)
                 test_output_gen_batch_padded = self.env_manager.to_dataproto(trajectories)
                 # test_output_gen_batch_padded = self.explorer_manager.rollout(test_gen_batch_padded)
                 # test_output_gen_batch_padded = self.async_rollout_manager.generate_sequences(test_gen_batch_padded)
@@ -316,9 +318,12 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                                     ) for i in range(len(gen_batch))]
 
                             # TODO enable tracing by jinli 0619
+                            print("=" * 10 + "start fit rollout" + "=" * 10)
                             trajectories = self.env_manager.rollout(tasks, mode="sample")
+                            print("=" * 10 + "start fit rollout" + "=" * 10)
+
                             gen_batch_output = self.env_manager.to_dataproto(trajectories)
-                            # breakpoint()
+                            print(f"gen_batch_output.info batch.keys={gen_batch_output.batch.keys()}")
                             num_term_traj = sum([traj.is_terminated  for traj in trajectories])
                             num_not_none_traj = sum([len(traj.steps)>0  for traj in trajectories])
 
@@ -354,7 +359,7 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                         summary_task = self.thread_pool.submit(self.em_client.call_summarizer,
                                                                trajectories=trajectories,
                                                                workspace_id=self.config.experience_maker.workspace_id)
-
+                        print("async submit summary_task~")
                     # balance the number of valid tokens on each dp rank.
                     # Note that this breaks the order of data inside the batch.
                     # Please take care when you implement group based adv computation such as GRPO and rloo
@@ -476,6 +481,7 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
 
                     if summary_task is not None:
                         experience_list = summary_task.result()
+                        print("wait for summary_task complete~")
                         if experience_list:
                             for i, experience in enumerate(experience_list):
                                 print(f"index={i} experience={experience}")

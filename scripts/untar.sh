@@ -1,0 +1,1 @@
+rm -rf BeyondAgent && tar -xzvf BeyondAgent.tar.gz

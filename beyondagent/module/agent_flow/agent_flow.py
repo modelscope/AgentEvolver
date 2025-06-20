@@ -1,11 +1,11 @@
 from loguru import logger
-from omegaconf import DictConfig
 
 from beyondagent.client.em_client import EMClient
 from beyondagent.client.env_client import EnvClient
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
 from beyondagent.schema.trajectory import Trajectory
 from beyondagent.utils.utils import convert_tool_to_user_message
+
 
 class AgentFlow(BaseAgentFlow):
 
@@ -21,10 +21,12 @@ class AgentFlow(BaseAgentFlow):
                 trajectory=trajectory,
                 retrieve_top_k=self.config.experience_maker.retrieve_top_k,
                 workspace_id=self.config.experience_maker.workspace_id)
+            logger.info(f"history_experience={history_experience}")
 
             if history_experience:
-                logger.info(f"history_experience={history_experience}")
-                trajectory.steps[-1]["content"] = history_experience + "\n\n" + trajectory.steps[-1]["content"]
+                new_content = history_experience + "\n\n" + trajectory.steps[-1]["content"]
+                trajectory.steps[-1]["content"] = new_content
+                logger.info(f"new_content={new_content}")
 
         for act_step in range(self.max_steps):
             # if use qwen3, add /no_think
