@@ -49,18 +49,16 @@ class AgentFlow(BaseAgentFlow):
                 break
 
             # callback llm server, messages.size=1
-            llm_output_content, new_request_id = self.llm_chat_fn(trajectory.steps, request_id=request_id)
-            logger.info(f"llm_output_content={llm_output_content} "
+            llm_output = self.llm_chat_fn(trajectory.steps, request_id=request_id)
+            new_request_id = llm_output.pop("request_id", None)
+            logger.info(f"llm_output={llm_output} "
                         f"new_request_id={new_request_id} "
                         f"request_id={request_id}")
             request_id = new_request_id
 
-            trajectory.steps.append({
-                "role": "assistant",
-                "content": llm_output_content,
-            })
+            trajectory.steps.append(llm_output)
 
-            env_output = env.step(instance_id, trajectory.steps[-1])
+            env_output = env.step(instance_id, llm_output)
             # convert role_tool to role_user message
             # breakpoint()
             

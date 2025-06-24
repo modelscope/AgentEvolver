@@ -1,6 +1,6 @@
 import copy
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List, Literal
+from typing import Dict, List, Literal
 
 import numpy as np
 import torch
@@ -12,22 +12,22 @@ from tqdm import tqdm
 from verl import DataProto
 from verl.utils.model import compute_position_id_with_mask
 from verl.utils.torch_functional import (pad_sequence_to_length)
-from verl.workers.rollout.async_server import AsyncLLMServerManager
 
 from beyondagent.module.agent_flow.agent_flow import AgentFlow
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
 from beyondagent.module.env_manager.env_worker import EnvWorker
+from beyondagent.module.trainer.ba_async_llm_server_manager import BaAsyncLLMServerManager
 from beyondagent.schema.task import Task
 from beyondagent.schema.trajectory import Trajectory, Sample
 
 
 class ParallelEnvManager(object):
-    def __init__(self, config: DictConfig, async_rollout_manager: AsyncLLMServerManager, max_parallel: int,
+    def __init__(self, config: DictConfig, async_rollout_manager: BaAsyncLLMServerManager, max_parallel: int,
                  **kwargs):
         super().__init__(**kwargs)
 
         self.config: DictConfig = config
-        self.async_rollout_manager: AsyncLLMServerManager = async_rollout_manager
+        self.async_rollout_manager: BaAsyncLLMServerManager = async_rollout_manager
         self.max_parallel: int = max_parallel
 
         self.rollout_n = config.actor_rollout_ref.rollout.n
@@ -39,7 +39,7 @@ class ParallelEnvManager(object):
     def get_llm_chat_fn(self, sampling_params: dict = None) -> callable:
         def llm_chat(messages: List[Dict[str, str]],
                      custom_sampling_params: dict = None,
-                     request_id: str = None) -> List[Dict[str, Any]]:
+                     request_id: str = None) -> dict:
             """
             input messages: [{"role": "system", "value": "..."}, {"role": "user", "value": "..."}]
             output messages: [{"role": "assistant", "value": "..."}]

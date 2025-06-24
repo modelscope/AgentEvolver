@@ -21,15 +21,7 @@ class SimpleCompletionCallback(CompletionCallback):
             message["content"] = ""
         message["request_id"] = completions.id
         messages.append(message)
-        finish_reason = completions.choices[0].finish_reason
-
-        # STEP 0: check if we reach max turns
-        if self.max_turns and len(messages) >= self.max_turns:
-            print(f"[id={completions.id},turn={len(messages)},finish_reason={finish_reason}] Reach max turns, done!")
-            return
-
-        # STEP 3: resubmit completion request with tool responses
-        # self.scheduler.submit_chat_completions(messages=messages, request_id=completions.id, info=info)
+        # finish_reason = completions.choices[0].finish_reason
 
     def postprocess(self, batch: DataProto, batch_conversations: List[List[Dict[str, str]]], n: int) -> DataProto:
         """Post process batch data.
