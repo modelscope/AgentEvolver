@@ -1,3 +1,9 @@
+"""
+1. 启动一个 env_service
+2. 运行该文件
+
+"""
+
 import hydra
 
 from beyondagent.client.llm_client import DashScopeClient

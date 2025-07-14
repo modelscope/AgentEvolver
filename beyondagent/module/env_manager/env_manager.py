@@ -101,7 +101,7 @@ class ParallelEnvManager(object):
         )
 
         # FIXME pass env_type & task_id
-        env_worker = EnvWorker(env_type=task.env_type, task_id=task.task_id, thread_index=thread_index,
+        env_worker = EnvWorker(task=task, thread_index=thread_index,
                                config=self.config)
         trajectory: Trajectory = env_worker.execute(data_id=data_id, rollout_id=rollout_id, agent_flow=agent_flow)
 

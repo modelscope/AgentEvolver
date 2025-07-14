@@ -4,16 +4,18 @@ from omegaconf import DictConfig
 
 from beyondagent.client.env_client import EnvClient
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
+from beyondagent.schema.task import Task
 from beyondagent.schema.trajectory import Trajectory
 from loguru import logger
 
 class EnvWorker(object):
 
-    def __init__(self, env_type: str, task_id: str, instance_id: str = None, thread_index: int = None,
+    def __init__(self, task: Task, instance_id: str = None, thread_index: int = None,
                  config: DictConfig = None):
         self.env = EnvClient(base_url=config.env_service.env_url)
-        self.env_type: str = env_type
-        self.task_id: str = task_id
+        self.task = task
+        self.env_type: str = task.env_type
+        self.task_id: str = task.task_id
         self.instance_id: str = instance_id if instance_id is not None else uuid.uuid4().hex
         self.thread_index: int = thread_index
 
@@ -21,9 +23,15 @@ class EnvWorker(object):
         trajectory: Trajectory = Trajectory(data_id=data_id, rollout_id=rollout_id, steps=[], query="")
 
         try:
+            # cc: this is just a temporary solution
+            if not self.task.is_query_empty:
+                params={"query":self.task.first_query}
+            else:
+                params=None
             init_response = self.env.create_instance(env_type=self.env_type,
                                                     task_id=self.task_id,
-                                                    instance_id=self.instance_id)
+                                                    instance_id=self.instance_id,
+                                                    params=params) # type: ignore
         except Exception as e:
             logger.exception(f"encounter exception in env_worker.create_instance~ error={e.args}")
             return trajectory
