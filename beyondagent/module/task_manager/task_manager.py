@@ -290,6 +290,9 @@ class OriginalDataset(Dataset):
         logger.info("mixed original tasks")
 
         self._dataset = to_rl_dataset(self._objectives, self._tokenizer, self._config,self._processor)
+        
+        logger.warning(f"loaded original dataset: #task={len(self._tasks)} #rlhf={len(self._dataset)}")
+        exit(0)
     
     
     def __getitem__(self, index):
