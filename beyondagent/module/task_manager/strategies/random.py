@@ -1,4 +1,3 @@
-import abc
 import copy
 import time
 from typing import Callable, NotRequired, Optional, Sequence, TypedDict, Unpack
@@ -7,51 +6,24 @@ from loguru import logger
 
 from beyondagent.module.agent_flow.agent_flow import AgentFlow
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
-from beyondagent.module.task_manager.base import LlmClient, TaskObjectiveRetrieval
 from beyondagent.module.task_manager.explorer import Explorer
 from beyondagent.module.task_manager.prompts.prompt_explore import get_agent_interaction_system_prompt
+from beyondagent.module.task_manager.strategies import TaskExploreStrategy
 from beyondagent.schema.task import Task, TaskObjective
 from beyondagent.schema.trajectory import Trajectory
-
-
-class ExploreStrategy(abc.ABC):
-    """The abstract class of exploration strategy used in Task Manager for task generation.
-    
-    It provides nescessary contexts.
-    """
-    def _inject_deps(self,old_retrival: TaskObjectiveRetrieval,llm_client: LlmClient):
-        self._old_retrival = old_retrival
-        # TODO: where should I init the llm client
-        self._llm_client=llm_client
-    
-    @property
-    def llm_client(self):
-        if not hasattr(self,"_llm_client"):
-            raise AttributeError("llm_client is not injected")
-        return self._llm_client
-    
-    @property
-    def old_retrival(self) -> TaskObjectiveRetrieval:
-        if not hasattr(self, "_old_retrival"):
-            raise AttributeError("old_retrival is not injected")
-        return self._old_retrival
-    
-    @abc.abstractmethod
-    def explore(
-        self, task: Task, data_id: str, rollout_id: str
-    ) -> list[Trajectory]:
-        """Explore the env.
-        """
-        pass
-
+from beyondagent.module.task_manager.prompts.prompt_summarize import (
+    get_task_summarize_prompt,
+    parse_tasks_from_response,
+)
 
 class LlmRandomSamplingExploreStrategyProps(TypedDict):
     exploration_llm_temperature: NotRequired[float]
     exploration_llm_top_p: NotRequired[float]
     exploration_llm_top_k: NotRequired[int]
+    task_summary_history_length: NotRequired[int]
     
 
-class LlmRandomSamplingExploreStrategy(ExploreStrategy):
+class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
     def __init__(self, env_service_url: str,max_llm_retries: int, max_explore_step: int,* , tokenizer, config,**kwargs: Unpack[LlmRandomSamplingExploreStrategyProps]):
         self._max_llm_retries = max_llm_retries
         self._max_explore_step = max_explore_step
@@ -62,6 +34,7 @@ class LlmRandomSamplingExploreStrategy(ExploreStrategy):
         self._exploration_llm_temperature=kwargs.get("exploration_llm_temperature", 1.0)
         self._exploration_llm_top_p=kwargs.get("exploration_llm_top_p", 1.0)
         self._exploration_llm_top_k=kwargs.get("exploration_llm_top_k", 1)
+        self._task_summary_history_length=kwargs.get("task_summary_history_length", self._max_explore_step)
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
@@ -84,7 +57,7 @@ class LlmRandomSamplingExploreStrategy(ExploreStrategy):
             tokenizer=self._tokenizer,
             config=self._config,
         )
-        agent_flow.max_steps = self._max_explore_step  # TODO(cc): this is ugly
+        agent_flow.max_steps = self._max_explore_step  # this is ugly
 
         old_objectives = self.old_retrival.retrieve_objectives(task)
 
@@ -96,6 +69,20 @@ class LlmRandomSamplingExploreStrategy(ExploreStrategy):
         )
 
         return [traj]
+    
+    def summarize(self, task: Task, trajectory: Trajectory) -> list[TaskObjective]:
+        llm_fn = self._get_llm_chat_fn()
+        old_objectives = self._old_retrival.retrieve_objectives(task)
+        system_prompt, user_prompt = get_task_summarize_prompt(
+            [trajectory], old_objectives, len_history=self._task_summary_history_length
+        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        llm_output = llm_fn(messages=messages)["content"]
+        tasks = parse_tasks_from_response(task, llm_output)
+        return tasks
     
     def _get_llm_chat_fn(self, sampling_params: Optional[dict] = None) -> Callable:
         def llm_chat(

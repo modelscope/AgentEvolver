@@ -29,16 +29,13 @@ from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
 from beyondagent.module.task_manager import adapter
 from beyondagent.module.task_manager.adapter import OnflyRlDataset, to_rl_dataset
 from beyondagent.module.task_manager.data_mixture import MixtureStrategy, OriginalOnlyStrategy
-from beyondagent.module.task_manager.exploration_strategies import ExploreStrategy
+from beyondagent.module.task_manager.strategies import TaskExploreStrategy
 from beyondagent.module.task_manager.explorer import Explorer
 from beyondagent.module.task_manager.filters import TaskPostFilter
 from beyondagent.module.task_manager.prompts.prompt_explore import (
     get_agent_interaction_system_prompt,
 )
-from beyondagent.module.task_manager.prompts.prompt_summarize import (
-    get_task_summarize_prompt,
-    parse_tasks_from_response,
-)
+
 from beyondagent.module.task_manager.base import LlmClient, TaskObjectiveRetrieval
 from beyondagent.schema.task import Task, TaskObjective
 from beyondagent.schema.trajectory import Trajectory
@@ -54,7 +51,7 @@ class TaskManagerProps(TypedDict):
     exploration_llm_top_p: NotRequired[float]
     exploration_llm_top_k: NotRequired[int]
     
-    task_summary_history_length: NotRequired[int]
+    mix_original_tasks: NotRequired[bool]
 
 
 # TODO: 能够替换的 exploration & extraction (summary) strategy
@@ -64,7 +61,7 @@ class TaskManager(object):
     def __init__(
         self,
         config: DictConfig,
-        exploration_strategy: ExploreStrategy,
+        exploration_strategy: TaskExploreStrategy,
         llm_client: LlmClient,
         old_retrival: TaskObjectiveRetrieval,
         mixture_strategy: MixtureStrategy,
@@ -213,19 +210,8 @@ class TaskManager(object):
             task: Task
             trajectories: Trajectory.
         """
-        # 这个方法从现在看基本上是固定的，所以先不打算拆出去
-        llm_fn = self._get_llm_chat_fn()
-        old_objectives = self._old_retrival.retrieve_objectives(task)
-        system_prompt, user_prompt = get_task_summarize_prompt(
-            [trajectory], old_objectives, len_history=self._task_summary_history_length
-        )
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ]
-        llm_output = llm_fn(messages=messages)["content"]
-        tasks = parse_tasks_from_response(task, llm_output)
-        return tasks
+        return self._exploration_strategy.summarize(task, trajectory)
+
 
     def _get_llm_chat_fn(self, sampling_params: Optional[dict] = None) -> Callable:
         def llm_chat(
