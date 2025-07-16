@@ -51,10 +51,12 @@ task_manager:
   max_llm_retries: 3
   max_explore_step: 15
   task_summary_history_length: 10
-  # num_explore_threads: ${thread_pool.max_workers}
-  num_explore_threads: 10
+  num_explore_threads: ${thread_pool.max_workers}
+
+  cache_dir: ./task_manager_cache
 
   use_original_tasks: True # mix original tasks with synthetic tasks
+  debug_use_original_tasks: True # use original task only
 
 
 experience_maker:
