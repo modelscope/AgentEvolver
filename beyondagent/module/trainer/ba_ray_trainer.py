@@ -54,6 +54,10 @@ from beyondagent.utils.plot_entropy import log_token_entropy
 from beyondagent.module.advantage_assignment.semantic_level_assignment import (
     evaluate_step_flags, apply_step_mask
 )
+from beyondagent.utils.advantage_structure_checker import (
+    debug_advantage_structure, 
+    validate_grpo_advantage_structure
+)
 
 def parse_reward_from_dataproto(data: DataProto, return_dict=False) -> dict | torch.Tensor:
     """
@@ -701,6 +705,38 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                         #     neg_bad_scale = self.config.actor_rollout_ref.actor.advantage.neg_bad_scale,
                         # )                  # breakpoint()
                         # print("$$$$$$$$$$$$$$$$$$$$ ")
+
+                        if self.global_steps <= 3:
+                            print(f"\n🔍 [DEBUG STEP {self.global_steps}] Advantage Structure Check")
+                            print("-" * 60)
+                            
+                            # 自动选择非零样本进行调试
+                            debug_advantage_structure(batch, self.tokenizer)
+                            
+                            # 使用loss_mask进行验证
+                            advs = batch.batch["advantages"]
+                            response_length = advs.shape[1]
+                            loss_mask_response = batch.batch["loss_mask"][:, -response_length:]
+                            
+                            is_valid, message = validate_grpo_advantage_structure(
+                                advs, 
+                                loss_mask=loss_mask_response  # 使用loss_mask参数
+                            )
+                            print(f"🔍 [GRPO Validation] {message}")
+                            
+                            # 使用loss_mask统计零advantage样本
+                            from beyondagent.module.advantage_assignment.parallel_semantic_assignment import _get_overall_advantage
+                            zero_count = 0
+                            for sample_idx in range(len(batch)):
+                                adv_val = _get_overall_advantage(
+                                    advs[sample_idx], 
+                                    loss_mask_response[sample_idx]
+                                )
+                                if abs(adv_val) < 1e-8:
+                                    zero_count += 1
+                            
+                            print(f"🔍 [Zero Advantage] {zero_count}/{len(batch)} samples have advantage≈0 (using loss_mask)")
+                            print("-" * 60)
                         
                         print("^^^^^^^^^^^^^^^^^ start parallel semantic processing")
                         from beyondagent.module.advantage_assignment.parallel_semantic_assignment import (

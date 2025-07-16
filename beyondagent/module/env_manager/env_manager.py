@@ -104,7 +104,7 @@ class ParallelEnvManager(object):
             # output_messages = []
             input_messages = copy.deepcopy(messages)
             weighted_addresses = self.async_rollout_manager.chat_scheduler.weighted_addresses
-            logger.info(f"weighted_addresses={weighted_addresses}")
+            # logger.info(f"weighted_addresses={weighted_addresses}")
             for i in range(self.max_llm_retries):
                 try:
                     self.async_rollout_manager.submit_chat_completions(messages=input_messages,

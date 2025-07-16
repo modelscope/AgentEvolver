@@ -35,13 +35,56 @@ class EvaluationResult:
     step_idx: int
     is_good: bool
     response_time: float
+    
+def _get_overall_advantage(advantages_tensor, loss_mask=None):
+    """
+    从advantages tensor中获取overall advantage值
+    在GRPO中，所有有效token共享一个advantage，我们需要正确提取这个值
+    
+    Args:
+        advantages_tensor: advantage tensor, shape (resp_len,) 
+        loss_mask: 标识需要训练的token位置的mask，shape (resp_len,)
+                   在多轮对话中，只有assistant的有效token为True
+    
+    Returns:
+        float: 提取到的overall advantage值
+    """
+    if advantages_tensor.dim() == 0:  # scalar
+        return advantages_tensor.item()
+    
+    if advantages_tensor.dim() == 1:  # shape: (resp_len,)
+        # 优先使用loss_mask来提取有效advantage
+        if loss_mask is not None:
+            valid_advantages = advantages_tensor[loss_mask.bool()]
+            if len(valid_advantages) > 0:
+                # 在GRPO中，所有有效token的advantage应该相同，取第一个即可
+                return valid_advantages[0].item()
+            else:
+                # loss_mask中没有有效token，返回0
+                return 0.0
+        else:
+            # fallback: 没有loss_mask时，寻找第一个非零值
+            non_zero_mask = torch.abs(advantages_tensor) > 1e-8
+            if non_zero_mask.any():
+                return advantages_tensor[non_zero_mask][0].item()
+            else:
+                return 0.0
+    
+    # 其他维度不支持
+    raise ValueError(f"Unsupported advantages_tensor shape: {advantages_tensor.shape}")
 
 # ————————————————————————————————————————————————————————————————
 # 1. 异步并行的step评估
 # ————————————————————————————————————————————————————————————————
 
 def _build_prompt(query: str, rollout: str, step: str, overall_adv: float) -> list[dict]:
-    """构造对话消息（与原版相同）"""
+    """
+    构造对话消息（与原版相同）
+    
+    Args:
+        overall_adv: 真正的共享advantage值（GRPO中所有token共享），
+                    不是sum()后被序列长度放大的错误值
+    """
     polarity = "positive" if overall_adv > 0 else "negative"
     sys = "You are an expert reward-model evaluator. Reply with **exactly one word**, either **GOOD** or **BAD** – no explanations."
     user = (
@@ -130,7 +173,7 @@ async def evaluate_step_flags_parallel(tokenizer,
                                      max_concurrent: int = 20,
                                      batch_size_limit: int = 100) -> Tuple[List[List[bool]], Dict]:
     """
-    并行评估step flags
+    并行评估step flags，对于advantage=0的样本跳过评估，直接返回GOOD
     
     Args:
         tokenizer: 分词器
@@ -160,14 +203,36 @@ async def evaluate_step_flags_parallel(tokenizer,
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
     
-    # 准备所有评估任务
+    # 准备所有评估任务，跳过advantage=0的样本
     all_tasks = []
+    flags_per_sample = [[] for _ in range(batch_size)]
+    skipped_samples = 0
+    
+    # 🔧 修复：使用loss_mask而不是response_mask
+    response_length = batch.batch["responses"].size(1)
+    loss_mask = batch.batch["loss_mask"][:, -response_length:]  # 取response部分的loss_mask
+    
     for sample_idx in range(batch_size):
         query = tokenizer.decode(batch.batch["prompts"][sample_idx], skip_special_tokens=True)
         rollout = tokenizer.decode(batch.batch["responses"][sample_idx], skip_special_tokens=True)
         steps = batch.non_tensor_batch["steps"][sample_idx]
-        overall_adv = batch.batch["advantages"][sample_idx].sum().item()
         
+        # 使用loss_mask提取正确的overall advantage
+        sample_loss_mask = loss_mask[sample_idx]
+        
+        overall_adv = _get_overall_advantage(
+            batch.batch["advantages"][sample_idx], 
+            sample_loss_mask
+        )
+        
+        # 新增：如果advantage为0，直接设置所有step为GOOD，跳过API调用
+        if abs(overall_adv) < 1e-8:  # 使用小的阈值处理浮点精度问题
+            print(f"[parallel_eval] Sample {sample_idx}: advantage≈0 ({overall_adv:.6f}), skipping evaluation, returning all GOOD")
+            flags_per_sample[sample_idx] = [True] * len(steps)  # 所有step都标记为GOOD
+            skipped_samples += 1
+            continue
+        
+        # 为非零advantage的样本创建评估任务
         for step_idx, step_text in enumerate(steps):
             task = EvaluationTask(
                 sample_idx=sample_idx,
@@ -181,6 +246,22 @@ async def evaluate_step_flags_parallel(tokenizer,
     
     total_tasks = len(all_tasks)
     print(f"[parallel_eval] Total tasks to process: {total_tasks}")
+    print(f"[parallel_eval] Skipped {skipped_samples} samples with advantage=0")
+    
+    if total_tasks == 0:
+        # 所有样本都被跳过了
+        print("[parallel_eval] No tasks to process, all samples had advantage=0")
+        await client.close()
+        return flags_per_sample, {
+            "total_tasks": 0,
+            "successful_tasks": 0,
+            "failed_tasks": 0,
+            "total_api_time": 0,
+            "avg_api_time": 0,
+            "max_concurrent": max_concurrent,
+            "fallback_used": False,
+            "skipped_samples": skipped_samples
+        }
     
     # 分批处理任务（避免内存过大）
     all_results = []
@@ -209,13 +290,14 @@ async def evaluate_step_flags_parallel(tokenizer,
             
             pbar.update(len(batch_tasks))
     
-    # 整理结果
-    flags_per_sample = [[] for _ in range(batch_size)]
-    
+    # 整理结果到已经初始化的flags_per_sample中
     # 按sample_idx和step_idx排序
     all_results.sort(key=lambda x: (x.sample_idx, x.step_idx))
     
     for result in all_results:
+        # 为非跳过的样本填充结果
+        if not flags_per_sample[result.sample_idx]:  # 如果还是空列表
+            flags_per_sample[result.sample_idx] = []
         flags_per_sample[result.sample_idx].append(result.is_good)
     
     # 统计信息
@@ -229,7 +311,8 @@ async def evaluate_step_flags_parallel(tokenizer,
         "total_api_time": total_time,
         "avg_api_time": avg_time,
         "max_concurrent": max_concurrent,
-        "fallback_used": False
+        "fallback_used": False,
+        "skipped_samples": skipped_samples
     }
     
     print(f"[parallel_eval] Completed. Stats: {stats}")
@@ -259,6 +342,7 @@ def apply_step_mask_vectorized(batch,
                              neg_bad_scale: float = -0.2) -> Dict:
     """
     向量化版本的step mask应用，避免嵌套循环
+    对于advantage=0的样本跳过处理
     
     Returns:
         stats: 应用统计信息
@@ -280,9 +364,23 @@ def apply_step_mask_vectorized(batch,
     # 初始化scale为全1
     scale = torch.ones_like(adv)
     
-    # 计算每个样本的overall advantage符号
-    overall_adv_sums = adv.sum(dim=1)  # (bs,)
-    overall_pos = overall_adv_sums > 0  # (bs,) bool tensor
+    # 🔧 修复：使用loss_mask而不是response_mask计算overall advantage
+    overall_advs = []
+    
+    # 获取loss_mask的response部分
+    loss_mask = batch.batch["loss_mask"][:, -resp_len:]  # 取response部分的loss_mask
+    
+    for sample_idx in range(bs):
+        sample_loss_mask = loss_mask[sample_idx]
+        
+        overall_adv = _get_overall_advantage(
+            adv[sample_idx], 
+            sample_loss_mask
+        )
+        overall_advs.append(overall_adv)
+    
+    overall_advs = torch.tensor(overall_advs, device=adv.device)
+    overall_pos = overall_advs > 0  # (bs,) bool tensor
     
     # 统计信息
     stats = {
@@ -292,12 +390,19 @@ def apply_step_mask_vectorized(batch,
         "good_steps": 0,
         "bad_steps": 0,
         "positive_samples": overall_pos.sum().item(),
-        "negative_samples": (~overall_pos).sum().item()
+        "negative_samples": (~overall_pos).sum().item(),
+        "zero_adv_samples": 0  # 新增：零advantage样本统计
     }
     
     # 处理每个样本（这部分还是需要循环，但内部是向量化的）
     for b in tqdm(range(bs), desc="[vectorized_mask] Processing samples"):
         current_step_flags = step_flags[b]
+        overall_adv_sum = overall_advs[b].item()
+        
+        # 新增：如果advantage为0，跳过处理（保持scale=1.0）
+        if abs(overall_adv_sum) < 1e-8:
+            stats["zero_adv_samples"] += 1
+            continue
         
         if not current_step_flags:
             continue
@@ -355,6 +460,7 @@ def apply_step_mask_vectorized(batch,
     
     print(f"[vectorized_mask] Completed. Advantages: {original_adv_sum:.4f} -> {new_adv_sum:.4f}")
     print(f"[vectorized_mask] Modified {stats['tokens_modified']} tokens ({stats['good_steps']} good steps, {stats['bad_steps']} bad steps)")
+    print(f"[vectorized_mask] Skipped {stats['zero_adv_samples']} samples with advantage=0")
     
     return stats
 
@@ -440,6 +546,7 @@ class ParallelSemanticProcessor:
                           neg_bad_scale: float = -0.2) -> Dict:
         """
         处理整个batch的语义评估和mask应用
+        对于advantage=0的样本会跳过评估
         
         Returns:
             综合统计信息
