@@ -7,16 +7,19 @@ from loguru import logger
 from beyondagent.module.agent_flow.agent_flow import AgentFlow
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
 from beyondagent.module.task_manager.explorer import Explorer
-from beyondagent.module.task_manager.prompts.prompt_explore import get_agent_interaction_system_prompt
-from beyondagent.module.task_manager.strategies import TaskExploreStrategy
-from beyondagent.schema.task import Task, TaskObjective
-from beyondagent.schema.trajectory import Trajectory
-from beyondagent.module.task_manager.prompts.prompt_summarize import (
+from beyondagent.module.task_manager.strategies.random.prompts.prompt_explore import get_agent_interaction_system_prompt
+from beyondagent.module.task_manager.strategies.random.prompts.prompt_summarize import (
     get_task_summarize_prompt,
     parse_tasks_from_response,
 )
+from beyondagent.module.task_manager.strategies import TaskExploreStrategy
+from beyondagent.schema.task import Task, TaskObjective
+from beyondagent.schema.trajectory import Trajectory
 
-class LlmRandomSamplingExploreStrategyProps(TypedDict):
+from .embedding import EmbeddingClient
+
+
+class LlmDedupExploreStrategyProps(TypedDict):
     max_explore_step: int
     max_llm_retries: int
     env_url: str
@@ -27,8 +30,8 @@ class LlmRandomSamplingExploreStrategyProps(TypedDict):
     
     
 
-class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
-    def __init__(self, * , tokenizer, config,**kwargs: Unpack[LlmRandomSamplingExploreStrategyProps]):
+class LlmDedupSamplingExploreStrategy(TaskExploreStrategy):
+    def __init__(self, * , tokenizer, config,**kwargs: Unpack[LlmDedupExploreStrategyProps]):
         self._tokenizer = tokenizer
         self._config = config
         
@@ -40,6 +43,8 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
         self._exploration_llm_top_p=kwargs.get("exploration_llm_top_p", 1.0)
         self._exploration_llm_top_k=kwargs.get("exploration_llm_top_k", 1)
         self._task_summary_history_length=kwargs.get("task_summary_history_length", self._max_explore_step)
+        
+        self._embedding=EmbeddingClient()
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
