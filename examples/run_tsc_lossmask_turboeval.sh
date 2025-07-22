@@ -22,7 +22,7 @@ python3 -m beyondagent.main_ppo \
     algorithm.adv_estimator=grpo \
     semantic_advantage.enable=true \
     semantic_advantage.evaluation_type='api' \
-    semantic_advantage.mask_type='response_mask' \
+    semantic_advantage.mask_type='loss_mask' \
     semantic_advantage.mode='semantic' \
     semantic_advantage.good_scale=1.0 \
     semantic_advantage.bad_scale=0.2 \

@@ -11,7 +11,7 @@ CONFIG_PATH="$PROJECT_DIR/config"
 # completion_callback=none
 env_url=http://localhost:8000
 current_time=$(date "+%Y%m%d_%H%M%S")
-log_file="logs/assignment/tsc_respmask1_sem_api_turbo_bad0.2_negbad-0.2_${current_time}.log"
+log_file="logs/assignment/qwen3_14b_tsc_sparse_respmask1_sem_api_turbo_bad0.2_negbad-0.2_${current_time}.log"
 EN_SAVE_DIR="./save_dir/save_entropy"
 
 python3 -m beyondagent.main_ppo \
@@ -30,6 +30,7 @@ python3 -m beyondagent.main_ppo \
     semantic_advantage.api_max_retries=200 \
     semantic_advantage.concurrent=5 \
     semantic_advantage.model='qwen-turbo' \
+    env_sparse=true \
     data.train_batch_size=16 \
     data.max_prompt_length=4096 \
     data.max_response_length=20480 \
@@ -42,7 +43,7 @@ python3 -m beyondagent.main_ppo \
     actor_rollout_ref.rollout.response_length=2048 \
     actor_rollout_ref.rollout.max_model_len=20480 \
     actor_rollout_ref.rollout.temperature=0.9 \
-    actor_rollout_ref.model.path=/mnt/data_aisys_cpfs/xielipeng.xlp/models/Qwen2.5-7B-Instruct \
+    actor_rollout_ref.model.path=/mnt/data_aisys_cpfs/xielipeng.xlp/models/Qwen3-14B \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=16 \
@@ -67,14 +68,14 @@ python3 -m beyondagent.main_ppo \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
     trainer.project_name='beyondagent' \
-    trainer.experiment_name="qwen2.5-7b_tsc_respmask1_sem_api_turbo_bad0.2_negbad-0.2" \
+    trainer.experiment_name="qwen3_14b_tsc_sparse_respmask1_sem_api_turbo_bad0.2_negbad-0.2" \
     trainer.nnodes=1 \
     trainer.save_freq=-1 \
     trainer.test_freq=20 \
     trainer.total_epochs=20 \
     trainer.val_before_train=True \
-    trainer.validation_data_dir="experiments/exp_tsc_respmask1_sem_api_turbo_bad0.2_negbad-0.2${current_time}/validation_log" \
-    trainer.rollout_data_dir="experiments/exp_tsc_respmask1_sem_api_turbo_bad0.2_negbad-0.2${current_time}/rollout_log" \
+    trainer.validation_data_dir="experiments/exp_tsc_sparse_respmask1_sem_api_turbo_bad0.2_negbad-0.2${current_time}/validation_log" \
+    trainer.rollout_data_dir="experiments/exp_tsc_sparse_respmask1_sem_api_turbo_bad0.2_negbad-0.2${current_time}/rollout_log" \
     actor_rollout_ref.actor.ppo_max_token_len_per_gpu=20480 \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=20480 \
     actor_rollout_ref.ref.log_prob_max_token_len_per_gpu=20480 \
