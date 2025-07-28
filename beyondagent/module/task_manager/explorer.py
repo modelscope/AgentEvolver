@@ -62,7 +62,7 @@ class EnvWorkerWithPrompt(object):
             step:list[dict] = []
             step.extend(state_message)
             if system_prompt is not None:
-                step.insert(1, {"role": "user", "content": system_prompt})
+                step.insert(1, {"role": "system", "content": system_prompt})
             # Example of state_message after rearrangement
             # [
             #     {
@@ -78,6 +78,7 @@ class EnvWorkerWithPrompt(object):
             #         "content": "<the query>"
             #     }
             # ]
+            step[-1]["content"] = f"Former query: {state_message[-1]['content']}. Ignore the query, now do your exploration!"
             
             trajectory: Trajectory = Trajectory(
                 data_id=data_id, rollout_id=rollout_id, steps=step, query=state_message[-1]['content']
