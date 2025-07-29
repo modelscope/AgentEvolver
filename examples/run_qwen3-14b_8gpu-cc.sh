@@ -76,5 +76,6 @@ python3 -m beyondagent.main_ppo \
     task_manager.n=0 \
     task_manager.mixture.synthetic_data_ratio=1.0 \
     task_manager.mixture.use_original_tasks=True \
+    actor_rollout_ref.rollout.val_kwargs.n=4 \
     2>&1 | tee "$log_file" \
     $@
