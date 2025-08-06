@@ -7,6 +7,14 @@ from typing import Any, Optional, Protocol, Iterator, Generator, cast
 from loguru import logger
 import requests
 
+class LlmException(Exception):
+    def __init__(self,typ: str):
+        self._type=typ
+    
+    @property
+    def typ(self):
+        return self._type
+        
 
 class DashScopeClient:
     """阿里云百炼API客户端"""
@@ -68,8 +76,16 @@ class DashScopeClient:
         """处理非流式响应"""
         response = requests.post(url, headers=self.headers, json=params, timeout=600)
         if not response.ok:
-            logger.error(f"API request failed: {response.text}")
-            response.raise_for_status()
+            # check inappropriate content
+            try:
+                error_json=response.json()['error']
+                if "inappropriate content" in error_json['message']:
+                    raise LlmException("inappropriate content")
+                if "limit" in error_json['message']:
+                    raise LlmException("hit limit")
+            except:
+                logger.error(f"API request failed: {response.text}")
+                response.raise_for_status()
         
         result = response.json()
         if "choices" in result and len(result["choices"]) > 0:
@@ -82,8 +98,16 @@ class DashScopeClient:
         """处理流式响应"""
         response = requests.post(url, headers=self.headers, json=params, stream=True, timeout=600)
         if not response.ok:
-            logger.error(f"API request failed: {response.text}")
-            response.raise_for_status()
+            # check inappropriate content
+            try:
+                error_json=response.json()['error']
+                if "inappropriate content" in error_json['message']:
+                    raise LlmException("inappropriate content")
+                if "limit" in error_json['message']:
+                    raise LlmException("hit limit")
+            except:
+                logger.error(f"API request failed: {response.text}")
+                response.raise_for_status()
         
         for line in response.iter_lines():
             if line:
@@ -112,7 +136,11 @@ class DashScopeClient:
                 result = cast(str,self.chat_completion(messages, stream=False, **kwargs))
                 if result:  # 如果获得了有效响应
                     return result
-                    
+            
+            except LlmException as e:
+                if e.typ=='inappropriate content':
+                    logger.warning(f"llm return inappropriate content, which is blocked by the remote")
+                    return "[inappropriate content]"
             except Exception as e:
                 logger.warning(f"Attempt {attempt + 1} failed: {e}")
                 
@@ -136,7 +164,11 @@ class DashScopeClient:
                     for chunk in stream_generator:
                         yield chunk
                     return  # 成功完成，退出重试循环
-                    
+            except LlmException as e:
+                if e.typ=='inappropriate content':
+                    logger.warning(f"llm return inappropriate content, which is blocked by the remote")
+                    yield "[inappropriate content]"
+                    return
             except Exception as e:
                 logger.warning(f"Stream attempt {attempt + 1} failed: {e}")
                 
