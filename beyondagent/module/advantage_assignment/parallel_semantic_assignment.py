@@ -14,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Tuple, Dict, Optional, Literal
 import threading
 from dataclasses import dataclass, asdict
+import random
 
 __all__ = [
     "evaluate_step_flags_parallel",
@@ -274,7 +275,7 @@ async def _async_safe_query(
                         temperature=0.0,
                         extra_body={"enable_thinking": True},
                         stream=True,
-                        max_tokens=10_000,
+                        max_tokens=10000,
                         timeout=timeout_s,
                     )
 
@@ -297,7 +298,7 @@ async def _async_safe_query(
                         messages=messages,
                         temperature=0.0,
                         timeout=timeout_s,
-                        max_tokens=10_000,
+                        max_tokens=10000,
                     )
                     return response.choices[0].message.content.strip()
 
