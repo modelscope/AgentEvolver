@@ -102,31 +102,51 @@ def build_batch_evaluation_prompt(
         max_step_chars: int = 2000,
 ) -> list[dict]:
     polarity = "positive" if overall_adv > 0 else "negative"
+    # prompt3
+    # sys_msg = (
+    #     "You are an expert *process* reward evaluator.\n\n"
+    #     "Input has three sections:\n"
+    #     "1) OVERALL ADVANTAGE – scalar for final answer quality\n"
+    #     "2) TASK DESCRIPTION  – the user's original request\n"
+    #     "3) SOLUTION TRAJECTORY – numbered steps (ACTION, optional OBSERVATION)\n\n"
+    #     "Rules:\n"
+    #     "• If OVERALL ADVANTAGE > 0 → GOOD only if the ACTION makes the answer better; else BAD.\n"
+    #     "• If OVERALL ADVANTAGE < 0 → DEFAULT = BAD. Mark GOOD ONLY IF ALL hold:\n"
+    #     "   (A) The step explicitly DIAGNOSES a prior error/assumption, AND\n"
+    #     "   (B) The ACTION implements a concrete FIX redirecting toward the correct goal, AND\n"
+    #     "   (C) The OBSERVATION shows EVIDENCE the fix worked (e.g., auth succeeds, correct list, error disappears).\n"
+    #     "   If any of A/B/C missing → BAD. \"Reasonable attempts\" without diagnosis+evidence → BAD.\n\n"
+    #     "Always BAD when advantage < 0:\n"
+    #     "• Continuing the wrong plan, or finalising/submitting a wrong result\n"
+    #     "• Repeating the same failure class without new diagnosis/redirect\n"
+    #     "• Using unsupported/unspecified interfaces/params, or acting on unverified assumptions\n"
+    #     "• Performing irreversible ops (delete/overwrite/complete) without validating preconditions\n\n"
+    #     "Output requirement (strict): For every step you mark GOOD when advantage < 0, your Step Analysis MUST include a line starting with:\n"
+    #     "  Evidence: \"<verbatim snippet from this step's OBSERVATION>\"\n"
+    #     "If you cannot quote such evidence from this step's OBSERVATION, mark BAD.\n\n"
+    #     "Judge strictly by whether each ACTION reduces the gap to correctly solving the ORIGINAL task.\n"
+    #     "Reply ONLY in the required output format."
+    # )
+    
+    # prompt1
+    sys = """You are an expert *process* reward evaluator.
 
-    sys_msg = (
-        "You are an expert *process* reward evaluator.\n\n"
-        "Input has three sections:\n"
-        "1) OVERALL ADVANTAGE – scalar for final answer quality\n"
-        "2) TASK DESCRIPTION  – the user's original request\n"
-        "3) SOLUTION TRAJECTORY – numbered steps (ACTION, optional OBSERVATION)\n\n"
-        "Rules:\n"
-        "• If OVERALL ADVANTAGE > 0 → GOOD only if the ACTION makes the answer better; else BAD.\n"
-        "• If OVERALL ADVANTAGE < 0 → DEFAULT = BAD. Mark GOOD ONLY IF ALL hold:\n"
-        "   (A) The step explicitly DIAGNOSES a prior error/assumption, AND\n"
-        "   (B) The ACTION implements a concrete FIX redirecting toward the correct goal, AND\n"
-        "   (C) The OBSERVATION shows EVIDENCE the fix worked (e.g., auth succeeds, correct list, error disappears).\n"
-        "   If any of A/B/C missing → BAD. \"Reasonable attempts\" without diagnosis+evidence → BAD.\n\n"
-        "Always BAD when advantage < 0:\n"
-        "• Continuing the wrong plan, or finalising/submitting a wrong result\n"
-        "• Repeating the same failure class without new diagnosis/redirect\n"
-        "• Using unsupported/unspecified interfaces/params, or acting on unverified assumptions\n"
-        "• Performing irreversible ops (delete/overwrite/complete) without validating preconditions\n\n"
-        "Output requirement (strict): For every step you mark GOOD when advantage < 0, your Step Analysis MUST include a line starting with:\n"
-        "  Evidence: \"<verbatim snippet from this step's OBSERVATION>\"\n"
-        "If you cannot quote such evidence from this step's OBSERVATION, mark BAD.\n\n"
-        "Judge strictly by whether each ACTION reduces the gap to correctly solving the ORIGINAL task.\n"
-        "Reply ONLY in the required output format."
-    )
+The single message you receive always contains three labelled sections:
+  1. OVERALL ADVANTAGE – a scalar summarising the final answer quality.
+  2. TASK DESCRIPTION   – the user’s original request.
+  3. SOLUTION TRAJECTORY – a numbered list of assistant steps.
+
+Evaluation rule:
+• If OVERALL ADVANTAGE is **positive (> 0)**, judge each step by whether its ACTION
+  makes the overall answer *even better* than before (incremental improvement).
+• If OVERALL ADVANTAGE is **negative (< 0)**, judge each step by whether it *actively
+  corrects the existing error*. Mark GOOD **only** when the ACTION clearly fixes or
+  moves the answer towards correctness; otherwise mark BAD.
+
+Ignore superficial politeness or formatting. Focus strictly on the technical impact
+of the ACTION (and OBSERVATION if present).
+
+Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
 
     def _trim(s: str) -> str:
         if not s: return ""
