@@ -58,6 +58,7 @@ from beyondagent.utils.advantage_structure_checker import (
     debug_advantage_structure, 
     validate_grpo_advantage_structure
 )
+from beyondagent.utils.step_parser import verify_step_alignment, verify_step_content
 # from beyondagent.module.credit_assign import AssignmentConfig, CreditAssigner
 
 def parse_reward_from_dataproto(data: DataProto, return_dict=False) -> dict | torch.Tensor:
@@ -750,6 +751,10 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                         enable_semantic_eval = semantic_config.enable
                         
                         if enable_semantic_eval:
+                            if not verify_step_alignment(batch, self.tokenizer, self.global_steps):
+                                raise RuntimeError("Step alignment check failed!")
+                            for sample_idx in range(min(3, len(batch.batch["prompts"]))):
+                                verify_step_content(batch, self.tokenizer, sample_idx)
                             print("^^^^^^^^^^^^^^^^^ start parallel semantic processing")
                             print(f"[Config] Semantic evaluation config: {semantic_config}")
                             

@@ -72,34 +72,34 @@ def _steps_struct_to_text_list(steps: List[Dict[str, str]]) -> List[str]:
             out.append(act)
     return out
 
-def parse_rollout_to_steps(rollout: str) -> List[Dict[str, str]]:
-    """
-    将包含 ... assistant\n<action text>\nuser\n<observation text> ... 的长串 rollout 拆成步骤列表。
-    """
+# def parse_rollout_to_steps(rollout: str) -> List[Dict[str, str]]:
+#     """
+#     将包含 ... assistant\n<action text>\nuser\n<observation text> ... 的长串 rollout 拆成步骤列表。
+#     """
     
-    # Yunpeng.zyp: 2025.08.09
-    # 危险，未区分大小写
-    # parts = re.split(r'\n(assistant|user)\n', rollout, flags=re.I)
-    # FIXME: 直接以assistant获取可能会被hack，需要改成从|imstart|\|imend|, 或直接从batch.non_tensor_batch["messages]里获取
-    # FIXME: 后续这里的切分修改也应该和batch.step_ids的切分一致
-    parts = re.split(r'\n(assistant|user)\n', rollout)
+#     # Yunpeng.zyp: 2025.08.09
+#     # 危险，未区分大小写
+#     # parts = re.split(r'\n(assistant|user)\n', rollout, flags=re.I)
+#     # FIXME: 直接以assistant获取可能会被hack，需要改成从|imstart|\|imend|, 或直接从batch.non_tensor_batch["messages]里获取
+#     # FIXME: 后续这里的切分修改也应该和batch.step_ids的切分一致
+#     parts = re.split(r'\n(assistant|user)\n', rollout)
 
-    if parts and parts[0].strip():
-        parts = ['assistant', parts[0]] + parts[1:]
+#     if parts and parts[0].strip():
+#         parts = ['assistant', parts[0]] + parts[1:]
 
-    steps: List[Dict[str, str]] = []
-    i = 0
-    while i < len(parts) - 1:
-        role, text = parts[i].lower(), parts[i + 1]
-        if role == 'assistant':
-            action = text.strip()
-            observation = ''
-            if i + 2 < len(parts) - 1 and parts[i + 2].lower() == 'user':
-                observation = parts[i + 3].strip()
-                i += 2
-            steps.append({"action": action, "observation": observation})
-        i += 2
-    return steps
+#     steps: List[Dict[str, str]] = []
+#     i = 0
+#     while i < len(parts) - 1:
+#         role, text = parts[i].lower(), parts[i + 1]
+#         if role == 'assistant':
+#             action = text.strip()
+#             observation = ''
+#             if i + 2 < len(parts) - 1 and parts[i + 2].lower() == 'user':
+#                 observation = parts[i + 3].strip()
+#                 i += 2
+#             steps.append({"action": action, "observation": observation})
+#         i += 2
+#     return steps
 
 def build_batch_evaluation_prompt(
         query: str,
@@ -231,9 +231,9 @@ Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
         {"role": "user", "content": "\n".join(user_parts)},
     ]
 
-def build_batch_evaluation_prompt_from_rollout(query: str, rollout: str, overall_adv: float, max_step_chars: int = 2000):
-    steps = parse_rollout_to_steps(rollout)
-    return build_batch_evaluation_prompt(query, steps, overall_adv, max_step_chars)
+# def build_batch_evaluation_prompt_from_rollout(query: str, rollout: str, overall_adv: float, max_step_chars: int = 2000):
+#     steps = parse_rollout_to_steps(rollout)
+#     return build_batch_evaluation_prompt(query, steps, overall_adv, max_step_chars)
 
 def parse_batch_evaluation_result(response: str, num_steps: int):
     numbered = {}
@@ -423,8 +423,13 @@ async def _evaluate_single_sample_api(
 
     try:
         # 1) 构造批量评估 prompt
-        messages = build_batch_evaluation_prompt_from_rollout(
-            task.query, task.rollout, task.overall_adv
+        # shuchang: 0809
+        # FIXME: 这里组织prompt改为直接用 steps 结构
+        # messages = build_batch_evaluation_prompt_from_rollout(
+        #     task.query, task.rollout, task.overall_adv
+        # )
+        messages = build_batch_evaluation_prompt(
+            task.query, task.steps, task.overall_adv
         )
         # 2) 调用 LLM
         llm_raw_output = await _async_safe_query(
@@ -540,7 +545,10 @@ async def evaluate_step_flags_parallel(tokenizer, batch, model_name: str = "qwen
         print("❌ [parallel_eval] No API key found in DASHSCOPE_API_KEY environment variable")
         print("❌ [parallel_eval] Please set: export DASHSCOPE_API_KEY='your-api-key'")
         print("❌ [parallel_eval] Using random fallback for evaluation")
-        return _apply_fallback_strategy_parallel(batch, tokenizer), {"fallback_used": True, "evaluation_type": evaluation_type}
+        # shuchang: 0809
+        # FIXME: 注释掉fallback，强制要求必须有API KEY
+        # return _apply_fallback_strategy_parallel(batch, tokenizer), {"fallback_used": True, "evaluation_type": evaluation_type}
+        raise  RuntimeError("No API key found in DASHSCOPE_API_KEY environment variable")
     
     api_client = AsyncOpenAI(
         api_key=api_key,
@@ -567,9 +575,10 @@ async def evaluate_step_flags_parallel(tokenizer, batch, model_name: str = "qwen
     for sample_idx in range(batch_size):
         query = tokenizer.decode(batch.batch["prompts"][sample_idx], skip_special_tokens=True)
         rollout = tokenizer.decode(batch.batch["responses"][sample_idx], skip_special_tokens=True)
-        
-        # ✅ 统一真相源：从 rollout 解析 steps（action/observation）
-        steps_struct = parse_rollout_to_steps(rollout)
+        # shuchang: 0809
+        # FIXME: 这里改为直接用 batch.non_tensor_batch["steps"]，不需要再额外解析
+        # steps_struct = parse_rollout_to_steps(rollout)
+        steps_struct = batch.non_tensor_batch["steps"][sample_idx]
 
         # mask 与 overall_adv 维持原逻辑
         sample_mask = response_mask[sample_idx]
@@ -696,21 +705,6 @@ async def evaluate_step_flags_parallel(tokenizer, batch, model_name: str = "qwen
     await api_client.close()
     return flags_per_sample, stats
 
-def _apply_fallback_strategy_parallel(batch, tokenizer) -> List[List[bool]]:
-    """API 不可用时的并行 fallback：全部禁用缩放（按 rollout 解析的步数返回均一标记）"""
-    flags_per_sample = []
-    advantages = batch.batch["advantages"]
-    bs = len(batch.batch["prompts"])
-
-    for sample_idx in range(bs):
-        rollout = tokenizer.decode(batch.batch["responses"][sample_idx], skip_special_tokens=True)
-        steps_struct = parse_rollout_to_steps(rollout)
-        overall_adv = _get_overall_advantage(advantages[sample_idx])
-        uniform_flag = overall_adv > 0  # True=GOOD, False=BAD
-        flags_per_sample.append([uniform_flag for _ in range(len(steps_struct))])
-
-    return flags_per_sample
-
 
 # ————————————————————————————————————————————————————————————————
 # 向量化的mask应用
@@ -752,15 +746,21 @@ def apply_step_mask_vectorized(tokenizer, batch, step_flags: List[List[bool]], c
         flags_b = list(step_flags[b])
         sample_step_ids = step_ids[b]
         rollout = tokenizer.decode(batch.batch["responses"][b], skip_special_tokens=True)
-        actual_steps = parse_rollout_to_steps(rollout)
-        token_step_cnt = len(actual_steps)  # ✅ 直接使用正确解析的步骤数
+        # shuchang: 0809
+        # FIXME: 这里不需要再解析 rollout 了，直接用 sample_step_ids 的长度
+        # actual_steps = parse_rollout_to_steps(rollout)
+        # token_step_cnt = len(actual_steps)  
         if (sample_step_ids >= 0).any():
-            max_step_id = int(sample_step_ids.max().item())
-            min_step_id = int(sample_step_ids[sample_step_ids >= 0].min().item())
-            print(f"[DEBUG] Sample {b}: step_ids range [{min_step_id}, {max_step_id}], "
-                  f"parsed_steps={token_step_cnt}, flags={len(flags_b)}")
+            token_step_cnt = int(sample_step_ids.max().item()) + 1
         else:
             token_step_cnt = 0
+        # if (sample_step_ids >= 0).any():
+        #     max_step_id = int(sample_step_ids.max().item())
+        #     min_step_id = int(sample_step_ids[sample_step_ids >= 0].min().item())
+        #     print(f"[DEBUG] Sample {b}: step_ids range [{min_step_id}, {max_step_id}], "
+        #           f"parsed_steps={token_step_cnt}, flags={len(flags_b)}")
+        # else:
+        #     token_step_cnt = 0
 
         if len(flags_b) != token_step_cnt:
             # 依据 overall_adv 的符号来填充（或截断）
