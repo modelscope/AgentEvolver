@@ -386,13 +386,15 @@ class ParallelEnvManager(object):
 
         exp_mask = pad_sequence(exp_mask_list, batch_first=True, padding_value=0)
         exp_mask = pad_sequence_to_length(exp_mask, self.config.data.max_prompt_length + self.config.data.max_response_length, 0)
-        assert exp_mask.shape == loss_mask.shape, f"Shape mismatch: {exp_mask.shape} vs {loss_mask.shape}"
 
         # Concatenate prompt and response tensors
         input_ids = torch.cat((prompt_ids, response_ids), dim=-1)
         attention_mask = torch.cat((prompt_attention_mask, response_attention_mask), dim=-1)
         position_ids = torch.cat((prompt_position_ids, response_position_ids), dim=-1)
         loss_mask = torch.cat((prompt_loss_mask, response_loss_mask), dim=-1)
+
+				# Validate masks have same shape
+        assert exp_mask.shape == loss_mask.shape, f"Shape mismatch: {exp_mask.shape} vs {loss_mask.shape}"
 
         # Construct the batch using TensorDict
         batch = TensorDict(
