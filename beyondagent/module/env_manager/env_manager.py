@@ -353,7 +353,8 @@ class ParallelEnvManager(object):
         attention_mask = torch.cat((prompt_attention_mask, response_attention_mask), dim=-1)
         position_ids = torch.cat((prompt_position_ids, response_position_ids), dim=-1)
         loss_mask = torch.cat((prompt_loss_mask, response_loss_mask), dim=-1)
-
+        # shuchang: construct group_id
+        group_ids = torch.tensor([int(s.data_id) for s in samples], dtype=torch.long)
         # Construct the batch using TensorDict
         batch = TensorDict(
             {
@@ -364,6 +365,7 @@ class ParallelEnvManager(object):
                 "position_ids": position_ids,
                 "loss_mask": loss_mask,
                 "step_ids": step_ids_pad,
+                "group_ids": group_ids,   # ★ 新增groupid
             },
             batch_size=len(samples),
         )

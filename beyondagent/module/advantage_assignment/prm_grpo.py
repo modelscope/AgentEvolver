@@ -139,8 +139,13 @@ def compute_prm_grpo_advantages(
         orm=orm, step_flags=step_flags, step_ids=step_ids, hyper=hyper
     )
 
-    B = step_ids.size(0)
-    group_ids = torch.arange(B, device=device) // int(group_size)
+    # 直接使用 env_manager 注入的 group_ids，避免串组
+    group_ids = batch.batch["group_ids"]
+    if not torch.is_tensor(group_ids):
+        group_ids = torch.as_tensor(group_ids)
+    group_ids = group_ids.to(device=device, dtype=torch.long).view(-1)
+    assert group_ids.numel() == responses.size(0), "group_ids length must equal batch size"
+
     norm_step_rewards = group_standardize_step_rewards(raw_step_rewards, group_ids, eps=hyper.eps)
 
     A = suffix_sum_advantages(norm_step_rewards, step_end_indices, resp_len, device=device)
