@@ -281,8 +281,16 @@ class ParallelEnvManager(object):
                 max_response_len=self.config.data.max_response_length,
                 extras={
                     "add_exp": trajectory.metadata.get("add_exp", None),
-                    "experience": experiences
-                },  # add add_exp and experience info by ANNI
+                    # Flag for experience incorporation:
+                    # If True for positive samples, applies off_clip_high strategy
+
+                    "task_train_expmode": trajectory.metadata.get("task_train_exp_mode", None), 
+                    # Mode for handling experience during trajectory-to-sample conversion:
+                    # Specifies whether to retain or discard experience data
+                    
+                    "experience": experiences   
+                    # List of experience values associated with the trajectory
+                },
             )
             sample.truncate_output_ids()
             samples.append(sample)
@@ -297,11 +305,8 @@ class ParallelEnvManager(object):
         prompt_loss_mask, response_loss_mask = [], []
         messages = []
         reward_scores = []
-        ############
-        # ANNI
-        extras = []
-        exp_mask_list = []
-        ############
+        extras = [] # List of dictionaries containing supplementary data for each trajectory, including "add_exp", "task_train_expmode", "exprience"
+        exp_mask_list = []  # List of binary masks indicating whether to consider experience for each sample in the batch
         
         for sample in samples:
             # Validate that all fields have the same length
@@ -341,18 +346,10 @@ class ParallelEnvManager(object):
 
             messages.append({"messages": sample.messages})
             reward_scores.append(sample.reward_scores)
-
-            ############
-            # ANNI
-            mask_length = len(sample.loss_mask)
-            add_exp = sample.extras.get("add_exp", False)
-            if add_exp:
-                exp_mask_list.append(torch.ones(mask_length, dtype=torch.int))
-            else:
-                exp_mask_list.append(torch.zeros(mask_length, dtype=torch.int))
-
             extras.append(sample.extras)
-            ############
+
+            exp_mask_list.append(torch.ones(len(sample.loss_mask), dtype=torch.int) if sample.extras.get("add_exp", False) else torch.zeros(len(sample.loss_mask), dtype=torch.int))
+
 
         # Batch and pad sequences
         prompt_ids = pad_sequence(prompt_ids, batch_first=True, padding_value=self.pad_token_id, padding_side="left")
@@ -383,20 +380,15 @@ class ParallelEnvManager(object):
         response_loss_mask = pad_sequence(response_loss_mask, batch_first=True, padding_value=0)
         response_loss_mask = pad_sequence_to_length(response_loss_mask, self.config.data.max_response_length, 0)
 
+        exp_mask = pad_sequence(exp_mask_list, batch_first=True, padding_value=0)
+        exp_mask = pad_sequence_to_length(exp_mask, self.config.data.max_prompt_length + self.config.data.max_response_length, 0)
+        assert exp_mask.shape == loss_mask.shape, f"Shape mismatch: {exp_mask.shape} vs {loss_mask.shape}"
+
         # Concatenate prompt and response tensors
         input_ids = torch.cat((prompt_ids, response_ids), dim=-1)
         attention_mask = torch.cat((prompt_attention_mask, response_attention_mask), dim=-1)
         position_ids = torch.cat((prompt_position_ids, response_position_ids), dim=-1)
         loss_mask = torch.cat((prompt_loss_mask, response_loss_mask), dim=-1)
-
-        ############
-        # ANNI
-        exp_mask = pad_sequence(exp_mask_list, batch_first=True, padding_value=0)
-        exp_mask = pad_sequence_to_length(exp_mask, self.config.data.max_prompt_length + self.config.data.max_response_length, 0)
-
-        assert exp_mask.shape == loss_mask.shape, f"Shape mismatch: {exp_mask.shape} vs {loss_mask.shape}"
-        ############
-
 
         # Construct the batch using TensorDict
         batch = TensorDict(

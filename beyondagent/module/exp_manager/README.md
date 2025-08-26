@@ -29,9 +29,9 @@ actor_rollout_ref:
 
 |          | `val_rollout_expmode` | `train_rollout_expmode` | `train_sample_expmode` | `rollout_expratio` | `train_sample_keepratio` |
 | -------- | --------------------- | ----------------------- | ---------------------- | ------------------ | ------------------------ |
-| baseline | "mixed"               | "woexp"                 | -                      | (0, 1)             | -                        |
-| EC       | "mixed"               | "mixed"                 | "keep"                 | (0, 1)             | 1                        |
-| EI       | "mixed"               | "mixed"                 | "discard"              | (0, 1)             | 0                        |
+| baseline | "woexp"               | "woexp"                 | -                      | 0.0             | -                        |
+| EC       | "mixed"               | "mixed"                 | "keep"                 | (0, 1)             | 1.0                        |
+| EI       | "mixed"               | "mixed"                 | "discard"              | (0, 1)             | 0.0                        |
 | HET      | "mixed"               | "mixed"                 | "hybrid"               | (0, 1)             | (0, 1)                   |
 
 ## 4. 启动方法
