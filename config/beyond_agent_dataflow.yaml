@@ -36,7 +36,9 @@ actor_rollout_ref:
     max_model_len: 20480
     max_env_len: 4096
     enable_request_id: False
-
+  model:
+    path: /mnt/data/zouanni.zan/models/Qwen2.5-14B-Instruct
+  
 thread_pool:
   max_workers: 5
 
