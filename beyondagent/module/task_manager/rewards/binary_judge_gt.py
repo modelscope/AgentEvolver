@@ -101,7 +101,7 @@ def steps_to_msg(steps: list[dict[str, Any]]) -> str:
     for i, msg in enumerate(steps):
         role = msg.get("role", "unknown")
         if role == 'assistant':
-            block = f""">>> STEP {i} <<<
+            block = f""">>> STEP {i//2} <<<
 <|ACTION|>
 {msg['content']}
 <|END|>
