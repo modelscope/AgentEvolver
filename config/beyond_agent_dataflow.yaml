@@ -74,7 +74,7 @@ semantic_advantage:
     level: "batch"       # "batch" 或 "group"
     group_size: null     # group模式下可覆盖默认repeat大小
     norm_style: "nostd"
-  enable_prm_grpo: true
+  enable_prm_grpo: false
 
 trainer:
   llm_evaluation_log_dir: null  # 设置为具体路径来启用，例如："/path/to/llm_evaluation_logs"
