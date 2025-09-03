@@ -1,6 +1,6 @@
 from beyondagent.schema.trajectory import Reward, Trajectory
 from typing import List, Dict
-import uuid
+import uuid as uuid_gen
 
 
 class ContextManagerBase:
@@ -64,7 +64,7 @@ class ExtendedMessage:
         self._info = ""
         self.clip = clip
         if uuid is None:
-            self.uuid = uuid.uuid4().hex
+            self.uuid = uuid_gen.uuid4().hex
         else:
             self.uuid = uuid
         self.build_from_uuid = build_from_uuid

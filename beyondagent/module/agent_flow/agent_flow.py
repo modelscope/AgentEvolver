@@ -131,7 +131,7 @@ class AgentFlow(BaseAgentFlow):
             # 8. 📥 save environment output
             state = env_output["state"]
             state.pop('tool_calls', None)
-            self.cmt.save_env_output(state, input_msg_ref=step_input_message_arr, add_nothink=add_nothink)
+
 
             # 9. 🔚 determine if the episode is terminated
             self.cmt.is_terminated = env_output["is_terminated"]
@@ -139,13 +139,14 @@ class AgentFlow(BaseAgentFlow):
                 break
 
         tmux['step'][thread_index] = -1
-        score = env.evaluate(instance_id, params={"sparse": False})
+
+        if self._reward_calculator is not None:
+            score = self._reward_calculator.calculate_reward(trajectory, env)
+        else:
+            score = env.evaluate(instance_id, params={"sparse": self.sparse})
+
         if score >= 1: success_rate = 1.0
         else: success_rate = 0.0
-
-        if self.config.actor_rollout_ref.rollout.magnify_success:
-            if success_rate >= 1.0: score = 1.0 + score * 0.5
-            else: score = 0.0 + score * 0.5
 
         self.cmt.reward = Reward(outcome=score, success_rate=success_rate, madness=self.cmt.compute_madness(), description="Success=1, Failure=0")
         self.cmt.reward = self.cmt.reward_patch(self.cmt.reward)
