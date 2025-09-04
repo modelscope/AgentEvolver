@@ -45,3 +45,4 @@ user_profile = UserProfile(
 )
 
 user_profile.reg_entity(product_entity)
+user_profile.save_to_json("user_profile.json")

@@ -161,7 +161,7 @@ class DashScopeClient:
         return ""
     
     def chat_stream_with_retry(self, messages: list[dict[str, str]], max_retries: int = 3, 
-                              retry_delay: float = 1.0, **kwargs) -> Generator[str, None, None]:
+                              retry_delay: float = 10.0, **kwargs) -> Generator[str, None, None]:
         """带重试机制的流式聊天完成"""
         for attempt in range(max_retries):
             try:

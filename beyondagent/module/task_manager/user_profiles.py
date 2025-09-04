@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+import json
 
 
 @dataclass
@@ -123,6 +124,73 @@ class UserProfile:
         inst_parts.append(f"- **Relation difficulty**: {self._task_preference.relation_difficulty}")
 
         return "\n".join(inst_parts)
+    
+    def to_json(self) -> str:
+        """Convert UserProfile to JSON string."""
+        data = {
+            "name": self._name,
+            "background": self._background,
+            "entities": [
+                {
+                    "name": entity.name,
+                    "description": entity.description,
+                    "attrs": entity.attrs,
+                    "opts": [{"name": opt.name, "description": opt.description} for opt in entity.opts]
+                }
+                for entity in self._entities
+            ],
+            "task_preference": {
+                "num_entities": self._task_preference.num_entities,
+                "num_opts": self._task_preference.num_opts,
+                "relation_difficulty": self._task_preference._relation_difficulty
+            }
+        }
+        return json.dumps(data, indent=2)
+    
+    def save_to_json(self, file_path: str):
+        """Save UserProfile to a JSON file."""
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(self.to_json())
+    
+    @classmethod
+    def from_json(cls, json_str: str) -> 'UserProfile':
+        """Create UserProfile from JSON string."""
+        data = json.loads(json_str)
+        
+        # Create task preference
+        task_pref = TaskPreference(
+            num_entities=data["task_preference"]["num_entities"],
+            num_opts=data["task_preference"]["num_opts"],
+            relation_difficulty=data["task_preference"]["relation_difficulty"]
+        )
+        
+        # Create user profile
+        user_profile = cls(
+            name=data["name"],
+            background=data["background"],
+            task=task_pref
+        )
+        
+        # Add entities
+        entities = []
+        for entity_data in data["entities"]:
+            opts = [EnvEntityOpt(opt["name"], opt["description"]) for opt in entity_data["opts"]]
+            entity = EnvEntity(
+                name=entity_data["name"],
+                description=entity_data["description"],
+                attrs=entity_data["attrs"],
+                opts=opts
+            )
+            entities.append(entity)
+        
+        user_profile.reg_entities(entities)
+        return user_profile
+    
+    @classmethod
+    def load_from_json(cls, file_path: str) -> 'UserProfile':
+        """Load UserProfile from a JSON file."""
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return cls.from_json(f.read())
 
 
 # ===== Example usage =====

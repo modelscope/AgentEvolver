@@ -39,6 +39,7 @@ from beyondagent.module.task_manager.filters.filters import NaiveTaskPostFilter,
 from beyondagent.module.task_manager.base import LlmClient, TaskObjectiveRetrieval
 from beyondagent.module.task_manager.strategies.deduplication import LlmDedupSamplingExploreStrategy
 from beyondagent.module.task_manager.strategies.random import LlmRandomSamplingExploreStrategy
+from beyondagent.module.task_manager.user_profiles import UserProfile
 from beyondagent.schema.task import Task, TaskObjective
 from beyondagent.schema.trajectory import Trajectory
 from verl.utils.dataset.rl_dataset import RLHFDataset
@@ -57,6 +58,7 @@ class TaskManager(object):
         self,
         config: DictConfig,
         exploration_strategy: str,
+        user_profile:UserProfile,
         exploration_strategy_args,
         llm_client: LlmClient,
         old_retrival: TaskObjectiveRetrieval,
@@ -81,7 +83,7 @@ class TaskManager(object):
         self._post_filter: list[TaskPostFilter] = [LlmFilter(env_service_url,llm_client,self._num_exploration_threads,tokenizer=tokenizer,config=config)]
         
         self._tasks: list[Task]=[]
-        self._exploration_strategy._inject_deps(self._old_retrival,self._llm_client,DashScopeClient(model_name='qwq-plus',max_tokens=8192))
+        self._exploration_strategy._inject_deps(self._old_retrival,self._llm_client,DashScopeClient(model_name='qwen3-235b-a22b-instruct-2507',max_tokens=8192),user_profile=user_profile)
     
     @property
     def seed_tasks(self):
@@ -157,10 +159,11 @@ class TaskManager(object):
         return hashlib.md5(combined_str.encode()).hexdigest()
     
     def generate_task(self, tasks: Sequence[Task], *, show_progress=False, resume_file: Optional[str] = None) -> list[TaskObjective]:
+        if resume_file is None:
+            resume_file = '.generate_task.checkpoint.json'
+        
         # Compute hash of current tasks
         current_tasks_hash = self._compute_tasks_hash(tasks)
-        
-        
         # Load from checkpoint if resume_file exists
         res = []
         processed_indices = set()
@@ -174,7 +177,7 @@ class TaskManager(object):
                         os.remove(resume_file)
                     else:
                         res = [TaskObjective.parse_raw(json.dumps(obj)) for obj in checkpoint.get('results', [])]
-                        processed_indices = set(checkpoint.get('processed_indices', []))
+                        processed_indices = {int(i) for i in checkpoint.get('processed_indices', [])}
                         logger.info(f"Resumed from checkpoint: {len(res)} results loaded, {len(processed_indices)} batches processed")
             except Exception as e:
                 logger.warning(f"Failed to load checkpoint: {e}, starting from scratch")

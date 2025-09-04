@@ -144,3 +144,4 @@ user_profile = UserProfile(
 
 # 注册实体
 user_profile.reg_entities(entities)
+

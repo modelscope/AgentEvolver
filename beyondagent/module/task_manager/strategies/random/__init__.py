@@ -127,11 +127,12 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
                     res = llm_client.chat(
                         messages=input_messages, sampling_params=updated_sampling_params
                     )
-                    break
+                    if res is not None and res!="":
+                        break
 
                 except Exception as e:
                     logger.exception(f"rollout_server.{i} error: {e.args}")
-                    time.sleep(i + 1)
+                    time.sleep(2**i)
 
             assert res is not None and res!="", f"LLM client failed to chat"
             return {

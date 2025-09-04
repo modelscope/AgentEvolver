@@ -193,6 +193,7 @@ class TaskRunner:
         train_task_manager=TaskManager(
             config=config,
             exploration_strategy=config.task_manager.strategy,
+            user_profile=None,
             exploration_strategy_args=config.task_manager.strategy_args,
             llm_client=llm_client, # or use policy model
             old_retrival=NaiveTaskObjectiveRetrieval(),
@@ -211,6 +212,7 @@ class TaskRunner:
         val_task_manager=TaskManager(
             config=config,
             exploration_strategy=config.task_manager.strategy,
+            user_profile=None,
             exploration_strategy_args=config.task_manager.strategy_args,
             llm_client=llm_client, # or use policy model
             old_retrival=NaiveTaskObjectiveRetrieval(),
