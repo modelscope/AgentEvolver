@@ -16,7 +16,7 @@ class BaseAgentFlow(object):
         # super.__init__(**kwargs)
         self.llm_chat_fn: Callable = llm_chat_fn
         self.tokenizer = tokenizer
-        self.config: DictConfig = config 
+        self.config: DictConfig = config
         self.max_steps: int = self.config.actor_rollout_ref.rollout.multi_turn.max_steps
         self.max_model_len: int = self.config.actor_rollout_ref.rollout.max_model_len
         self.max_env_len: int = self.config.actor_rollout_ref.rollout.max_env_len

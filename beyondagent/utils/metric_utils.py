@@ -100,7 +100,7 @@ def compute_data_metrics(batch: DataProto, use_critic: bool = True) -> Dict[str,
             - response_length/mean, max, min, clip_ratio: Statistics about response lengths
             - prompt_length/mean, max, min, clip_ratio: Statistics about prompt lengths
     """
-    is_llm_reward = torch.tensor([batch.non_tensor_batch["extras"][i]["evaluator"]!='env' for i in range(len(batch.non_tensor_batch["extras"]))],dtype=torch.bool,device=batch.batch.device)
+    is_llm_reward = torch.tensor([batch.non_tensor_batch["original_extras"][i]["evaluator"]!='env' for i in range(len(batch.non_tensor_batch["original_extras"]))],dtype=torch.bool,device=batch.batch.device)
     # 放在这里并不合适，但是我懒的管。这个 metric 其他人也不用现在
     n=batch.batch["token_level_scores"].size(0)//is_llm_reward.size(0)
     is_llm_reward=is_llm_reward.repeat_interleave(n)

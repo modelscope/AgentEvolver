@@ -4,7 +4,7 @@ import uuid
 from omegaconf import DictConfig
 
 from beyondagent.client.env_client import EnvClient
-from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
+from beyondagent.module.task_manager.agent_flow import ModifiedAgentFlow
 from beyondagent.schema.trajectory import Trajectory
 from loguru import logger
 
@@ -38,7 +38,7 @@ class EnvWorkerWithPrompt(object):
         self,
         data_id: str,
         rollout_id: str,
-        agent_flow: BaseAgentFlow,
+        agent_flow: ModifiedAgentFlow,
         system_prompt: Optional[str] = None,
         **kwargs,
     ) -> Trajectory:

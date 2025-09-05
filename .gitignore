@@ -130,3 +130,10 @@ venv/
 /_resources
 /sync_*.sh
 /best_logger
+launcher
+cradle.py
+Note
+tasks_explored.train.json
+anni_scripts
+anni_scripts/run_baseline_0825.sh
+temp.sh

@@ -9,7 +9,7 @@ from loguru import logger
 from beyondagent.module.agent_flow.base_agent_flow import BaseAgentFlow
 from beyondagent.module.task_manager.agent_flow import ModifiedAgentFlow
 from beyondagent.module.task_manager.base import LlmClient
-from beyondagent.module.task_manager.explorer import EnvWorkerWithPrompt
+from beyondagent.module.env_manager.env_worker import EnvWorker
 from beyondagent.module.task_manager.strategies.common.prompts.prompt_explore import get_agent_interaction_system_prompt
 from beyondagent.module.task_manager.strategies.common.prompts.prompt_summarize import (
     get_task_summarize_prompt,
@@ -35,7 +35,7 @@ class LlmRandomSamplingExploreStrategyProps(TypedDict):
 class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
     def __init__(self, * , tokenizer, config,**kwargs: Unpack[LlmRandomSamplingExploreStrategyProps]):
         self._tokenizer = tokenizer
-        self._config = config
+        self._config = config # 这东西仅仅用于给其他需要它的 class 使用
         
         self._max_llm_retries = kwargs.get("max_llm_retries", 3)
         self._max_explore_step = kwargs.get("max_explore_step", 10)
@@ -47,11 +47,11 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
-        env_worker = EnvWorkerWithPrompt(
-            env_type=task.env_type,
-            task_id=task.task_id,
-            instance_id=None,
-            env_service_url=self._env_service_url,
+        env_worker = EnvWorker(
+            task=task,
+            config=self._config, # FIXME 不是，你既然一定需要这3个东西就不要设置成 = None 啊 
+            thread_index=0,
+            tokenizer=self._tokenizer
         )
         llm_chat_fn = self._get_llm_chat_fn(self.llm_client_explore,
             sampling_params={
@@ -72,8 +72,15 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
         traj = env_worker.execute(
             data_id=data_id,
             rollout_id=rollout_id,
-            system_prompt=get_agent_interaction_system_prompt(bfcl.user_profile), # FIXME debug profile
+            add_exp=False,
+            task_train_exp_mode='woexp',
             agent_flow=agent_flow,
+            tmux={
+                'step':[0],
+                'token':[0],
+            },
+            stop=[False], # 这俩玩意有没有什么办法能封装一下
+            system_prompt=get_agent_interaction_system_prompt(bfcl.user_profile), # FIXME debug profile
         )
 
         return [traj]
@@ -89,17 +96,6 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
             {"role": "user", "content": user_prompt},
         ]
         llm_output = llm_fn(messages=messages)["content"]
-        
-        _temp_path=f"./debug/summarize_trajs"
-        os.makedirs(_temp_path, exist_ok=True)
-        with open(f"{_temp_path}/{uuid.uuid4().hex[:8]}.json", "w") as f:
-            import json
-            _t={
-                'traj':trajectory.dict(),
-                'llm_output':llm_output
-            }
-            f.write(json.dumps(_t))
-        
         
         task=task.copy()
         task.evaluator='synthetic'
