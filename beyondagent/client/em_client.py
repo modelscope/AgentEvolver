@@ -4,7 +4,6 @@ from typing import List
 from loguru import logger
 from pydantic import Field
 
-# BUG: 这里的导入失败，因为schema.trajectory里没有TrajectoryDataClass
 from beyondagent.schema.trajectory import Trajectory, Reward
 from beyondagent.utils.http_client import HttpClient
 
@@ -13,7 +12,8 @@ class EMClient(HttpClient):
     base_url: str = Field(default="http://localhost:8001")
     timeout: int = Field(default=1200 , description="request timeout, second")
 
-    def call_context_generator(self, trajectory, retrieve_top_k: int = 1, workspace_id: str = "default",
+
+    def call_context_generator(self, trajectory: Trajectory, retrieve_top_k: int = 1, workspace_id: str = "default",
                                **kwargs) -> str:
         start_time = time.time()
         self.url = self.base_url + "/retriever"

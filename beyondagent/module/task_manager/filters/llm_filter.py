@@ -12,6 +12,11 @@ from beyondagent.module.task_manager.agent_flow import ModifiedAgentFlow
 from beyondagent.module.task_manager.base import LlmClient
 from beyondagent.schema.task import Task, TaskObjective
 from beyondagent.schema.trajectory import Trajectory
+from beyondagent.module.task_manager.strategies.common.prompts.prompt_extract_refsol import (
+    get_task_summarize_prompt,
+    parse_tasks_from_response,
+)
+
 from . import TaskPostFilter
 
 import copy
@@ -62,8 +67,9 @@ class LlmFilter(TaskPostFilter):
             for future in as_completed(future_to_task):
                 task = future_to_task[future]
                 try:
-                    if future.result():  # 如果策略1返回True
-                        res.append(task)
+                    t=future.result()
+                    if t is not None:
+                        res.append(t)
                 except Exception as e:
                     logger.exception(f"Error processing task {task}: {e}")
                     # 根据需求决定是否将失败的任务也包含在结果中
@@ -101,10 +107,15 @@ class LlmFilter(TaskPostFilter):
         
         return res
     
-    def _execute_strategy1(self, task: TaskObjective) -> bool:
+    def _execute_strategy1(self, task: TaskObjective) -> TaskObjective|None:
         """Execute strategy 1: Simple execution / 执行策略1：简单执行"""
         try:
-            worker = EnvWorker(task.task,config=self._config)
+            worker = EnvWorker(
+                task.task,
+                config=self._config,
+                thread_index=0,
+                tokenizer=self._tokenizer
+            )
             agent_flow = ModifiedAgentFlow(
                 enable_context_generator=False,
                 llm_chat_fn=self._get_llm_chat_fn(),
@@ -113,12 +124,30 @@ class LlmFilter(TaskPostFilter):
             )
             assert task.objective is not None, "synthetic data must have objective"
             assert task.ground_truth is not None, "synthetic data must have ground-truth"
-            traj = worker.execute("unknown", "unknown", agent_flow,system_prompt=make_solver_tip_prompt(task.objective,task.ground_truth))
+            traj = worker.execute(
+                data_id="unknown",
+                rollout_id="unknown",
+                add_exp=False,
+                task_train_exp_mode='woexp',
+                agent_flow=agent_flow,
+                tmux={
+                    'step':[0],
+                    'token':[0],
+                },
+                stop=[False], # 这俩玩意有没有什么办法能封装一下
+                system_prompt=make_solver_tip_prompt(task.objective,task.ground_truth)
+            )
             
-            return self._validate(task, traj)
+            valid=self._validate(task,traj)
+            if valid:
+                task=self._rewrite_new_gt(task,traj)
+                return task
+            else:
+                return None
         except Exception as e:
             logger.exception(f"Error in _execute_strategy1 for task {task}: {e}")
-            return False
+            return None
+        
         
     def _validate(self, task: TaskObjective, trajectory: Trajectory) -> bool:
         """验证任务执行结果"""
@@ -128,6 +157,18 @@ class LlmFilter(TaskPostFilter):
         except Exception as e:
             logger.exception(f"Error in _validate for task {task}: {e}")
             return False
+    
+    def _rewrite_new_gt(self,task:TaskObjective,trajectory:Trajectory)->TaskObjective:
+        """重写任务新的ground-truth"""
+        sys_prompt,user_prompt=get_task_summarize_prompt([trajectory],[task], None)
+        messages=[{"role":"system","content":sys_prompt},{"role":"user","content":user_prompt}]
+        llm_output=self._get_llm_chat_fn()(messages)["content"]
+        gt = parse_tasks_from_response(llm_output)
+        if gt is not None:
+            task.ground_truth=gt
+        
+        return task        
+        
     
     def _get_llm_chat_fn(self, sampling_params: Optional[dict] = None) -> Callable:
         """获取LLM聊天函数，线程安全"""
@@ -161,7 +202,7 @@ class LlmFilter(TaskPostFilter):
                     break
                 except Exception as e:
                     logger.exception(f"llm_chat attempt {i+1} error: {e}")
-                    time.sleep(i + 1)
+                    time.sleep(10*2**i)
 
             assert res is not None, f"LLM client failed to chat after 3 attempts"
             return {

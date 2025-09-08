@@ -154,7 +154,7 @@ filesystem = EnvEntity(
 
 
 
-user = UserProfile(
+user_profile = UserProfile(
     name="Bob",
     background="A general computer user.",
     task=TaskPreference(
@@ -163,4 +163,4 @@ user = UserProfile(
         relation_difficulty=3,
     )
 )
-user.reg_entities([venmo, amazon, spotify, gmail, simplenote, phone, todoist, splitwise, filesystem])
+user_profile.reg_entities([venmo, amazon, spotify, gmail, simplenote, phone, todoist, splitwise, filesystem])

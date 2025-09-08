@@ -16,7 +16,7 @@ from beyondagent.module.task_manager.strategies.common.prompts.prompt_summarize 
     parse_tasks_from_response,
 )
 from beyondagent.module.task_manager.strategies import TaskExploreStrategy
-from beyondagent.module.task_manager.prelude_profiles import bfcl
+from beyondagent.module.task_manager.prelude_profiles import bfcl, appworld
 from beyondagent.schema.task import Task, TaskObjective
 from beyondagent.schema.trajectory import Trajectory
 
@@ -47,6 +47,7 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
+        task.query="Now do your exploration!"
         env_worker = EnvWorker(
             task=task,
             config=self._config, # FIXME 不是，你既然一定需要这3个东西就不要设置成 = None 啊 
@@ -80,7 +81,7 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
                 'token':[0],
             },
             stop=[False], # 这俩玩意有没有什么办法能封装一下
-            system_prompt=get_agent_interaction_system_prompt(bfcl.user_profile), # FIXME debug profile
+            system_prompt=get_agent_interaction_system_prompt(appworld.user_profile), # FIXME debug profile
         )
 
         return [traj]
@@ -89,7 +90,7 @@ class LlmRandomSamplingExploreStrategy(TaskExploreStrategy):
         llm_fn = self._get_llm_chat_fn(self.llm_client_summarize)
         old_objectives = self._old_retrival.retrieve_objectives(task)
         system_prompt, user_prompt = get_task_summarize_prompt(
-            [trajectory], old_objectives, bfcl.user_profile # FIXME debug profile
+            [trajectory], old_objectives, appworld.user_profile # FIXME debug profile
         )
         messages = [
             {"role": "system", "content": system_prompt},
