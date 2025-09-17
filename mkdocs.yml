@@ -23,7 +23,7 @@ plugins:
   - search:
       lang: [zh, en]   # 中文搜索更友好（安装了 jieba）
 nav:
-  - AgentEvolver: index.md
+  - Welcome: index.md
   - Tutorial: 
       - Installation: tutorial/install.md
       - Configuration: tutorial/configuration.md
