@@ -65,8 +65,7 @@ from beyondagent.schema.trajectory import Trajectory
 
 from beyondagent.utils.tracking import ValidationGenerationsLogger
 
-
-from beyondagent.utils.step_parser import verify_step_alignment, verify_step_content
+from beyondagent.module.credit_manager.adca_grpo_pipeline import apply_adca_grpo
 
 def parse_reward_from_dataproto(data: DataProto, return_dict=False) -> dict | torch.Tensor:
     """
@@ -553,9 +552,6 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
 
 
     def _get_attribution_config(self):
-        """
-        获取语义评估配置 - 支持API重试配置
-        """
         if not hasattr(self.config, 'attribution_driven_credit_assignment'):
             raise ValueError("attribution_driven_credit_assignment configuration block is required")
         
@@ -1200,16 +1196,6 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                                 print("DEBUG: change norm_adv_by_std_in_grpo from True to False, using batch std!")
                             norm_adv_by_std_in_grpo = False
 
-          
-                        # shuchang: 0825
-                        # NOTE: ADCA-GRPO 先得到 PRM 的 step-reward，再按 DeepSeek-Math 的 GRPO 公式算 token 的 advantage
-                        # ==================== Begin PRM GRPO  ====================
-                        attribution_cfg = self._get_attribution_config()
-                        enable_adca_grpo = getattr(attribution_cfg, 'enable', False)
-                        enable_adca_metric = getattr(getattr(attribution_cfg, 'adca_grpo', None), 'enable_adca_metric', getattr(attribution_cfg, 'enable_adca_metric', False))
-                        prm_cfg = getattr(attribution_cfg, "adca_grpo", None)
-                        prm_epoch = getattr(prm_cfg, "prm_epoch", 100) 
-                        
                         # 走原 compute_advantage 流程（保持兼容）
                         norm_adv_by_std_in_grpo = self.config.algorithm.get("norm_adv_by_std_in_grpo", True)
 
@@ -1225,128 +1211,22 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                             multi_turn=self.config.actor_rollout_ref.rollout.multi_turn.enable,
                             config=self.config.algorithm,
                         )
-                        
-                        # ============= shuchang: Begin PRM GRPO =============
-                        if enable_adca_metric or enable_adca_grpo:
-                            # === (A) 解析/校验 step 边界 ===
-                            if not verify_step_alignment(batch, self.tokenizer, self.global_steps):
-                                raise RuntimeError("Step alignment check failed!")
-                            for sample_idx in range(min(3, len(batch.batch["prompts"]))):
-                                verify_step_content(batch, self.tokenizer, sample_idx)
-
-                            # === (B) 一次 API / 每样本评估全部 steps ===
-                            from beyondagent.module.credit_manager.semantic_attribution import evaluate_step_flags_parallel_sync
-                            flags, stats = evaluate_step_flags_parallel_sync(
-                                tokenizer=self.tokenizer,
+                        # shuchang
+                        # ==================== Begin ADCA GRPO  ====================
+                        attribution_cfg = self._get_attribution_config()
+                        if getattr(attribution_cfg, 'enable', False):
+                            batch, adca_metrics = apply_adca_grpo(
                                 batch=batch,
-                                overall_score_source="token_level_rewards",  # PRM-GRPO 使用 ORM
-                                mask_tensor=batch.batch["response_mask"],
-                                save_dir=getattr(attribution_cfg, 'llm_evaluation_log_dir', None),
-                                global_step=self.global_steps,
-                                epoch=f"train.{epoch}.{i}",
-                                skip_type=getattr(prm_cfg, 'skip_type', "skip_small_adv"),
+                                attribution_cfg=attribution_cfg,
+                                tokenizer=self.tokenizer,
+                                global_steps=self.global_steps,
+                                epoch=epoch,
+                                i=i,
                             )
-                            # --- 指标统计：PRM评估结果统计信息 ---
-                            if isinstance(stats, dict):
-                                for k in (
-                                    "prm/parse_success_rate",
-                                    "prm/avg_steps_per_sample",
-                                    "prm/p95_steps_per_sample",
-                                    "prm/flags_len_mismatch_rate",
-                                    # 可选：需要原始计数就放开下面两个
-                                    # "prm/_parse_success_count",
-                                    # "prm/_flags_len_mismatch_count",
-                                ):
-                                    v = stats.get(k, None)
-                                    if v is not None:
-                                        try:
-                                            metrics[k] = float(v)
-                                        except Exception:
-                                            metrics[k] = v  # 若已是数值类型或小字典就原样塞进去
-                            # --- 指标：PRM标注与ORM方向的一致性 --- 
-                            # 统一flags为 List[List[bool]]
-                            step_flags = flags if isinstance(flags, list) else flags.get("llm_parsed_flags", [])
-                            # 计算每个样本的终端ORM符号（token_level_rewards优先，否则回退到token_level_scores）
-                            if "token_level_rewards" in batch.batch:
-                                orm_sum = batch.batch["token_level_rewards"].sum(dim=-1)
-                            else:
-                                orm_sum = batch.batch["token_level_scores"].sum(dim=-1)
-
-                            pos_mask = (orm_sum > 0)
-                            neg_mask = ~pos_mask
-
-                            def _count_for_indices(mask_tensor):
-                                total = 0
-                                good = 0
-                                bad = 0
-                                if mask_tensor.dtype != torch.bool:
-                                    mask_tensor = mask_tensor.bool()
-                                idx_list = torch.nonzero(mask_tensor, as_tuple=False).view(-1).tolist()
-                                for idx in idx_list:
-                                    if idx >= len(step_flags) or not step_flags[idx]:
-                                        continue
-                                    fs = step_flags[idx]
-                                    total += len(fs)
-                                    good += sum(1 for f in fs if f)
-                                    bad  += sum(1 for f in fs if not f)
-                                return total, good, bad
-
-                            pos_total, pos_good, pos_bad = _count_for_indices(pos_mask)
-                            neg_total, neg_good, neg_bad = _count_for_indices(neg_mask)
-
-                            metrics.update({
-                                "prm/pos_traj_bad_rate": (pos_bad / max(1, pos_total)),
-                                "prm/pos_traj_good_rate": (pos_good / max(1, pos_total)),
-                                "prm/neg_traj_good_rate": (neg_good / max(1, neg_total)),
-                                "prm/neg_traj_bad_rate": (neg_bad / max(1, neg_total)),
-                                "prm/good_steps_total": float(pos_good + neg_good),
-                                "prm/bad_steps_total": float(pos_bad + neg_bad),
-                            })
-                            # --- 指标统计：PRM评估结果统计信息 ---
-                            
-                        if enable_adca_grpo and epoch < prm_epoch:
-                            # === (C) PRM → GRPO 后缀和 ===
-                            from beyondagent.module.credit_manager.adca_grpo import (
-                                compute_prm_grpo_advantages, PRMHyper
-                            )
-                            # 读取语义优势总配置与 PRM 子配置
-                            
-
-                            # PRM 超参（权重在 attribution_cfg 顶层，fix_base 在 prm_cfg）
-                            _cons = float(getattr(attribution_cfg, "consistent_scale", 1.0))
-                            _posu = float(getattr(attribution_cfg, "pos_unconsistent_scale", 0.2))
-                            _negu = float(getattr(attribution_cfg, "neg_unconsistent_scale", 0.2))
-                            _negu = abs(_negu)
-
-                            hyper = PRMHyper(
-                                consistent_scale=_cons,
-                                pos_unconsistent_scale=_posu,
-                                neg_unconsistent_scale=_negu,
-                                do_batch_norm=bool(getattr(prm_cfg, "do_batch_norm", True)),
-                                equal_trajectory_weight=bool(getattr(prm_cfg, "equal_trajectory_weight", True)),
-                                fix_base=float(getattr(prm_cfg, "fix_base", 0.2)),
-                                alpha=float(getattr(prm_cfg, "alpha", 0.1)), 
-                                orm_distribution=getattr(prm_cfg, "orm_distribution", "last_step" ),  # "all" | "pos" | "neg"
-                                enable_length_normalization=getattr(prm_cfg, "enable_length_normalization", False),
-                            )
-
-                            scheme = getattr(prm_cfg, "prm_scheme", "decouple")
-
-                            out = compute_prm_grpo_advantages(
-                                batch      = batch,
-                                step_flags = flags if isinstance(flags, list) else flags["llm_parsed_flags"],
-                                hyper      = hyper,
-                                scheme     = scheme,
-                            )
-
-                            # 写回 advantages，供后续 actor/critic 更新
-                            batch.batch["advantages"] = out["advantages"]
-                            
-                            # ✅ 并入 decouple 统计指标（若存在）
-                            if isinstance(out, dict) and "metrics" in out and isinstance(out["metrics"], dict):
-                                metrics.update(out["metrics"])
-                        # ============= End PRM GRPO =============
+                            metrics.update(adca_metrics)
+                        # ==================== End ADCA GRPO ====================
                         
+
                         # Apply decay factor of 0.5 to non_tensor_batch['extras'][i]['evaluator'] != 'env'
                         if os.environ.get("DEBUG_ARG","").find("synth_decay")!=-1:
                             if epoch==0 and i==0:
@@ -1358,7 +1238,6 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                                     evaluator = batch.non_tensor_batch['extras'][i]['evaluator']
                                     if evaluator != 'env':
                                         batch.batch["advantages"][i] *= 0.5
-
 
                     # update critic
                     if self.use_critic:
