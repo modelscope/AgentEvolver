@@ -6,7 +6,6 @@ from best_logger import print_dict, print_listofdict
 from beyondagent.module.context_manager.cmt_linear import ExtendedMessage, Linear_CMT
 from beyondagent.module.context_manager.cmt_linear import find_sublist_indices, replace_token_ids
 
-
 class LinearThinkCMT(Linear_CMT):
     """
     A linear context manager template that handles the conversation flow between LLM and environment.
@@ -33,7 +32,16 @@ class LinearThinkCMT(Linear_CMT):
     """
 
     def __init__(self, config, tokenizer, contain_phantom_hint=False, past_trajectory=None):
-        super().__init__(config, tokenizer)
+        """
+        Initializes the LinearThinkCMT with the given configuration, tokenizer, and optional parameters.
+
+        Args:
+            config: Configuration object containing environment and model settings.
+            tokenizer: Tokenizer instance for processing text.
+            contain_phantom_hint (bool, optional): Flag indicating whether to include phantom hints. Defaults to False.
+            past_trajectory (optional): Past trajectory data. Defaults to None.
+        """
+        super().__init__(config, tokenizer)  # ⭐ Initialize the base class with the provided config and tokenizer
         self.contain_phantom_hint = contain_phantom_hint
         self.past_trajectory = past_trajectory
         self.helper_llm_handle = None

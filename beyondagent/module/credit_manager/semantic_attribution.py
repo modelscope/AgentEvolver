@@ -59,75 +59,116 @@ class EvaluationRecord:
 # =========================================================
 # Added: rollout parsing & batch-eval prompt utilities
 # =========================================================
-import re 
+import re
 
 def _steps_struct_to_text_list(steps: List[Dict[str, str]]) -> List[str]:
+    """
+    Converts a list of step dictionaries into a list of formatted strings.
+
+    Args:
+        steps (List[Dict[str, str]]): A list of dictionaries, each representing a step with 'action' and 'observation' keys.
+
+    Returns:
+        List[str]: A list of formatted strings, where each string represents a step.
+    """
     out = []
     for st in steps:
         act = (st.get("action") or "").strip()
         obs = (st.get("observation") or "").strip()
         if obs:
-            out.append(f"{act}\n\n[OBSERVATION]\n{obs}")
+            out.append(f"{act}\n\n[OBSERVATION]\n{obs}")  # ⭐ Format the step with action and observation
         else:
-            out.append(act)
+            out.append(act)  # ⭐ Format the step with only the action
     return out
 
 
 
 
 def parse_batch_evaluation_result(response: str, num_steps: int):
+    """
+    Parses the batch evaluation result from a given response string.
+
+    Args:
+        response (str): The response string containing the evaluation results.
+        num_steps (int): The expected number of steps in the evaluation.
+
+    Returns:
+        List[bool]: A list of boolean values indicating whether each step is GOOD (True) or BAD (False).
+
+    Raises:
+        ValueError: If the evaluation result cannot be parsed to match the expected number of steps.
+    """
     numbered = {}
     for m in re.finditer(r"Step\s+(\d+)\s+Judgment:\s*(GOOD|BAD)", response, flags=re.I):
-        numbered[int(m.group(1))] = m.group(2).upper() == "GOOD"
+        numbered[int(m.group(1))] = m.group(2).upper() == "GOOD"  # ⭐ Map step numbers to their judgment (GOOD or BAD)
     if len(numbered) == num_steps:
-        return [numbered[i] for i in range(num_steps)]
+        return [numbered[i] for i in range(num_steps)]  # ⭐ Return the list of judgments if all steps are matched
     flags = re.findall(r"\b(GOOD|BAD)\b", response.upper())
     if len(flags) >= num_steps:
-        return [flag == "GOOD" for flag in flags[:num_steps]]
-    raise ValueError("Could not parse evaluation result")
+        return [flag == "GOOD" for flag in flags[:num_steps]]  # ⭐ Return the list of judgments if enough flags are found
+    raise ValueError("Could not parse evaluation result")  # ⭐ Raise an error if the result cannot be parsed
 
 def _get_overall_advantage(advantages_tensor, mask=None):
-    """从advantages tensor中获取overall advantage值"""
+    """
+    Extracts the overall advantage value from the given advantages tensor, optionally using a mask to filter elements.
+
+    Args:
+        advantages_tensor (torch.Tensor): The tensor containing advantage values.
+        mask (torch.Tensor, optional): A boolean mask to filter the advantages tensor. Defaults to None.
+
+    Returns:
+        float: The overall advantage value, or 0.0 if no valid values are found.
+    """
     if advantages_tensor.dim() == 0:
         return advantages_tensor.item()
-    
+
     if advantages_tensor.dim() == 1:
         if mask is not None:
-            valid_advantages = advantages_tensor[mask.bool()]
+            valid_advantages = advantages_tensor[mask.bool()]  # ⭐ Filter advantages using the provided mask
             if len(valid_advantages) > 0:
                 return valid_advantages[0].item()
             else:
                 return 0.0
         else:
-            non_zero_mask = torch.abs(advantages_tensor) > 1e-8
+            non_zero_mask = torch.abs(advantages_tensor) > 1e-8  # ⭐ Create a mask for non-zero advantage values
             if non_zero_mask.any():
                 return advantages_tensor[non_zero_mask][0].item()
             else:
                 return 0.0
-    
+
     raise ValueError(f"Unsupported advantages_tensor shape: {advantages_tensor.shape}")
 
 def _save_evaluation_record(record: EvaluationRecord, save_dir: Optional[str] = None):
-    """保存评估记录到文件"""
+    """
+    Saves an evaluation record to a file in a specified directory. The directory and filename are
+    constructed based on the record's properties. Metadata is added to the record before saving.
+
+    Args:
+        record (EvaluationRecord): The evaluation record to be saved.
+        save_dir (Optional[str]): The directory where the record will be saved. If None, the record is not saved.
+
+    Returns:
+        None
+    """
     if save_dir is None:
         return
-    
+
     try:
         base_save_path = Path(save_dir)
-        base_save_path.mkdir(parents=True, exist_ok=True)
-        
+        base_save_path.mkdir(parents=True, exist_ok=True)  # ⭐ Ensure the base save directory exists
+
         if record.global_step is not None:
             step_subdir = f"step_{record.global_step:06d}"
         else:
             step_subdir = "step_unknown"
-        
+
         step_save_path = base_save_path / step_subdir
-        step_save_path.mkdir(parents=True, exist_ok=True)
-        
+        step_save_path.mkdir(parents=True, exist_ok=True)  # ⭐ Ensure the step subdirectory exists
+
         timestamp_str = f"{record.timestamp:.3f}".replace('.', '_')
         global_step_str = f"step{record.global_step:06d}" if record.global_step is not None else "nostep"
         filename = f"{global_step_str}_sample{record.sample_idx:03d}_{timestamp_str}.json"
-        
+
         file_path = step_save_path / filename
         record_dict = asdict(record)
         record_dict["_metadata"] = {
@@ -137,19 +178,15 @@ def _save_evaluation_record(record: EvaluationRecord, save_dir: Optional[str] = 
             "full_path": str(file_path),
             "num_steps": len(record.steps)
         }
-        
+
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(record_dict, f, ensure_ascii=False, indent=2)
-        
+            json.dump(record_dict, f, ensure_ascii=False, indent=2)  # ⭐ Write the record to the file
+
         print(f"[record_save] ✅ Saved sample {record.sample_idx} with {len(record.steps)} steps: {step_subdir}/{filename}")
-            
+
     except Exception as e:
         print(f"[record_save] ❌ FAILED to save evaluation record for sample {record.sample_idx}: {e}")
         print(f"[record_save] 📁 Path: {save_dir}")
-
-# ————————————————————————————————————————————————————————————————
-# API评估 - 增强的重试机制
-# ————————————————————————————————————————————————————————————————
 
 async def _async_safe_query(
     client: AsyncOpenAI,
@@ -159,7 +196,20 @@ async def _async_safe_query(
     max_retries: int = 200,
     timeout_s: int = 120,         # 可调：单次请求超时阈值
 ) -> str:
-    """异步 API 调用：对 **所有** 异常重试，429 用指数退避"""
+    """
+    Asynchronously queries the LLM API with built-in retry logic for handling rate limits and other exceptions.
+
+    Args:
+        client (AsyncOpenAI): The asynchronous OpenAI client.
+        model (str): The name of the model to use for the query.
+        messages (list[dict]): A list of message dictionaries to send to the model.
+        semaphore (asyncio.Semaphore): A semaphore to control the number of concurrent requests.
+        max_retries (int, optional): The maximum number of retries for the request. Defaults to 200.
+        timeout_s (int, optional): The timeout in seconds for each request. Defaults to 120.
+
+    Returns:
+        str: The final response content from the model.
+    """
     async with semaphore:
         last_exception = None
 
@@ -174,7 +224,7 @@ async def _async_safe_query(
 
                 if is_thinking_model:
                     print(f"[API] Using streaming mode for thinking model: {model}")
-                    response = await client.chat.completions.create(
+                    response = await client.chat.completions.create(  # ⭐ Create the streaming response for thinking models
                         model=model,
                         messages=messages,
                         temperature=0.0,
@@ -198,7 +248,7 @@ async def _async_safe_query(
                     return final_answer
 
                 else:
-                    response = await client.chat.completions.create(
+                    response = await client.chat.completions.create(  # ⭐ Create the non-streaming response for standard models
                         model=model,
                         messages=messages,
                         temperature=0.0,
@@ -253,19 +303,33 @@ async def _evaluate_single_sample_api(
     model_name: str,
     task: EvaluationTask,
     semaphore: asyncio.Semaphore,
-    overall_score_source: str = "advantages", 
+    overall_score_source: str = "advantages",
     max_retries: int = 200,
     save_dir: Optional[str] = None,
     global_step: Optional[int] = None,
     epoch: Optional[str] = None
 ) -> EvaluationResult:
-    """使用 API 一次性评估单个 sample 的所有 steps"""
+    """
+    Evaluates a single sample using the API, including constructing prompts, calling the LLM, parsing results, and saving the evaluation record.
+
+    Args:
+        client (AsyncOpenAI): The asynchronous OpenAI client.
+        model_name (str): The name of the model to use for evaluation.
+        task (EvaluationTask): The task containing the sample to evaluate.
+        semaphore (asyncio.Semaphore): Semaphore to control the number of concurrent API calls.
+        overall_score_source (str, optional): The source for the overall score. Defaults to "advantages".
+        max_retries (int, optional): Maximum number of retries for the API call. Defaults to 200.
+        save_dir (Optional[str], optional): Directory to save the evaluation record. Defaults to None.
+        global_step (Optional[int], optional): Global step for the evaluation. Defaults to None.
+        epoch (Optional[str], optional): Epoch for the evaluation. Defaults to None.
+
+    Returns:
+        EvaluationResult: The result of the evaluation.
+    """
     start_time = time.time()
 
     try:
-        # 1) 构造批量评估 prompt
-        # shuchang: 0809
-        # FIXME: 这里组织prompt改为直接用 steps 结构
+        # 1) Construct batch evaluation prompt
         if overall_score_source == "token_level_rewards":
             messages = build_batch_reward_evaluation_prompt(
                 task.query, task.steps, task.overall_score
@@ -274,12 +338,13 @@ async def _evaluate_single_sample_api(
             messages = build_batch_adv_evaluation_prompt(
                 task.query, task.steps, task.overall_score
             )
-        # 2) 调用 LLM
+
+        # 2) Call the LLM
         llm_raw_output = await _async_safe_query(
             client, model_name, messages, semaphore, max_retries
-        )
+        )  # ⭐ Asynchronously call the LLM with the constructed messages
 
-        # 3) 解析结果
+        # 3) Parse the results
         try:
             step_results = parse_batch_evaluation_result(
                 llm_raw_output, len(task.steps)
@@ -289,7 +354,7 @@ async def _evaluate_single_sample_api(
                 f"{len(step_results)} step results"
             )
         except Exception as parse_error:
-            # ——> 解析失败：不做任何缩放（全部使用 “无缩放” 标记）
+            # ——> Parsing failed: No rescaling (all use "no rescale" flag)
             print(
                 f"[API] ❌ Sample {task.sample_idx}: Parse error, "
                 f"disable rescale: {parse_error}"
@@ -299,7 +364,7 @@ async def _evaluate_single_sample_api(
 
         response_time = time.time() - start_time
 
-        # 4) 保存评估记录（保持不变）
+        # 4) Save the evaluation record
         if save_dir:
             is_thinking_model = model_name.lower() in {
                 "qwq-plus",
@@ -331,7 +396,7 @@ async def _evaluate_single_sample_api(
         )
 
     except Exception as e:
-        # ——> API 整体失败：同样不做任何缩放
+        # ——> Overall API failure: No rescaling
         response_time = time.time() - start_time
         print(f"[parallel_eval] ❌ FAILED to evaluate sample {task.sample_idx}: {e}")
 
@@ -363,13 +428,27 @@ async def _evaluate_single_sample_api(
             response_time=response_time,
         )
 
-# ————————————————————————————————————————————————————————————————
-# 统一的并行评估接口
-# ————————————————————————————————————————————————————————————————
+async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: str = "advantages", model_name: str = "qwen-max", evaluation_type: Literal["api"] = "api", max_concurrent: int = 20, batch_size_limit: int = 100, mask_tensor: torch.Tensor = None, api_max_retries: int = 200, save_dir: Optional[str] = None, global_step: Optional[int] = None, epoch: Optional[str] = None, skip_type: str='skip_small_adv') -> Tuple[List[List[bool]], Dict]:
+    """
+    Evaluates step flags in parallel for a batch of samples, with each sample being evaluated in one API call.
 
-async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: str = "advantages",  model_name: str = "qwen-max", evaluation_type: Literal["api"] = "api", max_concurrent: int = 20, batch_size_limit: int = 100, mask_tensor: torch.Tensor = None, api_max_retries: int = 200, save_dir: Optional[str] = None, global_step: Optional[int] = None, epoch: Optional[str] = None, skip_type: str='skip_small_adv') -> Tuple[List[List[bool]], Dict]:
-    """并行评估step flags，每个sample一次API调用评估所有steps
-    NOTE: SSA中根据advantage评估 和 PRM-GRPO中根据ORM评估均可使用本函数
+    Args:
+        tokenizer (Tokenizer): The tokenizer used to decode prompts and responses.
+        batch (Batch): The batch of samples to be evaluated.
+        overall_score_source (str, optional): The source of the overall score, either "advantages" or "token_level_rewards". Defaults to "advantages".
+        model_name (str, optional): The name of the model being used. Defaults to "qwen-max".
+        evaluation_type (Literal["api"], optional): The type of evaluation, currently only "api" is supported. Defaults to "api".
+        max_concurrent (int, optional): The maximum number of concurrent API calls. Defaults to 20.
+        batch_size_limit (int, optional): The maximum size of the batch. Defaults to 100.
+        mask_tensor (torch.Tensor, optional): An external mask tensor. Defaults to None.
+        api_max_retries (int, optional): The maximum number of retries for API calls. Defaults to 200.
+        save_dir (Optional[str], optional): The directory to save evaluation records. Defaults to None.
+        global_step (Optional[int], optional): The global step in the training process. Defaults to None.
+        epoch (Optional[str], optional): The current epoch. Defaults to None.
+        skip_type (str, optional): The type of skipping logic to apply. Defaults to 'skip_small_adv'.
+
+    Returns:
+        Tuple[List[List[bool]], Dict]: A tuple containing the list of step flags for each sample and a dictionary with additional information.
     """
     batch_size = len(batch.batch['prompts'])
     print(f"[parallel_eval] Starting parallel evaluation for {batch_size} samples using API mode")
@@ -377,13 +456,13 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
     print(f"[parallel_eval] Model: {model_name}, API max retries: {api_max_retries}")
     if save_dir:
         print(f"[parallel_eval] Saving evaluation records to: {save_dir}")
-    
+
     if 'steps' not in batch.non_tensor_batch:
         raise ValueError("❌ batch.non_tensor_batch['steps'] is required but not found")
-    
+
     if evaluation_type != "api":
         raise ValueError(f"❌ Only 'api' evaluation_type is supported, got: {evaluation_type}")
-    
+
     # 初始化API客户端
     api_key = os.getenv("DASHSCOPE_API_KEY")
     if not api_key:
@@ -393,22 +472,22 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         # shuchang: 0809
         # FIXME: 注释掉fallback，强制要求必须有API KEY
         # return _apply_fallback_strategy_parallel(batch, tokenizer), {"fallback_used": True, "evaluation_type": evaluation_type}
-        raise  RuntimeError("No API key found in DASHSCOPE_API_KEY environment variable")
-    
+        raise RuntimeError("No API key found in DASHSCOPE_API_KEY environment variable")  # ⭐ Ensure an API key is provided, otherwise raise an error
+
     api_client = AsyncOpenAI(
         api_key=api_key,
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
-    
+
     # 🚀 关键优化：按sample创建任务，而不是按step
     all_tasks = []
     flags_per_sample = [[] for _ in range(batch_size)]
     skipped_samples = 0
-    
+
     if mask_tensor is not None:
         response_mask = mask_tensor
         print(f"[parallel_eval] Using external mask tensor with shape {mask_tensor.shape}")
-        
+
         response_length = batch.batch["responses"].size(1)
         if response_mask.shape != (batch_size, response_length):
             raise ValueError(f"❌ mask_tensor shape {response_mask.shape} doesn't match expected shape ({batch_size}, {response_length})")
@@ -444,14 +523,20 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         # 决定是否应该跳过当前样本
         should_skip = False
         skip_reason = ""
-        
+
         if skip_type == "skip_small_adv":
             # 1. 只跳过 advantage 非常小的样本
             if abs(advantage) < 1e-8:
                 should_skip = True
                 skip_reason = f"advantage≈0 ({advantage:.6f})"
-        
+
         elif skip_type == "skip_all_neg":
+            """
+            Skips the evaluation of a sample if the ORM reward is non-positive.
+
+            Args:
+                orm_reward (float): The ORM reward value for the sample.
+            """
             # 2. 跳过 orm_reward 为负或零的样本
             # 注意：orm_reward > 0 才是正样本，所以 <= 0 都属于“负”的范畴
             if orm_reward <= 0:
@@ -483,11 +568,11 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
                     global_step=global_step,
                     epoch=epoch
                 )
-                _save_evaluation_record(record, save_dir)
+                _save_evaluation_record(record, save_dir)  # ⭐ Save the skipped sample's record
             skipped_samples += 1
             continue
 
-        
+
        # ✅ EvaluationTask 使用结构化 steps
         task = EvaluationTask(
             sample_idx=sample_idx,
@@ -497,21 +582,21 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
             overall_score=overall_score
         )
         all_tasks.append(task)
-    
+
     total_tasks = len(all_tasks)
     total_api_calls = total_tasks  # 现在每个sample只需要一次API调用
     total_steps = sum(len(t.steps) for t in all_tasks)
     # --- 指标准备：每个样本的step长度 ---
     step_len_map = {t.sample_idx: len(t.steps) for t in all_tasks}
     step_len_list = list(step_len_map.values())
-    
+
     print(f"[parallel_eval] 🚀 EFFICIENCY GAIN:")
     print(f"[parallel_eval]   - Total samples: {batch_size}")
     print(f"[parallel_eval]   - Total steps: {total_steps}")
     print(f"[parallel_eval]   - API calls needed: {total_api_calls} (instead of {total_steps})")
     print(f"[parallel_eval]   - Efficiency gain: {total_steps/max(1,total_api_calls):.1f}x fewer API calls")
     print(f"[parallel_eval]   - Skipped {skipped_samples} samples with advantage=0")
-    
+
     if total_tasks == 0:
         print("[parallel_eval] No tasks to process, all samples had advantage=0")
         await api_client.close()
@@ -530,36 +615,36 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
             "api_max_retries": api_max_retries,
             "efficiency_gain": 0
         }
-    
+
     all_results = []
     semaphore = asyncio.Semaphore(max_concurrent)
-    
+
     with tqdm(total=total_tasks, desc=f"[parallel_eval] Processing samples (API)") as pbar:
         for i in range(0, total_tasks, batch_size_limit):
             batch_tasks = all_tasks[i:i + batch_size_limit]
-            
+
             # 每个task调用_evaluate_single_sample_api，一次性评估整个sample的所有steps
             coroutines = [
                 _evaluate_single_sample_api(api_client, model_name, task, semaphore, overall_score_source, api_max_retries, save_dir, global_step, epoch)
                 for task in batch_tasks
             ]
             batch_results = await asyncio.gather(*coroutines, return_exceptions=True)
-            
+
             for result in batch_results:
                 if isinstance(result, Exception):
                     print(f"[parallel_eval] ❌ Task failed with exception: {result}")
                     continue
                 all_results.append(result)
-            
+
             pbar.update(len(batch_tasks))
-    
+
     # 整理结果到flags_per_sample
     for result in all_results:
         flags_per_sample[result.sample_idx] = result.step_results
-    
+
     total_time = sum(r.response_time for r in all_results)
     avg_time = total_time / len(all_results) if all_results else 0
-    
+
     stats = {
         "total_tasks": total_tasks,
         "total_api_calls": len(all_results),
@@ -578,9 +663,18 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         "efficiency_gain": total_steps / max(1, len(all_results))  # 效率提升倍数
     }
     def _p95(vals):
+        """
+        Calculates the 95th percentile of a list of values.
+
+        Args:
+            vals (list): A list of numeric values.
+
+        Returns:
+            float: The 95th percentile value.
+        """
         if not vals:
             return 0.0
-        s = sorted(vals)
+        s = sorted(vals)  # ⭐ Sort the values to find the 95th percentile
         k = int(round(0.95 * (len(s) - 1)))
         return float(s[k])
 
@@ -596,28 +690,41 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
     stats.update({
         "prm/parse_success_rate": parsed_ok / max(1, total_tasks),
         "prm/avg_steps_per_sample": (sum(step_len_list) / max(1, len(step_len_list))) if step_len_list else 0.0,
-        "prm/p95_steps_per_sample": _p95(step_len_list),
+        "prm/p95_steps_per_sample": _p95(step_len_list),  # ⭐ Calculate the 95th percentile of steps per sample
         "prm/flags_len_mismatch_rate": length_mismatch / max(1, total_tasks),
         # 可选：原始计数，便于排错
         "prm/_parse_success_count": parsed_ok,
         "prm/_flags_len_mismatch_count": length_mismatch,
     })
-    
+
     print(f"[parallel_eval] ✅ Completed with {stats['efficiency_gain']:.1f}x efficiency gain!")
     print(f"[parallel_eval] Stats: {stats}")
-    
+
     await api_client.close()
     return flags_per_sample, stats
 
 
 def evaluate_step_flags_parallel_sync(tokenizer, batch, **kwargs):
-    """evaluate_step_flags_parallel的同步包装器"""
+    """
+    Synchronous wrapper for the `evaluate_step_flags_parallel` function.
+
+    This function allows the `evaluate_step_flags_parallel` function to be called in a synchronous context by managing
+    the asyncio event loop and running the asynchronous function until completion.
+
+    Args:
+        tokenizer: The tokenizer used for processing text.
+        batch: The batch of data to be evaluated.
+        **kwargs: Additional keyword arguments to be passed to the `evaluate_step_flags_parallel` function.
+
+    Returns:
+        The result of the `evaluate_step_flags_parallel` function.
+    """
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:
-        loop = asyncio.new_event_loop()
+        loop = asyncio.new_event_loop()  # ⭐ Create a new event loop if one is not available
         asyncio.set_event_loop(loop)
-    
-    return loop.run_until_complete(
+
+    return loop.run_until_complete(  # ⭐ Run the asynchronous function until completion
         evaluate_step_flags_parallel(tokenizer, batch, **kwargs)
     )

@@ -91,49 +91,101 @@ class SelfContextClipCMT(LinearThinkCMT):
         super().__init__(config, tokenizer)
 
     def post_tag_init_message_context(self, content, is_last) -> str:
+        """
+        Processes the content of a message, ensuring it is properly formatted and adding additional prompts if necessary.
+
+        Args:
+            content (str): The content of the message to be processed.
+            is_last (bool): A flag indicating whether this is the last message in the sequence.
+
+        Returns:
+            str: The processed content of the message.
+        """
         if is_last:
-            content = content.strip() # + "\nSome additional requirements for last msg \n"
+            content = content.strip()  # ⭐ Ensure the content is stripped of leading/trailing whitespace
         if is_last and self.force_think:
-            content += self.force_think_prompt
-        return content.strip()
+            content += self.force_think_prompt  # ⭐ Append the force_think_prompt if this is the last message and force_think is enabled
+        return content.strip()  # ⭐ Return the final processed content
 
     def post_tag_env_message_context(self, content, turn, is_last) -> str:
+        """
+        Formats and tags a message from the environment, appending an identifier based on the turn number.
+        Updates the internal state with the latest environment response and its ID.
+        If the message is the last and `force_think` is enabled, appends a prompt for further thinking.
+
+        Args:
+            content (str): The content of the message from the environment.
+            turn (int): The turn number of the message, must be in the range [0, 99).
+            is_last (bool): A flag indicating if this is the last message in the conversation.
+
+        Returns:
+            str: The formatted and tagged message content.
+        """
         from textwrap import dedent
         assert 0 <= turn < 99, "turn 必须在 [0, 99) 范围内"
         turn_id = f"{turn:03d}"
-        self.latest_env_response_id = f"ER{turn_id}"
-        self.latest_env_response_content = content.strip()
+        self.latest_env_response_id = f"ER{turn_id}"  # ⭐ Update the latest environment response ID
+        self.latest_env_response_content = content.strip()  # ⭐ Update the latest environment response content
         content = dedent(f"""
             [Environment Response, id=ER{turn_id}]
             ---
-        """).strip() + '\n' + content.strip()
+        """).strip() + '\n' + content.strip()  # ⭐ Format and tag the message content
         if is_last and self.force_think:
-            content += self.force_think_prompt
+            content += self.force_think_prompt  # ⭐ Append the force think prompt if necessary
         return content
 
     def post_tag_llm_message_context(self, content, turn, is_last) -> str:
+        """
+        Formats the LLM's message by adding a specific tag and turn identifier.
+
+        Args:
+            content (str): The content of the LLM's message.
+            turn (int): The turn number of the message in the conversation.
+            is_last (bool): A flag indicating if this is the last message in the conversation.
+
+        Returns:
+            str: The formatted message with the added tag and turn identifier.
+        """
         from textwrap import dedent
-        assert not is_last, "llm message should never be last"
-        assert 0 <= turn < 99, "turn 必须在 [0, 99) 范围内"
+        assert not is_last, "llm message should never be last"  # ⭐ Ensures the LLM's message is not the last in the conversation
+        assert 0 <= turn < 99, "turn 必须在 [0, 99) 范围内"  # ⭐ Validates the turn number is within the valid range
         turn_id = f"{turn:03d}"
         content = dedent(f"""
             [Assistant Response, id=AR{turn_id}]
             ---
-        """).strip() + '\n' + content.strip()
+        """).strip() + '\n' + content.strip()  # ⭐ Adds the tag and turn identifier to the message
         return content
 
     def strip_think_tags(self, text: str) -> str:
-        new_ext_msg_content = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
-        new_ext_msg_content = new_ext_msg_content.replace("<think>", "")
-        new_ext_msg_content = new_ext_msg_content.replace("</think>", "")
+        """
+        Removes <think> and </think> tags, along with their enclosed content, from the provided text.
+
+        Args:
+            text (str): The input text containing <think> and </think> tags.
+
+        Returns:
+            str: The text with all <think> and </think> tags and their enclosed content removed.
+        """
+        new_ext_msg_content = re.sub(r'\<think\>.*?\<\/think\>', '', text, flags=re.DOTALL).strip()  # ⭐ Remove content within <think> and </think> tags
+        new_ext_msg_content = new_ext_msg_content.replace("<think>", "")  # Remove any remaining <think> tags
+        new_ext_msg_content = new_ext_msg_content.replace("</think>", "")  # Remove any remaining </think> tags
         return new_ext_msg_content
 
     def prepare_next_llm_context(self):
+        """
+        Prepares the next context for the LLM by filtering and processing the previous messages.
+
+        This function filters out non-deprecated context, processes each message based on its author,
+        and formats the context appropriately for the next LLM interaction.
+
+        Returns:
+            list: A list of dictionaries representing the updated context.
+        """
         self.latest_llm_interaction_socket = []
 
         # first we get all previous context (non-deprecated context)
         # get `init_message -> user -> llm -> user -> llm`` or `init_message -> llm -> user -> llm -> user``
-        self.latest_llm_interaction_socket = self.filter_context_via_authors(["initialization", "llm", "env"])
+        self.latest_llm_interaction_socket = self.filter_context_via_authors(["initialization", "llm", "env"])  # ⭐ Filter the context to include only relevant authors
 
         env_turn = 1
         llm_turn = 1
@@ -179,16 +231,35 @@ class SelfContextClipCMT(LinearThinkCMT):
             else:
                 raise RuntimeError(f"Unknown author {ext_msg.author} in latest_llm_interaction_socket")
 
-        listofdict_context = self.to_role_content(self.latest_llm_interaction_socket)
+        listofdict_context = self.to_role_content(self.latest_llm_interaction_socket)  # ⭐ Convert the processed context to a list of dictionaries
         return listofdict_context
 
 
     def save_init_input(self, init_input_arr:list, add_nothink):
-        super().save_init_input(init_input_arr, add_nothink)
+        """
+        Saves the initial input array by calling the parent class's method.
+
+        Args:
+            init_input_arr (list): The initial input array to be saved.
+            add_nothink: Additional parameter passed to the parent method.
+        """
+        super().save_init_input(init_input_arr, add_nothink)  # ⭐ Calls the parent class's method to save the initial input
         return
 
 
     def impl_new_request_from_previous_interaction(self, new_message,  this_interaction, strip_think=False):
+        """
+        Processes a new request in the context of previous interactions, optionally stripping 'think' tags,
+        and generates a new LLM response based on the updated context.
+
+        Args:
+            new_message: The new message to be added to the interaction.
+            this_interaction: The list of previous interactions.
+            strip_think (bool, optional): Whether to strip 'think' tags from the messages. Defaults to False.
+
+        Returns:
+            tuple: A tuple containing the updated interaction list and the LLM's output content.
+        """
         latest_llm_interaction_socket_additional = copy.deepcopy(this_interaction)
         if strip_think:
             for index, ext_msg in enumerate(latest_llm_interaction_socket_additional):
@@ -200,27 +271,27 @@ class SelfContextClipCMT(LinearThinkCMT):
                         token_generator='auto',
                         tokenizer=self.tokenizer,
                         build_from_uuid=ext_msg.build_from_uuid if ext_msg.build_from_uuid else ext_msg.uuid,
-                    )
+                    )  # ⭐ Strips 'think' tags from the message content
                 else:
                     continue
         latest_llm_interaction_socket_additional += [new_message]
         dict_context = self.to_role_content(latest_llm_interaction_socket_additional)
         if self.train_sp_action:
-            llm_output = self.llm_chat_fn(dict_context, request_id="")
+            llm_output = self.llm_chat_fn(dict_context, request_id="")  # ⭐ Generates LLM output using the current model
         else:
-            llm_output = self.alien_llm_chat_fn(dict_context, request_id="")
-        latest_llm_interaction_socket_additional += [self.save_llm_output_do_not_register_full_context(llm_output, dict_context)]
+            llm_output = self.alien_llm_chat_fn(dict_context, request_id="")  # ⭐ Generates LLM output using an external model
+        latest_llm_interaction_socket_additional += [self.save_llm_output_do_not_register_full_context(llm_output, dict_context)]  # ⭐ Adds the LLM output to the interaction history
         if self.train_sp_action:
             this_interaction = copy.deepcopy(latest_llm_interaction_socket_additional)
-            self.grouped_steps += [this_interaction]
+            self.grouped_steps += [this_interaction]  # ⭐ Updates the grouped steps with the latest interaction
         if self.console_debug_mode:
             print_listofdict(
                 dict_context + [{'role': 'llm_latest', 'content': llm_output['content']}], mod='c'
-            ) # print to console
+            )  # ⭐ Prints the updated context and LLM output to the console
         else:
             print_listofdict(
                 dict_context + [{'role': 'llm_latest', 'content': llm_output['content']}], mod='env_clip'
-            ) # log to file
+            )  # ⭐ Logs the updated context and LLM output to a file
         output_llm_content = llm_output['content'].strip()
         return latest_llm_interaction_socket_additional, output_llm_content
 
@@ -381,6 +452,16 @@ class SelfContextClipCMT(LinearThinkCMT):
 
 
     def replace_full_context_item(self, match_content: str, new_content: str):
+        """
+        Replaces the content of a message in the full context with new content if the match content is found.
+
+        Args:
+            match_content (str): The content to search for in the full context.
+            new_content (str): The new content to replace the matched content with.
+
+        Returns:
+            bool: True if the replacement was successful, False otherwise.
+        """
         success = False
         for index in range(len(self.full_context)):
             ext_msg = self.full_context[index]
@@ -392,16 +473,26 @@ class SelfContextClipCMT(LinearThinkCMT):
                     content=new_content,
                     token_generator='auto',
                     tokenizer=self.tokenizer,
-                )
+                )  # ⭐ Replace the matched content with the new content
                 # print_dict({match_content: new_content})
                 return success
         return success
 
 
     def save_llm_output(self, llm_output, input_msg_ref):
-        ext_msg = Linear_CMT.save_llm_output(self, llm_output, input_msg_ref)
-        this_interaction = copy.deepcopy(self.latest_llm_interaction_socket + [ext_msg])
-        self.grouped_steps += [this_interaction]
-        self.after_save_llm_output(this_interaction)
-        self.latest_llm_interaction_socket = []
+        """
+        Saves the LLM's output, updates the grouped steps with the latest interaction, and resets the latest LLM interaction socket.
+
+        Args:
+            llm_output (str): The output generated by the LLM.
+            input_msg_ref (str): The reference to the input message that triggered the LLM's response.
+
+        Returns:
+            None
+        """
+        ext_msg = Linear_CMT.save_llm_output(self, llm_output, input_msg_ref)  # ⭐ Save the LLM output and get the extended message
+        this_interaction = copy.deepcopy(self.latest_llm_interaction_socket + [ext_msg])  # ⭐ Create a deep copy of the latest interaction including the new message
+        self.grouped_steps += [this_interaction]  # ⭐ Append the new interaction to the grouped steps
+        self.after_save_llm_output(this_interaction)  # ⭐ Call the after-save hook for any additional processing
+        self.latest_llm_interaction_socket = []  # ⭐ Reset the latest LLM interaction socket
         return

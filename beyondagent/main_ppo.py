@@ -1,4 +1,4 @@
-# Copyright 2024 Bytedance Ltd. and/or its affiliates
+# Copyright 2024 Alibaba Tongyi EconML Lab. and/or its affiliates
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,8 +32,16 @@ from verl.trainer.ppo.reward import load_reward_manager
 
 from beyondagent.module.trainer.ba_ray_trainer import BeyondAgentRayPPOTrainer
 
-
 def get_custom_reward_fn(config):
+    """
+    Dynamically loads a custom reward function from a specified Python file.
+
+    Args:
+        config (dict): Configuration dictionary containing the path and name of the reward function.
+
+    Returns:
+        function: The loaded and wrapped reward function, or None if no custom function is specified.
+    """
     import importlib.util
     import sys
 
@@ -49,7 +57,7 @@ def get_custom_reward_fn(config):
     module = importlib.util.module_from_spec(spec)
     try:
         sys.modules["custom_module"] = module
-        spec.loader.exec_module(module)
+        spec.loader.exec_module(module)  # ⭐ Executes the module to load the custom reward function
     except Exception as e:
         raise RuntimeError(f"Error loading module from '{file_path}': {e}") from e
 
@@ -70,10 +78,30 @@ def get_custom_reward_fn(config):
 
 @hydra.main(config_path="../config", config_name="beyond_agent_dataflow", version_base=None)
 def main(config):
-    run_ppo(config)
+    """
+    Entry point for the PPO training process.
+
+    This function initializes and runs the PPO training using the provided configuration.
+
+    Args:
+        config (DictConfig): The configuration object that contains all the necessary parameters for setting up and running the PPO training.
+
+    Returns:
+        None
+    """
+    run_ppo(config)  # ⭐ Executes the PPO training process with the given configuration
 
 
 def run_ppo(config) -> None:
+    """
+    Initializes the Ray cluster, sets up the environment, and starts the PPO training process.
+
+    Args:
+        config (dict): Configuration dictionary containing settings for the PPO training process.
+
+    Returns:
+        None
+    """
     if not ray.is_initialized():
         # this is for local ray cluster
         ray.init(
@@ -81,18 +109,30 @@ def run_ppo(config) -> None:
              "VLLM_ALLOW_RUNTIME_LORA_UPDATING": "true", "VLLM_USE_V1": "1", "WANDB_API_KEY": "local-e93291bd40698a593a1fcc5b99da6a71a753a383",
              "WANDB_BASE_URL": "http://22.6.186.25:8080"}},
             num_cpus=config.ray_init.num_cpus,
-        )
+        )  # ⭐ Initialize the Ray cluster with the specified runtime environment and number of CPUs
 
     max_model_len: int = config.actor_rollout_ref.rollout.max_model_len
-    assert config.data.max_prompt_length + config.data.max_response_length <= max_model_len, f"max_prompt_length {config.data.max_prompt_length} + max_response_length {config.data.max_response_length} should be <= max_model_len {max_model_len}"
+    assert config.data.max_prompt_length + config.data.max_response_length <= max_model_len, f"max_prompt_length {config.data.max_prompt_length} + max_response_length {config.data.max_response_length} should be <= max_model_len {max_model_len}"  # ⭐ Ensure the sum of max prompt and response lengths does not exceed the max model length
 
     runner = TaskRunner.remote()
-    ray.get(runner.run.remote(config))
+    ray.get(runner.run.remote(config))  # ⭐ Start the PPO training process by calling the run method on the TaskRunner actor
 
 
 @ray.remote(num_cpus=1)  # please make sure main_task is not scheduled on head
 class TaskRunner:
+    """
+    A Ray actor class responsible for running the PPO tasks.
+
+    This class is decorated with @ray.remote to ensure it is scheduled on a worker node and not the head node.
+    """
     def run(self, config):
+        """
+        Initializes and runs the PPO training process, including downloading necessary models, defining worker classes,
+        and setting up the resource pool and reward functions.
+
+        Args:
+            config (dict): The configuration dictionary containing all the necessary parameters for the PPO setup.
+        """
         # print initial config
         from pprint import pprint
 
@@ -104,13 +144,13 @@ class TaskRunner:
         OmegaConf.resolve(config)
 
         # download the checkpoint from hdfs
-        local_path = copy_to_local(config.actor_rollout_ref.model.path, use_shm=config.actor_rollout_ref.model.get('use_shm', False))
+        local_path = copy_to_local(config.actor_rollout_ref.model.path, use_shm=config.actor_rollout_ref.model.get('use_shm', False))  # ⭐ Download the model checkpoint to a local path
 
         # instantiate tokenizer
         from verl.utils import hf_processor, hf_tokenizer
 
         trust_remote_code = config.data.get("trust_remote_code", False)
-        tokenizer = hf_tokenizer(local_path, trust_remote_code=trust_remote_code)
+        tokenizer = hf_tokenizer(local_path, trust_remote_code=trust_remote_code)  # ⭐ Initialize the tokenizer
         processor = hf_processor(local_path, use_fast=True)  # used for multimodal LLM, could be none
 
         # vllm early verify
@@ -130,7 +170,7 @@ class TaskRunner:
             ####################
             # ANNI
             from beyondagent.module.exp_manager.het_fsdp_worker import HETAsyncActorRolloutRefWorker, HETActorRolloutRefWorker
-            actor_rollout_cls = HETAsyncActorRolloutRefWorker if config.actor_rollout_ref.rollout.mode == "async" else HETActorRolloutRefWorker
+            actor_rollout_cls = HETAsyncActorRolloutRefWorker if config.actor_rollout_ref.rollout.mode == "async" else HETActorRolloutRefWorker  # ⭐ Define the actor rollout class based on the mode
             # actor_rollout_cls = AsyncActorRolloutRefWorker if config.actor_rollout_ref.rollout.mode == "async" else ActorRolloutRefWorker
             ####################
             ray_worker_group_cls = RayWorkerGroup
@@ -142,7 +182,7 @@ class TaskRunner:
             from verl.workers.megatron_workers import (ActorRolloutRefWorker,
                                                        CriticWorker)
 
-            actor_rollout_cls = ActorRolloutRefWorker
+            actor_rollout_cls = ActorRolloutRefWorker  # ⭐ Define the actor rollout class
             ray_worker_group_cls = NVMegatronRayWorkerGroup
 
         else:
@@ -177,17 +217,17 @@ class TaskRunner:
                 from verl.workers.megatron_workers import RewardModelWorker
             else:
                 raise NotImplementedError
-            role_worker_mapping[Role.RewardModel] = ray.remote(RewardModelWorker)
+            role_worker_mapping[Role.RewardModel] = ray.remote(RewardModelWorker)  # ⭐ Add the reward model worker to the mapping
             mapping[Role.RewardModel] = global_pool_id
 
         # use reference model
         if config.algorithm.use_kl_in_reward or config.actor_rollout_ref.actor.use_kl_loss:
-            role_worker_mapping[Role.RefPolicy] = ray.remote(ActorRolloutRefWorker)
+            role_worker_mapping[Role.RefPolicy] = ray.remote(ActorRolloutRefWorker)  # ⭐ Add the reference policy worker to the mapping
             mapping[Role.RefPolicy] = global_pool_id
 
-        reward_fn = load_reward_manager(config, tokenizer, num_examine=0, **config.reward_model.get("reward_kwargs", {}))
-        val_reward_fn = load_reward_manager(config, tokenizer, num_examine=1, **config.reward_model.get("reward_kwargs", {}))
-        resource_pool_manager = ResourcePoolManager(resource_pool_spec=resource_pool_spec, mapping=mapping)
+        reward_fn = load_reward_manager(config, tokenizer, num_examine=0, **config.reward_model.get("reward_kwargs", {}))  # ⭐ Load the reward manager for training
+        val_reward_fn = load_reward_manager(config, tokenizer, num_examine=1, **config.reward_model.get("reward_kwargs", {}))  # ⭐ Load the reward manager for validation
+        resource_pool_manager = ResourcePoolManager(resource_pool_spec=resource_pool_spec, mapping=mapping)  # ⭐ Initialize the resource pool manager
 
         from verl.utils.dataset.rl_dataset import collate_fn
 
@@ -211,7 +251,7 @@ class TaskRunner:
             env_service_url=config.env_service.env_url,
             num_explore_threads=config.task_manager.num_explore_threads,
             n=config.task_manager.n,
-        )
+        )  # ⭐ Initialize the training task manager with specified configurations
         val_task_manager=TaskManager(
             config=config,
             exploration_strategy=config.task_manager.strategy,
@@ -225,7 +265,7 @@ class TaskRunner:
             env_service_url=config.env_service.env_url,
             num_explore_threads=config.task_manager.num_explore_threads,
             n=config.task_manager.n,
-        )
+        )  # ⭐ Initialize the validation task manager with specified configurations
         trainer = BeyondAgentRayPPOTrainer(
             config=config,
             tokenizer=tokenizer,
@@ -239,21 +279,22 @@ class TaskRunner:
             val_task_manager=val_task_manager,
             collate_fn=collate_fn,
             device_name=config.trainer.device,
-        )
-        trainer.init_workers()
-        trainer.fit()
-
+        )  # ⭐ Initialize the PPO trainer with the given parameters
+        trainer.init_workers()  # ⭐ Initialize the workers for the trainer
+        trainer.fit()  # ⭐ Start the training process
 
 def create_rl_dataset(data_paths, data_config, tokenizer, processor):
-    """Create a dataset.
+    """
+    Create a dataset for reinforcement learning.
 
-    Arguments:
-        data_config: The data config.
-        tokenizer (Tokenizer): The tokenizer.
-        processor (Processor): The processor.
+    Args:
+        data_paths (list of str): Paths to the data files.
+        data_config (dict): Configuration for the dataset.
+        tokenizer (Tokenizer): The tokenizer to be used.
+        processor (Processor): The processor to be used.
 
     Returns:
-        dataset (Dataset): The dataset.
+        Dataset: The created dataset.
     """
     from torch.utils.data import Dataset
 
@@ -274,13 +315,9 @@ def create_rl_dataset(data_paths, data_config, tokenizer, processor):
         tokenizer=tokenizer,
         processor=processor,
         config=data_config,
-    )
+    )  # ⭐ Instantiate the dataset with the provided data paths, tokenizer, processor, and configuration
 
     return dataset
-
-
-
-
 
 if __name__ == "__main__":
     import shutil

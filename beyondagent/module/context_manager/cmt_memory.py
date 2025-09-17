@@ -151,14 +151,23 @@ class MemoryCoreCMT(Linear_CMT):
             - Ensures proper tokenization and context maintenance
         """
         def get_token_inc_from_vllm_response(input_msg_ref) -> List[int]:
+            """
+            Calculate the token increments from the VLLM response.
+
+            Args:
+                input_msg_ref: Reference to the input messages for token increment calculation
+
+            Returns:
+                List[int]: The final token array after processing.
+            """
             generation_prompt_token, msg = self.get_inc(
                 self.tokenizer.apply_chat_template(input_msg_ref, tokenize=False, add_generation_prompt=False),
                 self.tokenizer.apply_chat_template(input_msg_ref, tokenize=False, add_generation_prompt=True),
-            )
+            )  # ⭐ Calculate the token increment for the generation prompt
             completion_token_arr, msg2 = self.get_inc(
                 self.tokenizer.apply_chat_template(input_msg_ref, tokenize=False),
                 self.tokenizer.apply_chat_template(input_msg_ref + [ {"role": llm_output['role'],  "content": llm_output['content']} ], tokenize=False),
-            )
+            )  # ⭐ Calculate the token increment for the completion
             vllm_output_raw_token = [t.token_id for t in llm_output['tokens']]
             final_token_arr = replace_token_ids(place_holder=completion_token_arr, replace_with=vllm_output_raw_token, begin=generation_prompt_token, end=[self.tokenizer.eos_token_id])
             return final_token_arr
@@ -172,7 +181,7 @@ class MemoryCoreCMT(Linear_CMT):
             content=llm_output['content'],
             token_generator="manual",
             tokenizer=self.tokenizer,
-        )
+        )  # ⭐ Create an ExtendedMessage object for the LLM output
         self.full_context += [ext_msg]
         ext_msg.token_arr = get_token_inc_from_vllm_response(input_msg_ref)
         this_interaction = copy.deepcopy(self.latest_llm_interaction_socket + [ext_msg])
@@ -184,7 +193,7 @@ class MemoryCoreCMT(Linear_CMT):
             markdown_text=llm_output['content'],
             expected_sections=["current step", "previous instruction code", "relevant environment feedback", "next-step instruction code"],
             default_placeholder="❌ not available."
-        )
+        )  # ⭐ Extract and decompose the LLM output into sections
         from textwrap import dedent
         memory_construct = dedent("""
         >> step: {current_step}
@@ -197,7 +206,7 @@ class MemoryCoreCMT(Linear_CMT):
             current_step=lm_result_decompose['current step'],
             next_step_instruction_code=lm_result_decompose['next-step instruction code'],
             relevant_environment_feedback=lm_result_decompose['relevant environment feedback']
-        )
+        )  # ⭐ Format the extracted sections into a memory construct
         ext_msg_memory = ExtendedMessage(
             author="memory",
             role="assistant",
@@ -227,13 +236,20 @@ class MemoryCMT(MemoryCoreCMT):
     """
 
     def __init__(self, config, tokenizer):
+        """
+        Initializes the MemoryCMT with the given configuration and tokenizer.
+
+        Args:
+            config: Configuration object containing environment and model settings.
+            tokenizer: Tokenizer instance for processing text.
+        """
         self.config = config
         self.tokenizer = tokenizer
         self.full_context: List[ExtendedMessage] = []
         self.current_context_status = ""
         max_response_length = self.config.actor_rollout_ref.rollout.response_length
         max_model_len: int = self.config.actor_rollout_ref.rollout.max_model_len
-        self.max_seq_length: int = max_model_len - max_response_length
+        self.max_seq_length: int = max_model_len - max_response_length  # ⭐ Calculate the maximum sequence length for the context window
         self.max_env_output_length: int = self.config.actor_rollout_ref.rollout.max_env_len
         self.blackout_token_combo = tokenizer.encode("<|im_start|>assistant\n")
 
@@ -252,10 +268,19 @@ class MemoryCMT(MemoryCoreCMT):
         raise NotImplementedError("MemoryCMT does not support steps.")
 
     def generate_log(self, task_id):
+        """
+        Generates a log of grouped steps from the conversation history.
+
+        Args:
+            task_id (int): The ID of the task for which the log is being generated.
+
+        Returns:
+            GroupedSteps: An object containing the grouped steps from the conversation history.
+        """
         result = GroupedSteps()
         result.num_groups = len(self.grouped_steps)
         for steps in self.grouped_steps:
-            result.grouped_step_list += [self.to_role_content(steps)]
+            result.grouped_step_list += [self.to_role_content(steps)]  # ⭐ Convert each group of steps to role-content format and add to the result
         grouped_steps: GroupedSteps = result
         # for index, steps in enumerate(grouped_steps.grouped_step_list):
         #     print_listofdict(steps, mod='appworld_io', header=f'Task-{task_id} {index}/{grouped_steps.num_groups}')
@@ -264,15 +289,27 @@ class MemoryCMT(MemoryCoreCMT):
 
 
     def check_context_token_num_safe(self, messages: List[dict]):
-        return super().check_context_token_num_safe(messages)
+        """
+        Checks if the number of tokens in the provided messages is within a safe limit by calling the parent class's implementation.
+
+        Args:
+            messages (List[dict]): A list of message dictionaries, each containing at least a 'role' and 'content' key.
+
+        Returns:
+            bool: True if the token count is safe, False otherwise.
+        """
+        return super().check_context_token_num_safe(messages)  # ⭐ Calls the parent class's method to check token safety
 
 
     def prepare_previous_context(self, mod='future'):
         """
         Prepare the input context for future LLM call.
 
+        Args:
+            mod (str): The mode in which to prepare the context. Can be 'future' or 'raw'.
+
         Returns:
-            list: Array of message dictionaries containing role and content_for_future,
+            list: Array of message dictionaries containing role and content_for_future or content,
                  formatted for LLM input.
         """
         if mod=='future':
@@ -298,8 +335,9 @@ class MemoryCMT(MemoryCoreCMT):
         Save and process the initial input messages to the context.
 
         Args:
-            init_input_arr (list): Array of initial input messages to be processed
-                                  Each message should be a dict with 'role' and 'content'
+            init_input_arr (list): Array of initial input messages to be processed.
+                                   Each message should be a dict with 'role' and 'content'.
+            add_nothink: Additional parameter (not used in the provided code snippet).
 
         Note:
             - Initializes the context with the provided messages
@@ -307,7 +345,7 @@ class MemoryCMT(MemoryCoreCMT):
             - Validates that the context is empty before saving
         """
         # save basic
-        assert self.latest_llm_interaction_socket is None, "`save_init_input` must be called at proper time!"
+        assert self.latest_llm_interaction_socket is None, "`save_init_input` must be called at proper time!"  # ⭐ Ensures the method is called at the correct time
         super().save_init_input(init_input_arr, add_nothink)
 
 
@@ -318,15 +356,16 @@ class MemoryCMT(MemoryCoreCMT):
         Save and process environment output to the context.
 
         Args:
-            env_output (dict): Environment output containing 'content'
-            input_msg_ref (List[dict], optional): Reference messages for token calculation
+            env_output (dict): Environment output containing 'content'.
+            input_msg_ref (List[dict], optional): Reference messages for token calculation.
+            add_nothink (bool, optional): Flag to indicate whether to add a no-think message. Defaults to False.
 
         Note:
-            - Clips environment output if it exceeds max_env_output_length
-            - Processes the output as a user message in the conversation
-            - Computes and stores token arrays for the environment response
+            - Clips environment output if it exceeds max_env_output_length.
+            - Processes the output as a user message in the conversation.
+            - Computes and stores token arrays for the environment response.
         """
-        assert self.latest_llm_interaction_socket is None, "`save_env_output` must be called at proper time!"
+        assert self.latest_llm_interaction_socket is None, "`save_env_output` must be called at proper time!"  # ⭐ Ensures the function is called at the correct time
         super().save_env_output(env_output, input_msg_ref=input_msg_ref, add_nothink=add_nothink)
 
 
@@ -355,6 +394,16 @@ class MemoryCMT(MemoryCoreCMT):
 
 
     def group_tokenize(self):
+        """
+        Tokenizes the grouped steps of a conversation and prepares them into Sample objects.
+
+        This function processes a limited number of groups, tokenizes each group, and converts it into a Sample object.
+        Each Sample object contains various attributes such as input IDs, attention masks, and position IDs.
+        The function also handles truncation of output IDs to fit within specified length constraints.
+
+        Returns:
+            list[Sample]: A list of Sample objects, each representing a tokenized group of steps.
+        """
         # assert self.latest_llm_interaction_socket is None, "unprocessed message buffer! forget to call `save_llm_output` after `prepare_next_llm_context`?"
         sample_arr = []
         max_num_group = 30 # self.config.actor_rollout_ref.rollout.multi_turn.max_steps
@@ -362,7 +411,7 @@ class MemoryCMT(MemoryCoreCMT):
             if index >= max_num_group:
                 print(f"Warning: group_tokenize only process first {max_num_group} groups, but got {len(self.grouped_steps)} groups")
                 break
-            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps)
+            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps)  # ⭐ Tokenize the current group of steps
             sample = Sample(
                 data_id=self.data_id,
                 rollout_id=self.rollout_id,
@@ -386,7 +435,7 @@ class MemoryCMT(MemoryCoreCMT):
                 max_response_len=self.config.data.max_response_length,
                 max_model_len=self.config.data.max_response_length + self.config.data.max_prompt_length,
             )
-            sample.truncate_output_ids()
+            sample.truncate_output_ids()  # ⭐ Truncate the output IDs to fit within the specified length constraints
             sample_arr += [sample]
         return sample_arr
 

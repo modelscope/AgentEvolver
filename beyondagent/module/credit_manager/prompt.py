@@ -6,6 +6,18 @@ def build_batch_adv_evaluation_prompt(
         overall_adv: float,
         max_step_chars: int = 2000,
 ) -> list[dict]:
+    """
+    Constructs a prompt for evaluating a series of steps in a task. The prompt includes a system message with detailed evaluation rules and a user message with the task description, solution trajectory, and overall performance score.
+
+    Args:
+        query (str): The original task description.
+        steps (list[dict]): A list of dictionaries, each representing a step in the solution trajectory.
+        overall_adv (float): The overall performance score, indicating the quality of the final answer.
+        max_step_chars (int, optional): The maximum number of characters allowed for each step. Defaults to 2000.
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing the system message and the user message for the evaluation prompt.
+    """
     polarity = "positive" if overall_adv > 0 else "negative"
     # prompt3
     # sys_msg = (
@@ -82,10 +94,19 @@ Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
 
 **OUTPUT FORMAT:** Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else.
 
-"""
+"""  # ⭐ Defines the system message with detailed evaluation rules
     def _trim(s: str) -> str:
+        """
+        Trims the input string to a maximum length, appending an ellipsis if it exceeds the limit.
+
+        Args:
+            s (str): The input string to be trimmed.
+
+        Returns:
+            str: The trimmed string, or an empty string if the input is empty.
+        """
         if not s: return ""
-        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"
+        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"  # ⭐ Trims the string and appends an ellipsis if necessary
 
     user_parts = [
         "### TASK DESCRIPTION",
@@ -129,7 +150,7 @@ Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
         {"role": "system", "content": sys_msg},
         {"role": "user", "content": "\n".join(user_parts)},
     ]
-    
+
 
 def build_batch_reward_evaluation_prompt(
         query: str,
@@ -137,6 +158,18 @@ def build_batch_reward_evaluation_prompt(
         overall_adv: float,
         max_step_chars: int = 2000,
 ) -> list[dict]:
+    """
+    Constructs a structured prompt for evaluating the reward of a batch of steps in a given task.
+
+    Args:
+        query (str): The original request or task description.
+        steps (list[dict]): A list of dictionaries, each representing a step in the solution trajectory.
+        overall_adv (float): The overall reward score indicating the success or failure of the task.
+        max_step_chars (int, optional): The maximum number of characters allowed for each step. Defaults to 2000.
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing a 'role' and 'content' key, representing the system and user messages.
+    """
     polarity = "positive" if overall_adv > 0 else "negative"
     
     sys_msg = """You are an expert *process reward evaluator*, specializing in **attributional analysis** of multi-step solution trajectories.
@@ -173,9 +206,10 @@ def build_batch_reward_evaluation_prompt(
 **FOCUS:** Judge based on **objective contribution to task completion**, not effort or good intentions.
 
 **OUTPUT FORMAT:** Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
+
     def _trim(s: str) -> str:
         if not s: return ""
-        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"
+        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"  # ⭐ Trims the string to the maximum allowed length
 
     user_parts = [
         "### TASK DESCRIPTION",
@@ -194,7 +228,7 @@ def build_batch_reward_evaluation_prompt(
         obs = st.get("observation")
         if obs:
             block += ["<|OBSERVATION|>", _trim(obs), "<|END|>"]
-        user_parts.append("\n".join(block))
+        user_parts.append("\n".join(block))  # ⭐ Adds the formatted step to the user parts
 
     user_parts += [
         "",
@@ -217,5 +251,5 @@ def build_batch_reward_evaluation_prompt(
 
     return [
         {"role": "system", "content": sys_msg},
-        {"role": "user", "content": "\n".join(user_parts)},
+        {"role": "user", "content": "\n".join(user_parts)},  # ⭐ Combines all parts into the final user message
     ]

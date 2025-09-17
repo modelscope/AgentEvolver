@@ -87,23 +87,55 @@ class LinearThinkCMT(Linear_CMT):
             self.think_hint: str = force_think_prompt
 
     def _get_seq_length(self, messages: List[dict]) -> int:
-        prompt_text = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        return len(self.tokenizer(prompt_text, return_tensors="pt", padding=False)["input_ids"][0])
+        """
+        Calculates the sequence length of the provided messages after applying the chat template and tokenizing them.
+
+        Args:
+            messages (List[dict]): A list of message dictionaries to be processed.
+
+        Returns:
+            int: The length of the tokenized sequence.
+        """
+        prompt_text = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)  # ⭐ Apply the chat template to the messages
+        return len(self.tokenizer(prompt_text, return_tensors="pt", padding=False)["input_ids"][0])  # ⭐ Tokenize the prompt text and return the length of the tokenized sequence
 
 
     def check_context_token_num_safe(self, messages: List[dict]) -> bool:
-        return self._get_seq_length(messages) < self.max_seq_length   # self.config.env_engine.max_seq_length = 20480
+        """
+        Checks if the total number of tokens in the provided messages is within the allowed limit.
+
+        Args:
+            messages (List[dict]): A list of message dictionaries.
+
+        Returns:
+            bool: True if the total number of tokens is within the allowed limit, False otherwise.
+        """
+        return self._get_seq_length(messages) < self.max_seq_length  # ⭐ Compare the total token count with the max allowed length
 
 
     @property
     def steps(self):
-        return self.prepare_previous_context(mod='future')
+        """
+        Property that returns the result of the prepare_previous_context method with the mode set to 'future'.
+
+        Returns:
+            Any: The result of the prepare_previous_context method.
+        """
+        return self.prepare_previous_context(mod='future')  # ⭐ Call the prepare_previous_context method with 'future' mode
 
 
     def prepare_next_llm_context(self):
+        """
+        Prepares the next context for the LLM by filtering and modifying the latest interaction messages.
+        It removes the `think` tags from previous LLM messages, adds `/no_think` tags to non-final messages,
+        and updates the context accordingly.
+
+        Returns:
+            dict: The updated context in a dictionary format.
+        """
         self.latest_llm_interaction_socket = []
         # 筛选出 `初始message-user-llm-user-llm`` 或者 `初始message-llm-user-llm-user``
-        self.latest_llm_interaction_socket = self.filter_context_via_authors(["initialization", "llm", "env"])
+        self.latest_llm_interaction_socket = self.filter_context_via_authors(["initialization", "llm", "env"])  # ⭐ Filter the context based on authors
 
         for index, ext_msg in enumerate(list(self.latest_llm_interaction_socket)):
             # is_last 是最后一条信息
@@ -113,7 +145,7 @@ class LinearThinkCMT(Linear_CMT):
             if ext_msg.author == "llm":
                 # 如果是以往的llm消息，去掉think标签
                 import re
-                new_ext_msg_content = re.sub(r'<think>.*?</think>', '', ext_msg.content, flags=re.DOTALL).strip()
+                new_ext_msg_content = re.sub(r'<think>.*?</think>', '', ext_msg.content, flags=re.DOTALL).strip()  # ⭐ Remove <think> tags from the content
                 new_ext_msg_content = new_ext_msg_content.replace("<think>", "")
                 new_ext_msg_content = new_ext_msg_content.replace("</think>", "")
                 # new_ext_msg_content = re.sub(r'<think>.*?</think>', '<think>\n\n</think>', ext_msg.content, flags=re.DOTALL)
@@ -176,15 +208,24 @@ class LinearThinkCMT(Linear_CMT):
             else:
                 raise RuntimeError(f"Unknown author {ext_msg.author} in latest_llm_interaction_socket")
 
-        dict_context = self.to_role_content(self.latest_llm_interaction_socket)
+        dict_context = self.to_role_content(self.latest_llm_interaction_socket)  # ⭐ Convert the filtered and modified messages to a dictionary context
         return dict_context
 
 
 
     def generate_log(self, task_id):
+        """
+        Generates a log for the given task ID, which includes tokenized steps, decoded text, and other relevant details.
+
+        Args:
+            task_id (str): The ID of the task for which the log is being generated.
+
+        Returns:
+            None
+        """
         nested_items_print_buffer = {}
         for index, ext_steps in enumerate(self.grouped_steps):
-            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps, debug=True)
+            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps, debug=True)  # ⭐ Tokenize the extended steps
             text_arr = [self.tokenizer.decode(t) for t in cmt_tokenized["input_ids"]]
             input_id_arr = [str(t) for t in cmt_tokenized["input_ids"]]
             loss_mask_color_arr = ["#09ABCF" if mask==1 else "#D98510" for mask in cmt_tokenized["loss_mask"]]
@@ -200,7 +241,6 @@ class LinearThinkCMT(Linear_CMT):
             len_response_ids = len(cmt_tokenized["response_ids"])
             len_input_ids = len(cmt_tokenized["input_ids"])
             assert len_prompt_ids + len_response_ids == len_input_ids, "len_prompt_ids + len_response_ids should equal to len_input_ids"
-            # print(f"Task {task_id}, outcome {task_outcome}, group {index}, len_prompt_ids {len_prompt_ids}, len_response_ids {len_response_ids}, len_input_ids {len_input_ids}")
             nested_items_print_buffer[f".".join(selectors)] = NestedJsonItem(
                 item_id=f"item",
                 outcome=task_outcome,
@@ -209,10 +249,10 @@ class LinearThinkCMT(Linear_CMT):
                 len_input_ids=len_input_ids,
                 reward=f"{float(reward):.3f}",
                 content=SeqItem(
-                    text = buffer['text_arr'],  # 文本
-                    title = buffer['text_arr'], # 鼠标悬浮文本
-                    count = buffer['input_id_arr'], # 高亮文本
-                    color = buffer['loss_mask_color_arr']   # 颜色
+                    text=buffer['text_arr'],  # 文本
+                    title=buffer['text_arr'],  # 鼠标悬浮文本
+                    count=buffer['input_id_arr'],  # 高亮文本
+                    color=buffer['loss_mask_color_arr']  # 颜色
                 )
             )
         print_nested(nested_items_print_buffer,
@@ -230,10 +270,20 @@ class LinearThinkCMT(Linear_CMT):
 
 
     def save_llm_output(self, llm_output, input_msg_ref):
-        ext_msg = super().save_llm_output(llm_output, input_msg_ref)
-        this_interaction = copy.deepcopy(self.latest_llm_interaction_socket + [ext_msg])
-        self.grouped_steps += [this_interaction]
-        self.latest_llm_interaction_socket = []
+        """
+        Saves the LLM output and updates the internal state by appending the latest interaction to the grouped steps and resetting the latest LLM interaction socket.
+
+        Args:
+            llm_output: The output generated by the LLM.
+            input_msg_ref: A reference to the input message that triggered the LLM output.
+
+        Returns:
+            None
+        """
+        ext_msg = super().save_llm_output(llm_output, input_msg_ref)  # ⭐ Save the LLM output and get the extended message
+        this_interaction = copy.deepcopy(self.latest_llm_interaction_socket + [ext_msg])  # ⭐ Create a deep copy of the latest interaction with the new message
+        self.grouped_steps += [this_interaction]  # ⭐ Append the latest interaction to the grouped steps
+        self.latest_llm_interaction_socket = []  # ⭐ Reset the latest LLM interaction socket for the next interaction
         return
 
 
@@ -243,18 +293,33 @@ class LinearThinkCMT(Linear_CMT):
 
 
     def prepare_world_interaction(self) -> str:
-        latest_content = self.full_context[-1].content
+        """
+        Retrieves the latest content from the full context of the conversation.
+
+        Returns:
+            str: The latest content from the full context.
+        """
+        latest_content = self.full_context[-1].content  # ⭐ Retrieve the latest content from the full context
         return latest_content
 
 
     def group_tokenize(self):
+        """
+        Tokenizes grouped steps of a conversation and creates Sample objects for each group.
+
+        Args:
+            None
+
+        Returns:
+            list: A list of Sample objects, each representing a tokenized group of steps.
+        """
         sample_arr = []
         max_num_group = self.config.actor_rollout_ref.rollout.multi_turn.max_sample_per_task
         for index, ext_steps in enumerate(self.grouped_steps):
             if index >= max_num_group:
                 print(f"Warning: group_tokenize only process first {max_num_group} groups, but got {len(self.grouped_steps)} groups")
                 break
-            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps, debug=True)
+            cmt_tokenized = self.tokenize_steps(ext_steps=ext_steps, debug=True)  # ⭐ Tokenize the extended steps
             sample = Sample(
                 data_id=self.data_id,
                 rollout_id=self.rollout_id,
