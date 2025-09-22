@@ -65,7 +65,7 @@ from beyondagent.schema.trajectory import Trajectory
 
 from beyondagent.utils.tracking import ValidationGenerationsLogger
 
-from beyondagent.module.credit_manager.adca_grpo_pipeline import apply_adca_grpo
+from beyondagent.module.adv_processor.adca_grpo_pipeline import apply_adca_grpo
 
 def parse_reward_from_dataproto(data: DataProto, return_dict=False) -> dict | torch.Tensor:
     """

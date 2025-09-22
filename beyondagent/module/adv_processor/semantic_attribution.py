@@ -15,7 +15,7 @@ from typing import List, Tuple, Dict, Optional, Literal
 import threading
 from dataclasses import dataclass, asdict
 import random
-from beyondagent.module.credit_manager.prompt import build_batch_adv_evaluation_prompt, build_batch_reward_evaluation_prompt
+from beyondagent.module.adv_processor.prompt import build_batch_adv_evaluation_prompt, build_batch_reward_evaluation_prompt
 
 __all__ = [
     "evaluate_step_flags_parallel",

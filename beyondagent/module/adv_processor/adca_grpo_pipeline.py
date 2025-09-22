@@ -12,8 +12,8 @@ from verl import DataProto
 
 # Note: These imports are moved from the trainer's fit loop.
 from beyondagent.utils.step_parser import verify_step_alignment, verify_step_content
-from beyondagent.module.credit_manager.semantic_attribution import evaluate_step_flags_parallel_sync
-from beyondagent.module.credit_manager.adca_grpo import (
+from beyondagent.module.adv_processor.semantic_attribution import evaluate_step_flags_parallel_sync
+from beyondagent.module.adv_processor.adca_grpo import (
     compute_prm_grpo_advantages, PRMHyper
 )
 
