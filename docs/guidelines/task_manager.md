@@ -1,6 +1,5 @@
 To evolve a agent in your own environment data-driven, the first step is to collect the training data that maps the agent abilities which suit your needs.
 
-
 Task Manager provides the training data for AgentEvolver. It is responsible for
 
 - Exploring an unknown environment, profiling the potential tasks,
@@ -12,7 +11,7 @@ In this section, we will introduce the Task Manager and show you how to efficien
 
 ## Collect Your First Training Data
 
-To collect your training data, there are TODO things to do:
+To collect your training data, there are 4 things to do:
 
 1. Adopt your environment to Environment Service, which is supposed to be done in the previous section.
 2. Profile the environment.
@@ -30,9 +29,9 @@ Task Manager needs not only the API documents, but also the concepts in the envi
 
 We introduce Environment Profile to collect the concepts. A environment profile is a JSON file that describes the *Entity*, *Attribute*, and *Operation* in the environment.
 
-- Entity: TODO
-- Attribute: TODO
-- Operation: TODO
+- Entity: An entity represents a fundamental object in the environment. It is the target of interactions and can usually be created, modified, or deleted.
+- Attribute: Attributes describe the properties or metadata of an entity. They provide additional information that defines the state or identity of the entity but are not themselves executable actions.
+- Operation: Operations define the actions that can be applied to an entity. They represent the functional capabilities available in the environment and are often aligned with API calls.
 
 Besides, we also define the task preference in the environment profile, which is used to control the style of the tasks.
 
@@ -138,6 +137,8 @@ To start Task Manager in standalone mode, run the following command.
 ```bash
 TODO
 ```
+
+You will see the progress of task synthesis. After the synthesis is done, it prints the path of the generated tasks.
 
 #### Integrated Mode
 
@@ -283,23 +284,103 @@ If you prefer Python, you can find examples in the package `TODO`.
 
 ## Task Derivation
 
-在 Derivation 阶段，我们对环境进行自由探索，建立从无到有的环境理解，并进行任务草案的生成。
 
+Task Derivation constitutes the initial stage of synthetic task generation. Its purpose is to transform the conceptual knowledge provided by the Environment Profile into preliminary task drafts. In this stage, the system applies exploration-synthesis strategies to traverse the environment, construct trajectories, and abstract them into structured task descriptions.
+
+The primary objectives of derivation are:
+
+1. Exploration – to systematically or stochastically cover the environment space.
+2. Summarization – to convert exploration trajectories into concise, well-formed candidate tasks.
+
+The following derivation strategies are available:
+
+- RandomWalk Strategy – Performs unbiased random exploration, producing a diverse set of candidate tasks.
+- More strategies will be introduced in future...
+
+### RandomWalk Strategy
+
+RandomWalk Strategy is a simple and effective strategy for task derivation. It leverages curiosity and exploration to generate a wide range of candidate tasks.
+
+The parameters of RandomWalk Strategy are:
+
+```yaml
+task_manager:
+  # ......
+  strategy: random
+  strategy_args:
+    max_explore_step: 30              # Maximum number of steps to explore
+    max_llm_retries: 6                # Maximum number of LLM retries
+    env_url: ${env_service.env_url}   # Environment Service URL
+    exploration_llm_temperature: 1.0  # LLM temperature
+    exploration_llm_top_p: 1.0        # LLM top-p
+    exploration_llm_top_k: 100        # LLM top-k
+```
 
 
 ## Task Curation
 
-Curation 阶段主要负责对任务质量的控制，以及训练数据的动态管理。
+Task Curation is responsible for ensuring the quality and diversity of synthetic tasks generated during derivation. It operates by applying filters to discard unsuitable tasks and mixture strategies to balance task distributions.
+
+
+- Filters
+    - DeduplicationFilter: Removes duplicated or highly similar tasks.
+    - FeasibilityFilter: Eliminates tasks that cannot be executed in the given environment.
+- Mixture Strategies
+    - UnifiedMixtureStrategy: Integrates tasks from multiple sources to maintain distributional balance.
+
+The goals of task curation are:
+- Quality assurance – Valid, feasible, and logically consistent tasks.
+- Diversity preservation – Avoiding over-concentration on a single class of tasks.
+- Dynamic control – Adjusting task sets during training according to agent performance.
+
+### DeduplicationFilter
+
+DeduplicationFilter is a filter that removes duplicated or highly similar tasks. It is designed to remove tasks that are likely to be redundant or similar to each other, thus reducing the number of tasks and improving task diversity.
+
+The filter is enabled by default.
+
+### FeasibilityFilter
+
+
+
 
 ## Synthetic Reward
 
-为便于训练，Task Manager 提供了内置的合成奖励，作为 Fallback。
 
-> 虽然内置奖励在通用性上经过考量，性能良好，但我们建议你使用自己的奖励。
+To facilitate direct training without requiring user-defined reward functions, Task Manager provides a built-in synthetic reward mechanism as a fallback. Characteristics of the synthetic reward:
+
+- Generality – Designed to provide reasonable feedback across a wide range of environments.
+- Zero-configuration – No additional user specification required.
+- Extensibility – Can be combined with or replaced by custom reward functions.
+
+Typical reward components include:
+- Relevance check - Whether the trajectory is relevant to the task.
+- Success Check with Ref. GT – Whether the task has been completed successfully.
+- Efficiency check with Ref. GT - Whether the task has been completed within reasonable steps.
+
+> While the built-in reward achieves good general performance, it is strongly recommended to implement custom reward functions tailored to your application for optimal results.
+
+To use the built-in synthetic reward, simply set `synthetic_grader: llm` in the configuration file.
+
+```yaml
+task_manager:
+  # ......
+  grader:
+    original_grader: env    # use environment reward for original tasks
+    synthetic_grader: llm   # use synthetic reward for synthetic tasks
+```
 
 
 ## Extend Task Manager
 
-Task Manager 是由合成框架和合成方法集组成，这意味着你可以自由的组合现有方法，也能为自己的实际情况开发新方法。
+Task Manager is designed as a modular and extensible framework, enabling users to adapt it to a wide variety of training scenarios.
 
-框架中可自定义的模块有
+Extension points include:
+
+- Environment Profiling – Define new entities, attributes, operations, or adjust the granularity of profiles.
+- Task Derivation – Implement novel exploration or synthesis strategies.
+- Task Curation – Introduce additional filters and mixture strategies (e.g., semantic similarity–based filtering).
+- Reward Functions – Replace or augment the synthetic reward to reflect domain-specific success criteria.
+
+
+TODO waiting for refactoring
