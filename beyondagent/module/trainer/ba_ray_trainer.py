@@ -908,7 +908,7 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
                             task_id=test_gen_batch.non_tensor_batch["extras"][i]["task_id"],
                             query=test_gen_batch.non_tensor_batch["extras"][i]['new_query'],
                             env_type=self.config.env_service.env_type,
-                            # open_query=test_gen_batch.non_tensor_batch["extras"][i]['open_query'], # avoid potential bugs
+                            open_query=test_gen_batch.non_tensor_batch["extras"][i]['open_query'],
                             # evaluator=gen_batch.non_tensor_batch['extras'][i]['evaluator'], # avoid potential bugs
                          ) for i in range(len(test_gen_batch))]
                 print("=" * 10 + "start validate rollout" + "=" * 10)
