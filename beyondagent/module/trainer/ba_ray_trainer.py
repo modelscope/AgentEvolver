@@ -534,7 +534,7 @@ class BeyondAgentRayPPOTrainer(RayPPOTrainer):
             num_loaded_val_tasks = 0
             if 'val_on_test' in os.environ.get("DEBUG_ARG",'') or (self.config.data.val_type == 'test_normal' and self.config.env_service.env_type == "appworld"):
                 logger.warning("using test_normal as val dataset")
-                self.val_task_manager.load_tasks_from_environment(env_client,env_type=self.config.env_service.env_type,split="test_normal")
+                num_loaded_val_tasks += self.val_task_manager.load_tasks_from_environment(env_client,env_type=self.config.env_service.env_type,split="test_normal")
             else:
                 for split in ['val','dev']:
                     try:
