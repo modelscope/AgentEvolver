@@ -36,9 +36,9 @@ improve their capabilities, aiming for efficient, cost-effective, and continuous
 
 🧠 Three **Self-Evolving Mechanisms** from Environment to Policy:
 
-- **Automatic Task Generation (Self-Questioning)** – Explore the environment and autonomously create diverse tasks, eliminating costly manual dataset construction.  
-- **Experience-guided Exploration (Self-Navigating)** – Summarize and reuse cross-task experience, guiding higher-quality rollouts and improving exploration efficiency.  
-- **Attribution-based Credit Assignment (Self-Attributing)** – Process long trajectories to uncover the causal contribution of intermediate steps, enabling fine-grained and efficient policy optimization.  
+- **Automatic Task Generation (Self-Questioning)** – Explore the environment and autonomously create diverse tasks, eliminating costly manual dataset construction.
+- **Experience-guided Exploration (Self-Navigating)** – Summarize and reuse cross-task experience, guiding higher-quality rollouts and improving exploration efficiency.
+- **Attribution-based Credit Assignment (Self-Attributing)** – Process long trajectories to uncover the causal contribution of intermediate steps, enabling fine-grained and efficient policy optimization.
 
 
 
@@ -51,9 +51,9 @@ AgentEvolver adopts a service-oriented dataflow architecture, seamlessly integra
 </p>
 
 
-- **Environment Compatibility** – Standardized interfaces for seamless integration with a wide range of external environments and tool APIs.  
-- **Flexible Context Manager** – Built-in utilities for managing multi-turn contexts and complex interaction logic, supporting diverse deployment scenarios.  
-- **Modular & Extensible Architecture** – Decoupled components allow easy customization, secondary development, and future algorithm upgrades.  
+- **Environment Compatibility** – Standardized interfaces for seamless integration with a wide range of external environments and tool APIs.
+- **Flexible Context Manager** – Built-in utilities for managing multi-turn contexts and complex interaction logic, supporting diverse deployment scenarios.
+- **Modular & Extensible Architecture** – Decoupled components allow easy customization, secondary development, and future algorithm upgrades.
 
 
 
@@ -95,7 +95,7 @@ conda create -n appworld python=3.11 -y
 conda activate appworld
 # 🆙 make sure our pip is ready
 pip install --upgrade pip setuptools packaging -i https://mirrors.aliyun.com/pypi/simple/
-pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --no-deps --prerelease=allow
+pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --no-deps
 pip install -e external/verl -i https://mirrors.aliyun.com/pypi/simple/
 pip install --verbose flash-attn==2.7.4.post1 ring-flash-attn -i https://mirrors.aliyun.com/pypi/simple/ --no-deps --no-build-isolation
 ```
@@ -110,6 +110,8 @@ cd env_service/environments/appworld && bash setup.sh
 ```
 
 ### Step 3. Begin Training! 🚀 🚀
+
+Using AgentEvoler launcher to start environment, log dashboard and training process altogether. Refer to [docs/launcher.md](docs/launcher.md) for more launcher information.
 
 ```bash
 python launcher.py --conf examples/self-question-attr.yaml --with-appworld --with-logview
