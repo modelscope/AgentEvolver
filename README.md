@@ -87,46 +87,14 @@ Performance on two benchmarks. Columns show avg@8 and best@8 for each benchmark,
 ## 🚀 Quick Start
 ### Step 1. Basic Dependency Installation
 
-First, clone all submodule.
-```bash
-git submodule update --init external/verl
-```
+Make sure you have **conda** and **cuda toolkit** installed.
 
-Then, set up the training environment, choose between `uv` and `conda`.
-
-<details>
-<summary>🛠️ Set up environment with uv (Click to read detail)</summary>
+Then, set up the training environment by running the script
 
 ```bash
-# 🧰 setup uv (you can also choose conda if you prefer, but conda is too slow)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv --python=3.11 # If this step is slow, add ENV variable: UV_PYTHON_INSTALL_MIRROR="https://gh-proxy.com/https://github.com/astral-sh/python-build-standalone/releases/download"
-source .venv/bin/activate
-# 🌱 clone our verl branch
-git submodule update --init external/verl
-# 🆙 make sure our pip is ready
-uv pip install --upgrade pip setuptools packaging -i https://mirrors.aliyun.com/pypi/simple/
-uv pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --no-deps --prerelease=allow
-uv pip install -e external/verl -i https://mirrors.aliyun.com/pypi/simple/
-# ✨ finally, install flash attention (must be installed at last, need to connect to github)
-uv pip install --verbose flash-attn==2.7.4.post1 ring-flash-attn -i https://mirrors.aliyun.com/pypi/simple/ --no-deps --no-build-isolation
+bash install.sh
 ```
 
-</details>
-<details>
-<summary>🛠️ Set up environment with conda (Click to read detail)</summary>
-
-```bash
-conda create -n appworld python=3.11 -y
-conda activate appworld
-# 🆙 make sure our pip is ready
-pip install --upgrade pip setuptools packaging -i https://mirrors.aliyun.com/pypi/simple/
-pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --no-deps
-pip install -e external/verl -i https://mirrors.aliyun.com/pypi/simple/
-pip install --verbose flash-attn==2.7.4.post1 ring-flash-attn -i https://mirrors.aliyun.com/pypi/simple/ --no-deps --no-build-isolation
-```
-
-</details>
 
 ### Step 2. Setup Env-Service (Appworld as example)
 The script below sets up an environment for appworld. For other environment setup, refer to [docs/guidelines/env_service.md](docs/guidelines/env_service.md) 📄

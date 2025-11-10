@@ -208,3 +208,4 @@ xgrammar==0.1.18
 xxhash==3.5.0
 yarl==1.20.1
 zipp==3.23.0
+verl @ git+https://gh-proxy.com/https://github.com/volcengine/verl.git@8e9e73723fd1cc729bedb3bbcf915060afbda91d
