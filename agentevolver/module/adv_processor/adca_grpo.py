@@ -28,17 +28,17 @@ class PRMHyper:
         orm_distribution (str): ORM distribution method, either "last_step" or "all_steps".
         enable_length_normalization (bool): Whether to enable length normalization.
     """
-    # 权重：一致性步的权重大，不一致性步的权重小（用于 allocation）
+    # Weights: higher weight for consistent steps, lower weight for inconsistent steps (used for allocation)
     consistent_scale: float = 1.0
-    pos_unconsistent_scale: float = 0.2   # 成功轨迹里的 BAD 步权重
-    neg_unconsistent_scale: float = 0.2   # 失败轨迹里的 GOOD 步权重
+    pos_unconsistent_scale: float = 0.2   # Weight for BAD steps in successful trajectories
+    neg_unconsistent_scale: float = 0.2   # Weight for GOOD steps in failed trajectories
     eps: float = 1e-8
-    do_batch_norm: bool = True          # 是否做组内 z-score（按 step 级，allocation/decouple 会用到）
-    equal_trajectory_weight: bool = True  # True=每条轨迹等权（GRPO）；False=把所有 step 拉平成一个大样本（GSPO）
-    fix_base: float = 0.2                 # fix 方案的基础幅度（good=+base, bad=-base）
-    alpha: float = 1.0                   # PRM权重平衡系数
-    orm_distribution: str = "last_step"   # ORM分配方式："last_step" 或 "all_steps"
-    enable_length_normalization: bool = False  # 是否启用长度正则化（除以sqrt(K)）
+    do_batch_norm: bool = True          # Whether to perform group-wise z-score (at step level, used by allocation/decouple)
+    equal_trajectory_weight: bool = True  # True=equal weight per trajectory (GRPO); False=flatten all steps into one large sample (GSPO)
+    fix_base: float = 0.2                 # Base magnitude for fix scheme (good=+base, bad=-base)
+    alpha: float = 1.0                   # PRM weight balance coefficient
+    orm_distribution: str = "last_step"   # ORM distribution method: "last_step" or "all_steps"
+    enable_length_normalization: bool = False  # Whether to enable length normalization (divide by sqrt(K))
 
 def _ensure_tensor(x, device, dtype=None):
     """
@@ -53,11 +53,11 @@ def _ensure_tensor(x, device, dtype=None):
         torch.Tensor: The input converted to a tensor with the specified device and data type.
     """
     if torch.is_tensor(x):
-        t = x.to(device=device)  # ⭐ Convert the tensor to the specified device
+        t = x.to(device=device)
         if dtype is not None:
             t = t.to(dtype)
         return t
-    return torch.as_tensor(x, device=device, dtype=dtype)  # ⭐ Convert the input to a tensor
+    return torch.as_tensor(x, device=device, dtype=dtype)
 
 def _num_steps_from_step_ids(step_ids_row: torch.Tensor) -> int:
     if step_ids_row.numel() == 0:
@@ -85,9 +85,9 @@ def _align_flags(flags: List[bool], K: int, is_success: bool) -> List[bool]:
         return list(flags)
     default_flag = True if is_success else False
     if len(flags) < K:
-        return list(flags) + [default_flag] * (K - len(flags))  # ⭐ Pad the list with the default value
+        return list(flags) + [default_flag] * (K - len(flags))
     else:
-        return list(flags[:K])  # ⭐ Truncate the list to K elements
+        return list(flags[:K])
 
 def _group_zscore_on_steps(
     step_rewards_raw: List[List[float]],
@@ -120,7 +120,7 @@ def _group_zscore_on_steps(
 
     for _, idxs in g2idx.items():
         if hyper.equal_trajectory_weight:
-            # === 轨迹等权：先均值的均值，再均方差的均值 ===
+            # === Equal trajectory weight: mean of means first, then mean of variances ===
             n_traj = 0
             mu_acc = 0.0
             for i in idxs:
@@ -128,13 +128,13 @@ def _group_zscore_on_steps(
                 if not ri:
                     continue
                 n_traj += 1
-                # 轨迹均值累加（等权）
+                # Accumulate trajectory means (equal weight)
                 mu_acc += (math.fsum(ri) / len(ri))
             if n_traj == 0:
                 mu_g, sd_g = 0.0, 1.0
             else:
                 mu_g = mu_acc / n_traj
-                # 组方差 = 轨迹内围绕 mu_g 的均方差，再对轨迹做等权平均
+                # Group variance = mean squared deviation around mu_g within trajectories, then equal-weighted average across trajectories
                 second_moments_sum = 0.0
                 for i in idxs:
                     ri = step_rewards_raw[i]
@@ -144,10 +144,10 @@ def _group_zscore_on_steps(
                 var_g = (second_moments_sum / n_traj) if n_traj > 0 else 0.0
                 sd_g = math.sqrt(var_g + eps)
         else:
-            # === 拉平：两遍流式统计（避免 flat 列表与 tensor 转换的巨大开销）===
+            # === Flatten: two-pass streaming statistics (to avoid huge overhead of converting flat lists and tensors) ===
             total_cnt = 0
             total_sum = 0.0
-            # pass1: 统计全组总步数与总和 → 均值
+            # pass1: count total steps and sum across the group → mean
             for i in idxs:
                 ri = step_rewards_raw[i]
                 if not ri:
@@ -159,7 +159,7 @@ def _group_zscore_on_steps(
                 mu_g, sd_g = 0.0, 1.0
             else:
                 mu_g = total_sum / total_cnt
-                # pass2: 累加二阶偏差 → population variance（与 unbiased=False 对齐）
+                # pass2: accumulate second-order deviations → population variance (aligned with unbiased=False)
                 M2 = 0.0
                 for i in idxs:
                     ri = step_rewards_raw[i]
@@ -170,14 +170,13 @@ def _group_zscore_on_steps(
                 sd = math.sqrt(var)
                 sd_g = sd if sd >= eps else eps
 
-        inv = 1.0 / (sd_g + 1e-12)  # ⭐ Calculate the inverse of the standard deviation to avoid division by zero
+        inv = 1.0 / (sd_g + 1e-12)
         for i in idxs:
             ri = step_rewards_raw[i]
             if not ri:
                 step_rewards_std[i] = []
             else:
-                # 与原逻辑一致：按组统计量逐步标准化
-                step_rewards_std[i] = [float((x - mu_g) * inv) for x in ri]  # ⭐ Standardize the step rewards using the group mean and inverse standard deviation
+                step_rewards_std[i] = [float((x - mu_g) * inv) for x in ri]
 
     return step_rewards_std
 
@@ -206,7 +205,7 @@ def _build_allocation(
     """
     B = step_ids.size(0)
 
-    # ---------- 工具 ----------
+    # ---------- Utility functions ----------
     def _p95(vals):
         if not vals:
             return 0.0
@@ -214,98 +213,97 @@ def _build_allocation(
         k = int(round(0.95 * (len(s) - 1)))
         return float(s[k])
 
-    mean_eps = getattr(hyper, "zscore_mean_tol", 0.05)  # 组内均值容差
-    std_tol  = getattr(hyper, "zscore_std_tol", 0.2)    # std 允许偏离 1 的幅度 => 区间 [1-std_tol, 1+std_tol]
+    mean_eps = getattr(hyper, "zscore_mean_tol", 0.05)  # Tolerance for group-wise mean
+    std_tol  = getattr(hyper, "zscore_std_tol", 0.2)    # Allowed deviation of std from 1 => interval [1-std_tol, 1+std_tol]
     small_mag_threshold = getattr(hyper, "small_mag_threshold", 0.05)
 
-    # ---- 第一阶段：生成原始PRM奖励（一致性权重瓜分，逐轨迹奖励和 = ORM符号）----
+    # ---- Stage 1: Generate raw PRM rewards (consistent weight allocation, per-trajectory reward sum = ORM sign) ----
     step_rewards_raw: List[List[float]] = []
 
-    # 监控：权重占比 / 退化计数 / 前置一致性不变量
+    # Monitoring: weight ratios / degenerate count / pre-normalization consistency invariants
     unit_weights: List[float] = []
     pos_consistent_shares: List[float] = []
     neg_consistent_shares: List[float] = []
     degenerate_total_w_count = 0
     pre_norm_sign_agree_flags: List[float] = []
 
-    # 多数派一致性（基于 PRM 标注）
+    # Majority consistency (based on PRM annotations)
     pos_major_good = pos_cnt = 0
     neg_major_bad  = neg_cnt = 0
 
-    # 记录 flags 供后续 r_norm 计算 GAP
+    # Cache flags for subsequent r_norm GAP calculation
     flags_cache: List[List[bool]] = []
 
     for i in range(B):
-        # 获取当前轨迹的step数量
+        # Get the number of steps in the current trajectory
         K = _num_steps_from_step_ids(step_ids[i])
         if K == 0:
             step_rewards_raw.append([]); flags_cache.append([]); continue
 
-        # 根据ORM分数符号确定轨迹类型和权重分配策略
+        # Determine trajectory type and weight allocation strategy based on ORM score sign
         raw_orm = float(orm_scores[i].item())
         is_success = bool(get_positive_mask(raw_orm, threshold=0.5))
 
-        # 对齐 flags
+        # Align flags
         flags_i = _align_flags(step_flags[i] if i < len(step_flags) else [], K, is_success)
         flags_cache.append(flags_i)
 
-        # GOOD/BAD 数
+        # Count GOOD/BAD steps
         n_g = sum(1 for f in flags_i if f)
         n_b = K - n_g
 
-        # 一致/不一致权重
+        # Consistent/inconsistent weights
         if is_success:
-            # 成功轨迹：一致性步骤(GOOD)权重高，不一致性步骤(BAD)权重低
+            # Successful trajectory: consistent steps (GOOD) have higher weight, inconsistent steps (BAD) have lower weight
             w_g, w_b = hyper.consistent_scale, hyper.pos_unconsistent_scale
             sgn = +1.0
         else:
-            # 失败轨迹：一致性步骤(BAD)权重低，不一致性步骤(GOOD)权重高
+            # Failed trajectory: consistent steps (BAD) have lower weight, inconsistent steps (GOOD) have higher weight
             w_g, w_b = hyper.neg_unconsistent_scale, hyper.consistent_scale
             sgn = -1.0
 
-        # 权重归一化：确保轨迹总奖励等于ORM符号
+        # Weight normalization: ensure trajectory total reward equals ORM sign
         total_w = n_g * w_g + n_b * w_b
         if total_w <= hyper.eps:
             unit = 0.0
             degenerate_total_w_count += 1
         else:
-            unit = 1.0 / total_w  # ⭐ Normalize the weights to ensure the total reward equals the ORM sign
+            unit = 1.0 / total_w
         unit_weights.append(unit)
 
-        # 轨迹 raw 奖励（sum == sgn 或退化为 0）
+        # Trajectory raw rewards (sum == sgn or degenerate to 0)
         r_raw = [sgn * (w_g * unit) if f else sgn * (w_b * unit) for f in flags_i]
         step_rewards_raw.append([float(x) for x in r_raw])
 
-        # 监控：一致性权重占比（pos: GOOD 一致；neg: BAD 一致）
+        # Monitoring: consistent weight ratio (pos: GOOD consistent; neg: BAD consistent)
         if total_w > hyper.eps:
             if is_success:
                 pos_consistent_shares.append((n_g * w_g) / total_w)
             else:
                 neg_consistent_shares.append((n_b * w_b) / total_w)
 
-        # 监控：pre-norm 不变量（sum(r_raw) 与 ORM 符号应一致）
+        # Monitoring: pre-norm invariant (sum(r_raw) should be consistent with ORM sign)
         raw_sum = sum(r_raw)
         # is_raw_sum_positive = get_positive_mask(raw_sum, threshold=0.0)
         raw_orm_sign = 1.0 if is_success else -1.0
         pre_norm_sign_agree_flags.append(1.0 if (raw_sum * raw_orm_sign) > 0 else 0.0)
 
-        # 多数派一致性（PRM 标注 vs ORM 方向）
-        is_good_majority = (n_g > n_b) # 增加一个可读的布尔变量
+        # Majority consistency (PRM annotation vs ORM direction)
+        is_good_majority = (n_g > n_b) # Add a readable boolean variable
         if is_success:
             pos_cnt += 1
             if is_good_majority:
                 pos_major_good += 1
         else: # not is_success
             neg_cnt += 1
-            if not is_good_majority: # not (n_g > n_b) 等价于 n_b >= n_g
+            if not is_good_majority: # not (n_g > n_b) is equivalent to n_b >= n_g
                 neg_major_bad += 1
 
 
-    # ---- 第二阶段：组内 z-score 标准化（获得真正的优势函数）----
-    # 使用 _group_zscore_on_steps 函数进行标准化
-    r_norm = _group_zscore_on_steps(step_rewards_raw, group_ids, hyper)  # ⭐ Perform group-wise z-score normalization on step rewards
+    # ---- Stage 2: Group-wise z-score normalization (to obtain the true advantage function) ----
+    r_norm = _group_zscore_on_steps(step_rewards_raw, group_ids, hyper)
 
-    # 监控：组内均值/方差（按 group 聚合所有 step）
+    # Monitoring: group-wise mean/variance (aggregate all steps by group)
     gid_list = group_ids.view(-1).tolist()
     group_vals: Dict[int, List[float]] = {}
     all_abs_rnorm: List[float] = []
@@ -332,7 +330,7 @@ def _build_allocation(
     r_norm_group_mean_abs_p95 = _p95(group_mean_abs) if group_mean_abs else 0.0
     r_norm_group_std_p95 = _p95(group_std) if group_std else 0.0
 
-    # 监控：GOOD/BAD 的 r_norm 可分性（按 ORM 正负分别度量）
+    # Monitoring: r_norm separability of GOOD/BAD (measured separately by ORM positive/negative)
     gap_pos_list = []
     gap_neg_list = []
     for i in range(B):
@@ -354,13 +352,13 @@ def _build_allocation(
     good_bad_rnorm_gap_pos = float(torch.tensor(gap_pos_list).mean().item()) if gap_pos_list else 0.0
     good_bad_rnorm_gap_neg = float(torch.tensor(gap_neg_list).mean().item()) if gap_neg_list else 0.0
 
-    # 监控：小幅度比例（是否被稀释）
+    # Monitoring: small magnitude ratio (whether diluted)
     if all_abs_rnorm:
         rnorm_small_mag_ratio = float(sum(1 for x in all_abs_rnorm if x < small_mag_threshold) / len(all_abs_rnorm))
     else:
         rnorm_small_mag_ratio = 0.0
 
-    # ---------- 第三阶段：组内标准化 ORM 并叠加到 r_norm（与 decouple 一致的分配策略） ----------
+    # ---------- Stage 3: Group-wise normalize ORM and overlay on r_norm (allocation strategy consistent with decouple) ----------
     alpha = getattr(hyper, "alpha", 1.0)
     orm_distribution = getattr(hyper, "orm_distribution", "last_step")
 
@@ -384,7 +382,7 @@ def _build_allocation(
                 orm_scores_std[i] = float((orm_list[i] - m.item()) / denom)
 
     combined_rewards: List[List[float]] = []
-    # 监控：ORM/PRM 主导度 & 后置一致性
+    # Monitoring: ORM/PRM dominance & post-normalization consistency
     per_traj_attr_abs_sum = []
     per_traj_out_abs_sum  = []
     per_traj_out_last_abs = []
@@ -397,7 +395,7 @@ def _build_allocation(
         K = len(steps_i)
         ostd = orm_scores_std[i]
 
-        # 组合
+        # Combination
         if orm_distribution == "last_step":
             arr = [alpha * x for x in steps_i]
             arr[-1] = arr[-1] + ostd
@@ -408,20 +406,20 @@ def _build_allocation(
 
         combined_rewards.append([float(v) for v in arr])
 
-        # 监控：主导度（与 decouple 对齐）
+        # Monitoring: dominance (aligned with decouple)
         a_abs = sum(abs(alpha * x) for x in steps_i)          # α * Σ|r_norm|
         if orm_distribution == "last_step":
-            o_abs = abs(ostd)                                 # Σ|ORM|（last_step 模式）
+            o_abs = abs(ostd)                                 # Σ|ORM| (last_step mode)
             o_last = abs(ostd)
         else:
-            o_abs = K * abs(ostd)                             # all_steps：每步都有同一 orm_std
+            o_abs = K * abs(ostd)                             # all_steps: each step has the same orm_std
             o_last = abs(ostd)
 
         per_traj_attr_abs_sum.append(float(a_abs))
         per_traj_out_abs_sum.append(float(o_abs))
         per_traj_out_last_abs.append(float(o_last))
 
-        # 后置一致性：∑(combined_step_reward) vs 原始 ORM 符号
+        # Post-normalization consistency: ∑(combined_step_reward) vs original ORM sign
         is_orm_positive = get_positive_mask(float(orm_scores[i].item()), threshold=0.5)
         is_sum_positive = get_positive_mask(sum(arr), threshold=0.0)
         signs_agree = (is_sum_positive == is_orm_positive)
@@ -432,57 +430,57 @@ def _build_allocation(
     shares = []
     for a_abs, o_last in zip(per_traj_attr_abs_sum, per_traj_out_last_abs):
         denom = o_last + a_abs + 1e-12
-        shares.append(float(o_last / denom))  # ⭐ Calculate the share of the last step's ORM score
+        shares.append(float(o_last / denom))
     outcome_share_last_mean = float(sum(shares) / max(1, len(shares)))
 
     alpha_ratios = []
     for a_abs, o_abs in zip(per_traj_attr_abs_sum, per_traj_out_abs_sum):
         denom = o_abs + 1e-12
-        alpha_ratios.append(float(a_abs / denom))  # ⭐ Calculate the ratio of attribute absolute sum to ORM absolute sum
+        alpha_ratios.append(float(a_abs / denom))
     alpha_effective = float(sum(alpha_ratios) / max(1, len(alpha_ratios)))
 
     sum_step_reward_sign_agree = float(sum(sum_step_reward_sign_agree_flags) / max(1, len(sum_step_reward_sign_agree_flags)))
 
-    # post-norm 不变量（z-score 后按理 sum≈0）
+    # post-norm invariant (after z-score, sum should be approximately 0)
     post_norm_sum_vals = []
     for vals in r_norm:
         if vals:
             post_norm_sum_vals.append(sum(vals))
     post_norm_sum_mean = float(torch.tensor(post_norm_sum_vals, dtype=torch.float32).mean().item()) if post_norm_sum_vals else 0.0
 
-    # 多数派一致性（与 decouple 指标对齐，便于横向比较）
+    # Majority consistency (aligned with decouple metrics for horizontal comparison)
     pos_rate = float(pos_major_good / max(1, pos_cnt))
     neg_rate = float(neg_major_bad  / max(1, neg_cnt))
 
-    # ---------- 汇总指标 ----------
+    # ---------- Summary metrics ----------
     alloc_stats = {
-        # §1 权重分配是否按设计工作
+        # §1 Whether weight allocation works as designed
         "prm_allocation/consistent_weight_share_pos": float(torch.tensor(pos_consistent_shares).mean().item()) if pos_consistent_shares else 0.0,
         "prm_allocation/consistent_weight_share_neg": float(torch.tensor(neg_consistent_shares).mean().item()) if neg_consistent_shares else 0.0,
         "prm_allocation/unit_weight_mean": float(torch.tensor(unit_weights).mean().item()) if unit_weights else 0.0,
         "prm_allocation/unit_weight_p95": _p95(unit_weights),
         "prm_allocation/degenerate_total_w_count": float(degenerate_total_w_count),
 
-        # §2 z-score 有效性
+        # §2 z-score effectiveness
         "prm_allocation/r_norm_group_mean_abs_p95": r_norm_group_mean_abs_p95,
         "prm_allocation/r_norm_group_std_p95": r_norm_group_std_p95,
         "prm_allocation/zscore_bad_group_cnt": float(zscore_bad_group_cnt),
 
-        # §3 PRM 标注与 r_norm 的关系
+        # §3 Relationship between PRM annotations and r_norm
         "prm_allocation/good_bad_rnorm_gap_pos": good_bad_rnorm_gap_pos,
         "prm_allocation/good_bad_rnorm_gap_neg": good_bad_rnorm_gap_neg,
         "prm_allocation/rnorm_small_mag_ratio": rnorm_small_mag_ratio,
 
-        # §4 不变量检查
+        # §4 Invariant checks
         "prm_allocation/pre_norm_sum_sign_agree": float(sum(pre_norm_sign_agree_flags) / max(1, len(pre_norm_sign_agree_flags))),
         "prm_allocation/post_norm_sum_mean": post_norm_sum_mean,
 
-        # §6 （叠加 ORM 后的）主导度与一致性
+        # §6 Dominance and consistency (after overlaying ORM)
         "prm_allocation/outcome_share_last_mean": outcome_share_last_mean,
         "prm_allocation/alpha_effective": alpha_effective,
         "prm_allocation/sum_step_reward_sign_agree": sum_step_reward_sign_agree,
 
-        # 多数派一致性（和 decouple 对齐，便于横向比较）
+        # Majority consistency (aligned with decouple for horizontal comparison)
         "prm_allocation/pos_traj_prm_good_majority_rate": pos_rate,
         "prm_allocation/neg_traj_prm_bad_majority_rate": neg_rate,
     }
@@ -579,20 +577,20 @@ def _build_decouple(
         prm_std = prm_rewards_std[i]
         orm_std = orm_scores_std[i]
         K = len(prm_std)
-        # --- PRM/ORM 分布统计采样 ---
+        # --- PRM/ORM distribution statistics sampling ---
         flat_attr_vals.extend(prm_std)
         out_vals.append(float(orm_std))
 
-        # 🔥 关键区别：是否计算长度正则化因子
+        # 🔥 Key difference: whether to calculate length normalization factor
         if enable_length_normalization:
             length_scale = 1.0 / math.sqrt(max(K, 1))
-            print(f"轨迹 {i}: 长度={K}, 长度缩放因子=1/sqrt({K})={length_scale:.4f}")
+            print(f"Trajectory {i}: length={K}, length scale factor=1/sqrt({K})={length_scale:.4f}")
         else:
             length_scale = 1.0
-            print(f"轨迹 {i}: 长度={K}, 无长度正则化 (缩放因子=1.0)")
+            print(f"Trajectory {i}: length={K}, no length normalization (scale factor=1.0)")
 
         combined = []
-        # 逐步构造 combined_step_reward，并计算 per-traj 的各种和
+        # Construct combined_step_reward step by step, and calculate various sums for per-traj
         attr_abs_sum = 0.0  # α * Σ_j |prm_std[j]|
         for j, prm_reward in enumerate(prm_std):
             if orm_distribution == "last_step":
@@ -611,30 +609,30 @@ def _build_decouple(
             combined.append(float(final_reward))
             attr_abs_sum += abs(alpha * prm_reward)
 
-        # ORM 的绝对贡献（逐轨迹）
+        # Absolute contribution of ORM (per trajectory)
         if orm_distribution == "last_step":
-            out_abs_sum = abs(orm_std)               # 只在最后一步加
+            out_abs_sum = abs(orm_std)               # Only added at the last step
             out_last_abs = abs(orm_std)
         else:  # "all_steps"
-            out_abs_sum = K * abs(orm_std)           # 每步都加同一个 orm_std
+            out_abs_sum = K * abs(orm_std)           # all_steps: each step has the same orm_std
             out_last_abs = abs(orm_std)
 
         per_traj_attr_abs_sum.append(float(attr_abs_sum))
         per_traj_out_abs_sum.append(float(out_abs_sum))
         per_traj_out_last_abs.append(float(out_last_abs))
 
-        # ∑(combined_step_reward) 与「原始」ORM 符号一致性（不使用 z-score 后的符号）
+        # ∑(combined_step_reward) consistency with the "original" ORM sign (not using z-score sign)
         is_orm_positive = get_positive_mask(float(orm_full_scores[i].item()), threshold=0.5)
         combined_sum = sum(combined)
         is_sum_positive = get_positive_mask(combined_sum, threshold=0.0)
         signs_agree = (is_sum_positive == is_orm_positive)
         sum_sign_agree_flags.append(float(signs_agree))
 
-        # PRM 标注在正/负轨迹中的“多数派”一致性
+        # "Majority" consistency of PRM annotations in positive/negative trajectories
         flags_i = _align_flags(step_flags[i] if i < len(step_flags) else [], K, is_success=is_orm_positive)
         n_g = sum(1 for f in flags_i if f)
         n_b = K - n_g
-        is_good_majority = (n_g > n_b) # 增加可读变量
+        is_good_majority = (n_g > n_b) # Add a readable variable
         if is_orm_positive:
             pos_cnt += 1
             if is_good_majority:
@@ -646,8 +644,8 @@ def _build_decouple(
 
         combined_rewards.append(combined)
 
-    # === Decouple 统计指标 ===
-    # 1) PRM/ORM 标准化后分布的 mean/std
+    # === Decouple statistics ===
+    # 1) mean/std of PRM/ORM normalized distribution
     if len(flat_attr_vals) == 0:
         attr_mean, attr_std = 0.0, 0.0
     else:
@@ -662,24 +660,24 @@ def _build_decouple(
         out_mean = float(t_out.mean().item())
         out_std  = float(t_out.std(unbiased=False).item())
 
-    # 2) outcome_share_last_mean：|ORM(最后一步)| / (|ORM(最后一步)| + α * Σ|PRM_std|)
+    # 2) outcome_share_last_mean: |ORM(last step)| / (|ORM(last step)| + α * Σ|PRM_std|)
     shares = []
     for a_abs, o_last in zip(per_traj_attr_abs_sum, per_traj_out_last_abs):
         denom = o_last + a_abs + 1e-12
-        shares.append(float(o_last / denom))  # ⭐ 计算每条轨迹中 ORM 最后一步的贡献比例
+        shares.append(float(o_last / denom))
     outcome_share_last_mean = float(sum(shares) / max(1, len(shares)))
 
-    # 3) alpha_effective：α * Σ|PRM_std| / (Σ|ORM|)，按轨迹求比再做均值
+    # 3) alpha_effective: α * Σ|PRM_std| / (Σ|ORM|), calculate ratio per trajectory then average
     alpha_ratios = []
     for a_abs, o_abs, i in zip(per_traj_attr_abs_sum, per_traj_out_abs_sum, range(len(per_traj_out_abs_sum))):
         denom = o_abs + 1e-12
-        alpha_ratios.append(float(a_abs / denom))  # ⭐ 计算每条轨迹中 PRM 和 ORM 的相对贡献
+        alpha_ratios.append(float(a_abs / denom))
     alpha_effective = float(sum(alpha_ratios) / max(1, len(alpha_ratios)))
 
-    # 4) ∑(combined_step_reward) 与 原始 ORM 符号一致的比例
-    sum_step_reward_sign_agree = float(sum(sum_sign_agree_flags) / max(1, len(sum_sign_agree_flags)))  # ⭐ 计算综合奖励总和与原始 ORM 符号一致的比例
+    # 4) Proportion of ∑(combined_step_reward) consistent with the original ORM sign
+    sum_step_reward_sign_agree = float(sum(sum_sign_agree_flags) / max(1, len(sum_sign_agree_flags)))
 
-    # 5) PRM 标注与 ORM 的“全局一致性”（多数派）
+    # 5) "Global consistency" of PRM annotations with ORM (majority)
     pos_rate = float(pos_major_good / max(1, pos_cnt))
     neg_rate = float(neg_major_bad  / max(1, neg_cnt))
 
@@ -695,7 +693,7 @@ def _build_decouple(
         "prm/decouple/neg_traj_prm_bad_majority_rate": neg_rate,
     }
 
-    # 注意：返回 (rewards, stats) 二元组（仅 decouple 如此），其余方案仍然只返回 rewards
+    # Note: Return (rewards, stats) tuple (only decouple does this), other schemes still return rewards only
     return combined_rewards, decouple_stats
 # =========================
 # Step → Token broadcast + suffix-sum
@@ -716,7 +714,7 @@ def suffix_sum_on_steps(step_rewards: List[List[float]]) -> List[List[float]]:
         if not r:
             adv.append([]); continue
         t = torch.tensor(r, dtype=torch.float32)
-        s = torch.flip(torch.cumsum(torch.flip(t, dims=[0]), dim=0), dims=[0])  # ⭐ Compute the suffix sum by flipping, cumulatively summing, and then flipping back
+        s = torch.flip(torch.cumsum(torch.flip(t, dims=[0]), dim=0), dims=[0])
         adv.append([float(x) for x in s])
     return adv
 
@@ -745,12 +743,12 @@ def broadcast_step_adv_to_tokens(
     for i in range(B):
         if not step_adv[i]:
             continue
-        adv_i = torch.tensor(step_adv[i], device=device, dtype=torch.float32)  # ⭐ Convert step advantage values to a tensor
+        adv_i = torch.tensor(step_adv[i], device=device, dtype=torch.float32)
         sid_row = step_ids[i]
         valid = sid_row >= 0
         if torch.any(valid):
             sids = sid_row[valid]
-            out[i, valid] = adv_i[sids]  # ⭐ Assign advantage values to the corresponding token positions
+            out[i, valid] = adv_i[sids]
     return out
 
 # =========================
@@ -758,8 +756,8 @@ def broadcast_step_adv_to_tokens(
 # =========================
 
 def compute_prm_grpo_advantages(
-    batch,                          # DataProto 或兼容结构：batch.batch[...] 可索引
-    step_flags: List[List[bool]],   # 每条轨迹的 GOOD/BAD 标志
+    batch,                          # DataProto or compatible structure: batch.batch[...] can be indexed
+    step_flags: List[List[bool]],   # GOOD/BAD flags for each trajectory
     hyper: Optional[PRMHyper] = None,
     scheme: str = "decouple",   #  "allocation" | "decouple"
 ) -> dict:
@@ -790,14 +788,14 @@ def compute_prm_grpo_advantages(
     if hyper is None:
         hyper = PRMHyper()
 
-    # ---- 1. 数据准备阶段：提取必要字段 ----
-    # 获取设备信息，确保所有张量在同一设备上
+    # ---- 1. Data preparation stage: extract necessary fields ----
+    # Get device information to ensure all tensors are on the same device
     responses = batch.batch["responses"]
     device = responses.device if torch.is_tensor(responses) else torch.as_tensor(responses).device
 
-    # 提取step_ids和group_ids，并确保数据类型正确
+    # Extract step_ids and group_ids, ensuring correct data types
     step_ids = _ensure_tensor(batch.batch["step_ids"], device=device, dtype=torch.long)      # (B, L_resp) with -1 for non-response
-    # >>> add begin: 对齐到真实响应长度 <<<
+    # >>> add begin: align to actual response length <<<
     target_L = responses.size(1)
     if step_ids.size(1) != target_L:
         if step_ids.size(1) > target_L:
@@ -811,8 +809,8 @@ def compute_prm_grpo_advantages(
     # <<< add end
     group_ids = _ensure_tensor(batch.batch["group_ids"], device=device, dtype=torch.long).view(-1)
 
-    # ---- 2. 提取token-level奖励 ----
-    # 尝试多种可能的字段名获取token-level奖励
+    # ---- 2. Extract token-level rewards ----
+    # Try multiple possible field names to get token-level rewards
     token_keys_try = ["token_level_rewards", "response_token_level_rewards", "token_rewards"]
     token_level_rewards = None
     for k in token_keys_try:
@@ -822,32 +820,32 @@ def compute_prm_grpo_advantages(
     if token_level_rewards is None:
         raise KeyError("token-level rewards not found in batch (tried keys: token_level_rewards / response_token_level_rewards / token_rewards)")
 
-    # ---- 3. ORM处理：计算ORM分数 ----
-    # 对token-level奖励求和得到轨迹级ORM分数，用于各个方案的奖励构造
+    # ---- 3. ORM processing: calculate ORM scores ----
+    # Sum token-level rewards to get trajectory-level ORM scores for reward construction in various schemes
     orm_scores = token_level_rewards.sum(dim=1)  
 
-    # ---- 4. 方案选择阶段：根据scheme选择具体的奖励构造方案 ----
+    # ---- 4. Scheme selection stage: select specific reward construction scheme based on scheme parameter ----
     extra_metrics = {}
     scheme = (scheme or "decouple").lower()
     step_rewards = None
     if scheme == "allocation":
-        # 方案2：allocation —— 一致性权重瓜分 + 组内减均值中心化
+        # Scheme 2: allocation —— consistent weight allocation + group-wise mean subtraction centering
         step_rewards, extra_metrics = _build_allocation(orm_scores, step_flags, step_ids, group_ids, hyper)
     elif scheme == "decouple":
-        # 方案4：decouple —— PRM和ORM分别标准化后组合
+        # Scheme 4: decouple —— PRM and ORM separately normalized then combined
         step_rewards, extra_metrics = _build_decouple(orm_scores, step_flags, step_ids, group_ids, hyper,)
     else:
         raise ValueError(f"Unknown PRM scheme: {scheme} (expected one of: allocation | decouple)")
 
-    # ---- 5. 优势值计算阶段：step后缀和 + 广播到token ----
-    # 对step-level奖励进行后缀和计算得到step-level优势值
+    # ---- 5. Advantage calculation stage: step suffix-sum + broadcast to tokens ----
+    # Perform suffix-sum on step-level rewards to get step-level advantage values
     step_adv = suffix_sum_on_steps(step_rewards)
     advantages = broadcast_step_adv_to_tokens(step_adv, step_ids)
 
-    # ---- 6. 结果返回阶段：构造返回字典 ----
-    # 返回token-level优势值和原始ORM分数
+    # ---- 6. Result return stage: construct return dictionary ----
+    # Return token-level advantage values and original ORM scores
     return {
-        "advantages": advantages,        # (B, L_resp) token-level优势值
-        "orm_scores": orm_scores,         # (B,) 逐条轨迹的 ±1
-        "metrics":  extra_metrics,      # ✅ 仅 decouple 会有
+        "advantages": advantages,        # (B, L_resp) token-level advantage values
+        "orm_scores": orm_scores,         # (B,) ±1 for each trajectory
+        "metrics":  extra_metrics,      # ✅ Only decouple has this
     }

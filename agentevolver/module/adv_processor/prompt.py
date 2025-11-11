@@ -2,7 +2,6 @@ import torch
 from agentevolver.module.adv_processor.candidate_prompt import sys_msg_1003, THRESHOLD
 
 
-# 写一个函数，如果THRESHOLD=0.5那么直接return score，如果THRESHOLD=0，那么 score = (score -0.5) * 2 
 def rescale_score(score: float, threshold: float = THRESHOLD) -> float:
     """
     Rescales the input score based on the specified threshold.
@@ -25,17 +24,17 @@ def rescale_score(score: float, threshold: float = THRESHOLD) -> float:
 
 def get_positive_mask(scores: torch.Tensor | float, threshold: float = THRESHOLD) -> torch.Tensor | bool:
     """
-    根据给定的阈值判断分数是否为正向。
-    这个函数可以处理单个浮点数或整个PyTorch张量。
-    用的地方：
-    1. 评估产生prompt
-    2. 评估时的统计信息决定哪些是正trajectory，哪些是负trajectory
+    Determines whether scores are positive based on the given threshold.
+    This function can handle a single float or an entire PyTorch tensor.
+    Used in:
+    1. Generating evaluation prompts
+    2. Determining which are positive trajectories and which are negative trajectories in evaluation statistics
     Args:
-        scores: 一个或一批分数。
-        threshold: 判断正向的阈值。
+        scores: A single score or a batch of scores.
+        threshold: The threshold for determining positivity.
 
     Returns:
-        一个布尔值或布尔张量，表示是否为正向。
+        A boolean value or boolean tensor indicating whether the score is positive.
     """
     return scores > threshold
 
@@ -61,51 +60,6 @@ def build_batch_adv_evaluation_prompt(
     is_pos = get_positive_mask(overall_adv)
     polarity = "positive" if is_pos else "negative"
     
-    # prompt3
-    # sys_msg = (
-    #     "You are an expert *process* reward evaluator.\n\n"
-    #     "Input has three sections:\n"
-    #     "1) OVERALL ADVANTAGE – scalar for final answer quality\n"
-    #     "2) TASK DESCRIPTION  – the user's original request\n"
-    #     "3) SOLUTION TRAJECTORY – numbered steps (ACTION, optional OBSERVATION)\n\n"
-    #     "Rules:\n"
-    #     "• If OVERALL ADVANTAGE > 0 → GOOD only if the ACTION makes the answer better; else BAD.\n"
-    #     "• If OVERALL ADVANTAGE < 0 → DEFAULT = BAD. Mark GOOD ONLY IF ALL hold:\n"
-    #     "   (A) The step explicitly DIAGNOSES a prior error/assumption, AND\n"
-    #     "   (B) The ACTION implements a concrete FIX redirecting toward the correct goal, AND\n"
-    #     "   (C) The OBSERVATION shows EVIDENCE the fix worked (e.g., auth succeeds, correct list, error disappears).\n"
-    #     "   If any of A/B/C missing → BAD. \"Reasonable attempts\" without diagnosis+evidence → BAD.\n\n"
-    #     "Always BAD when advantage < 0:\n"
-    #     "• Continuing the wrong plan, or finalising/submitting a wrong result\n"
-    #     "• Repeating the same failure class without new diagnosis/redirect\n"
-    #     "• Using unsupported/unspecified interfaces/params, or acting on unverified assumptions\n"
-    #     "• Performing irreversible ops (delete/overwrite/complete) without validating preconditions\n\n"
-    #     "Output requirement (strict): For every step you mark GOOD when advantage < 0, your Step Analysis MUST include a line starting with:\n"
-    #     "  Evidence: \"<verbatim snippet from this step's OBSERVATION>\"\n"
-    #     "If you cannot quote such evidence from this step's OBSERVATION, mark BAD.\n\n"
-    #     "Judge strictly by whether each ACTION reduces the gap to correctly solving the ORIGINAL task.\n"
-    #     "Reply ONLY in the required output format."
-    # )
-    
-    # prompt1
-    sys_msg = f"""You are an expert *process* reward evaluator.
-
-The single message you receive always contains three labelled sections:
-  1. OVERALL ADVANTAGE – a scalar summarising the final answer quality.
-  2. TASK DESCRIPTION   – the user’s original request.
-  3. SOLUTION TRAJECTORY – a numbered list of assistant steps.
-
-Evaluation rule:
-• If OVERALL ADVANTAGE is **positive (> {THRESHOLD:+.1f})**, judge each step by whether its ACTION
-  makes the overall answer *even better* than before (incremental improvement).
-• If OVERALL ADVANTAGE is **negative (≤ {THRESHOLD:+.1f})**, judge each step by whether it *actively
-  corrects the existing error*. Mark GOOD **only** when the ACTION clearly fixes or
-  moves the answer towards correctness; otherwise mark BAD.
-
-Ignore superficial politeness or formatting. Focus strictly on the technical impact
-of the ACTION (and OBSERVATION if present).
-
-Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
     
     sys_msg = f"""You are an expert *process reward evaluator*, specializing in **attributional analysis** of multi-step solution trajectories.
 
@@ -136,19 +90,10 @@ Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
 
 **OUTPUT FORMAT:** Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else.
 
-"""  # ⭐ Defines the system message with detailed evaluation rules
+"""
     def _trim(s: str) -> str:
-        """
-        Trims the input string to a maximum length, appending an ellipsis if it exceeds the limit.
-
-        Args:
-            s (str): The input string to be trimmed.
-
-        Returns:
-            str: The trimmed string, or an empty string if the input is empty.
-        """
         if not s: return ""
-        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"  # ⭐ Trims the string and appends an ellipsis if necessary
+        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"
 
     user_parts = [
         "### TASK DESCRIPTION",
@@ -216,45 +161,11 @@ def build_batch_reward_evaluation_prompt(
     is_pos = get_positive_mask(overall_adv)
     polarity = "positive" if is_pos else "negative"
     
-#     sys_msg = f"""You are an expert *process reward evaluator*, specializing in **attributional analysis** of multi-step solution trajectories.
-
-# **INPUT STRUCTURE:** The single message you receive always contains three labelled sections:
-#   1.  **TASK DESCRIPTION**   – The user's original request.
-#   2.  **SOLUTION TRAJECTORY** – A strictly numbered list of assistant steps. Each step describes an `ACTION` taken (and optionally an `OBSERVATION`).
-#   3.  **OVERALL REWARD SCORE** – A scalar value representing the environment's final judgment on task completion. **>0** indicates the task was **successfully completed**. **≤0** indicates the task **failed or was incomplete**.
-
-# **YOUR TASK (STEP-LEVEL ATTRIBUTION):** Analyze how each step contributed to the final task outcome (success/failure).
-
-# **EVALUATION RULES:**
-
-# *   **If OVERALL REWARD SCORE is POSITIVE (> {THRESHOLD:+.1f}) - SUCCESSFUL COMPLETION:**
-#     *   Mark a step as **GOOD** if it **directly advanced progress** toward successful task completion:
-#         *   Correctly implementing required functionality
-#         *   Making measurable progress on the core objective  
-#         *   Successfully handling necessary sub-tasks
-#     *   Mark a step as **BAD** if it was **counterproductive or irrelevant** to task success:
-#         *   Introducing errors or taking wrong approaches
-#         *   Wasting effort on irrelevant activities
-#         *   Making decisions that hindered overall progress
-
-# *   **If OVERALL REWARD SCORE is NON-POSITIVE (≤ {THRESHOLD:+.1f}) - TASK FAILURE:**
-#     *   Mark a step as **GOOD** **only if** it **attempted genuine error correction**:
-#         *   Identifying and diagnosing specific problems
-#         *   Implementing concrete fixes with observable improvement
-#         *   Preventing further deterioration of the situation
-#     *   Mark a step as **BAD** if it **contributed to or failed to prevent failure**:
-#         *   Continuing ineffective approaches despite warning signs
-#         *   Introducing new problems or complications  
-#         *   Missing opportunities to correct course
-
-# **FOCUS:** Judge based on **objective contribution to task completion**, not effort or good intentions.
-
-# **OUTPUT FORMAT:** Reply IN THE REQUIRED OUTPUT FORMAT and output nothing else."""
 
     sys_msg = sys_msg_1003
     def _trim(s: str) -> str:
         if not s: return ""
-        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"  # ⭐ Trims the string to the maximum allowed length
+        return s if len(s) <= max_step_chars else s[:max_step_chars] + "\n…"
 
     user_parts = [
         "### TASK DESCRIPTION",
@@ -273,7 +184,7 @@ def build_batch_reward_evaluation_prompt(
         obs = st.get("observation")
         if obs:
             block += ["<|OBSERVATION|>", _trim(obs), "<|END|>"]
-        user_parts.append("\n".join(block))  # ⭐ Adds the formatted step to the user parts
+        user_parts.append("\n".join(block))
 
     user_parts += [
         "",
@@ -296,5 +207,5 @@ def build_batch_reward_evaluation_prompt(
 
     return [
         {"role": "system", "content": sys_msg},
-        {"role": "user", "content": "\n".join(user_parts)},  # ⭐ Combines all parts into the final user message
+        {"role": "user", "content": "\n".join(user_parts)},
     ]

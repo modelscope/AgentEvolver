@@ -78,6 +78,7 @@ def apply_adca_grpo(
         global_step=global_steps,
         epoch=f"train.{epoch}.{i}",
         skip_type=getattr(prm_cfg, 'skip_type', "skip_small_adv"),
+        model_name=getattr(prm_cfg, 'model_name', "qwen-max"),
     )
 
     # --- PRM evaluation result statistics ---

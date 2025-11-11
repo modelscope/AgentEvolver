@@ -25,23 +25,23 @@ __all__ = [
 
 @dataclass
 class EvaluationTask:
-    """评估任务的数据结构 - 一次评估整个sample的所有steps"""
+    """Data structure for evaluation task - evaluates all steps of an entire sample at once"""
     sample_idx: int
     query: str
     rollout: str
-    steps: List[Dict[str, str]]  # ← 原来是 List[str]，统一为 parse_rollout_to_steps 的结构
+    steps: List[Dict[str, str]]  # ← Originally List[str], unified to the structure of parse_rollout_to_steps
     overall_score: float
 
 @dataclass
 class EvaluationResult:
-    """评估结果的数据结构 - 包含整个sample的所有step结果"""
+    """Data structure for evaluation result - contains all step results for an entire sample"""
     sample_idx: int
-    step_results: List[bool]  # 所有steps的评估结果
+    step_results: List[bool]  # Evaluation results for all steps
     response_time: float
 
 @dataclass
 class EvaluationRecord:
-    """评估记录的数据结构，用于保存到文件"""
+    """Data structure for evaluation record, used for saving to file"""
     sample_idx: int
     query: str
     rollout: str
@@ -49,7 +49,7 @@ class EvaluationRecord:
     overall_score: float
     llm_input_messages: List[Dict]
     llm_raw_output: str
-    llm_parsed_results: List[bool]  # 所有steps的解析结果
+    llm_parsed_results: List[bool]  # Parsed results for all steps
     response_time: float
     timestamp: float
     model_name: str
@@ -77,9 +77,9 @@ def _steps_struct_to_text_list(steps: List[Dict[str, str]]) -> List[str]:
         act = (st.get("action") or "").strip()
         obs = (st.get("observation") or "").strip()
         if obs:
-            out.append(f"{act}\n\n[OBSERVATION]\n{obs}")  # ⭐ Format the step with action and observation
+            out.append(f"{act}\n\n[OBSERVATION]\n{obs}")
         else:
-            out.append(act)  # ⭐ Format the step with only the action
+            out.append(act)
     return out
 
 
@@ -101,13 +101,13 @@ def parse_batch_evaluation_result(response: str, num_steps: int):
     """
     numbered = {}
     for m in re.finditer(r"Step\s+(\d+)\s+Judgment:\s*(GOOD|BAD)", response, flags=re.I):
-        numbered[int(m.group(1))] = m.group(2).upper() == "GOOD"  # ⭐ Map step numbers to their judgment (GOOD or BAD)
+        numbered[int(m.group(1))] = m.group(2).upper() == "GOOD"
     if len(numbered) == num_steps:
-        return [numbered[i] for i in range(num_steps)]  # ⭐ Return the list of judgments if all steps are matched
+        return [numbered[i] for i in range(num_steps)]
     flags = re.findall(r"\b(GOOD|BAD)\b", response.upper())
     if len(flags) >= num_steps:
-        return [flag == "GOOD" for flag in flags[:num_steps]]  # ⭐ Return the list of judgments if enough flags are found
-    raise ValueError("Could not parse evaluation result")  # ⭐ Raise an error if the result cannot be parsed
+        return [flag == "GOOD" for flag in flags[:num_steps]]
+    raise ValueError("Could not parse evaluation result")
 
 def _get_overall_advantage(advantages_tensor, mask=None):
     """
@@ -125,13 +125,13 @@ def _get_overall_advantage(advantages_tensor, mask=None):
 
     if advantages_tensor.dim() == 1:
         if mask is not None:
-            valid_advantages = advantages_tensor[mask.bool()]  # ⭐ Filter advantages using the provided mask
+            valid_advantages = advantages_tensor[mask.bool()]
             if len(valid_advantages) > 0:
                 return valid_advantages[0].item()
             else:
                 return 0.0
         else:
-            non_zero_mask = torch.abs(advantages_tensor) > 1e-8  # ⭐ Create a mask for non-zero advantage values
+            non_zero_mask = torch.abs(advantages_tensor) > 1e-8
             if non_zero_mask.any():
                 return advantages_tensor[non_zero_mask][0].item()
             else:
@@ -156,7 +156,7 @@ def _save_evaluation_record(record: EvaluationRecord, save_dir: Optional[str] = 
 
     try:
         base_save_path = Path(save_dir)
-        base_save_path.mkdir(parents=True, exist_ok=True)  # ⭐ Ensure the base save directory exists
+        base_save_path.mkdir(parents=True, exist_ok=True)
 
         if record.global_step is not None:
             step_subdir = f"step_{record.global_step:06d}"
@@ -164,7 +164,7 @@ def _save_evaluation_record(record: EvaluationRecord, save_dir: Optional[str] = 
             step_subdir = "step_unknown"
 
         step_save_path = base_save_path / step_subdir
-        step_save_path.mkdir(parents=True, exist_ok=True)  # ⭐ Ensure the step subdirectory exists
+        step_save_path.mkdir(parents=True, exist_ok=True)
 
         timestamp_str = f"{record.timestamp:.3f}".replace('.', '_')
         global_step_str = f"step{record.global_step:06d}" if record.global_step is not None else "nostep"
@@ -181,7 +181,7 @@ def _save_evaluation_record(record: EvaluationRecord, save_dir: Optional[str] = 
         }
 
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(record_dict, f, ensure_ascii=False, indent=2)  # ⭐ Write the record to the file
+            json.dump(record_dict, f, ensure_ascii=False, indent=2)
 
         print(f"[record_save] ✅ Saved sample {record.sample_idx} with {len(record.steps)} steps: {step_subdir}/{filename}")
 
@@ -196,7 +196,7 @@ async def _async_safe_query(
     messages: list[dict],
     semaphore: asyncio.Semaphore,
     max_retries: int = 200,
-    timeout_s: int = 120,         # 可调：单次请求超时阈值
+    timeout_s: int = 120,         # Adjustable: timeout threshold for single request
 ) -> str:
     """
     Asynchronously queries the LLM API with built-in retry logic for handling rate limits and other exceptions.
@@ -215,12 +215,12 @@ async def _async_safe_query(
     """
     async with semaphore:
         last_exception = None
-        # 👇 新增：用于追踪内容审核失败的计数器
+        # 👇 New addition: counter for tracking content moderation failures
         inappropriate_content_error_count = 0
 
         for attempt in range(max_retries):
             try:
-                # ---------- 普通 / thinking 模型分支 (这部分逻辑保持不变) ----------
+                # ---------- Normal / thinking model branch (this part of the logic remains unchanged) ----------
                 is_thinking_model = model.lower() in {
                     "qwq-plus",
                     "qwen3-30b-a3b-thinking-2507",
@@ -262,13 +262,13 @@ async def _async_safe_query(
                     )
                     return response.choices[0].message.content.strip()
 
-            # ---------- 统一异常处理 (重构后的逻辑) ----------
+            # ---------- Unified exception handling (refactored logic) ----------
             except Exception as e:
                 last_exception = e
                 err_msg = str(e).lower()
 
-                # 👇 1. 优先处理内容审核失败的特定错误
-                # 错误码 'data_inspection_failed' 或消息中包含 'inappropriate content'
+                # 👇 1. Prioritize handling specific content moderation failure errors
+                # Error code 'data_inspection_failed' or message contains 'inappropriate content'
                 is_content_error = isinstance(e, BadRequestError) and (
                     "data_inspection_failed" in err_msg or "inappropriate content" in err_msg
                 )
@@ -277,38 +277,38 @@ async def _async_safe_query(
                     print(f"[API Warning] Content inspection failed (attempt {inappropriate_content_error_count}/2). Error: {e}")
                     if inappropriate_content_error_count >= 2:
                         print("[API Error] ❌ Content inspection failed twice. Aborting and returning empty string.")
-                        return ""  # 满足条件，直接返回空字符串并退出函数
+                        return ""  # Condition met, directly return empty string and exit function
 
-                # 如果未到最大重试次数，则根据错误类型决定如何等待
+                # If not yet at maximum retries, decide how to wait based on error type
                 if attempt < max_retries - 1:
-                    # 👇 2. 处理速率限制错误 (用 elif 保证逻辑独立)
+                    # 👇 2. Handle rate limit errors (use elif to ensure logic independence)
                     is_rate_limit = any(
                         key in err_msg
                         for key in ["429", "rate limit", "exceeded", "limit_requests"]
                     )
                     if is_rate_limit:
-                        backoff = min(1.5 ** attempt, 60)  # 上限 60 s
+                        backoff = min(1.5 ** attempt, 60)  # Upper limit 60s
                         jitter = backoff * 0.25 * random.random()
                         wait = backoff + jitter
                         print(f"[API Retry] Rate limit (attempt {attempt+1}/{max_retries}) "
                               f"sleep {wait:.1f}s")
                         await asyncio.sleep(wait)
                     else:
-                        # 👇 3. 处理其他所有可重试的异常 (包括第一次内容审核失败)
+                        # 👇 3. Handle all other retryable exceptions (including first content moderation failure)
                         wait = min(2.0 * (attempt + 1), 15)
                         print(f"[API Retry] {type(e).__name__} (attempt {attempt+1}/{max_retries}) "
                               f"sleep {wait:.1f}s. Error: {e}")
                         await asyncio.sleep(wait)
                     
-                    continue # 继续下一次循环尝试
+                    continue # Continue to next loop iteration
                 
-                # 如果已达到最大重试次数
+                # If maximum retries reached
                 else:
                     print(f"[API Error] ❌ Max retries ({max_retries}) exceeded for error: {e}")
-                    break # 中断 for 循环
+                    break # Break the for loop
 
-        # 如果循环正常结束或被 break 中断（意味着所有重试都失败了）
-        # 注意：如果是因为内容审核失败返回 ""，代码不会执行到这里
+        # If the loop completes normally or is interrupted by break (meaning all retries failed)
+        # Note: If returning "" due to content moderation failure, code won't execute here
         print(f"[API Error] ❌ Failed after {max_retries} retries.")
         raise last_exception if last_exception else Exception("API query failed after all retries.")
 
@@ -358,7 +358,7 @@ async def _evaluate_single_sample_api(
         # 2) Call the LLM
         llm_raw_output = await _async_safe_query(
             client, model_name, messages, semaphore, max_retries
-        )  # ⭐ Asynchronously call the LLM with the constructed messages
+        )
 
         # 3) Parse the results
         try:
@@ -391,7 +391,7 @@ async def _evaluate_single_sample_api(
                 sample_idx=task.sample_idx,
                 query=task.query,
                 rollout=task.rollout,
-                steps=_steps_struct_to_text_list(task.steps),  # ← 关键
+                steps=_steps_struct_to_text_list(task.steps),  
                 overall_score=task.overall_score,
                 llm_input_messages=messages,
                 llm_raw_output=llm_raw_output,
@@ -479,23 +479,23 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
     if evaluation_type != "api":
         raise ValueError(f"❌ Only 'api' evaluation_type is supported, got: {evaluation_type}")
 
-    # 初始化API客户端
+    # Initialize API client
     api_key = os.getenv("DASHSCOPE_API_KEY")
     if not api_key:
         print("❌ [parallel_eval] No API key found in DASHSCOPE_API_KEY environment variable")
         print("❌ [parallel_eval] Please set: export DASHSCOPE_API_KEY='your-api-key'")
         print("❌ [parallel_eval] Using random fallback for evaluation")
         # shuchang: 0809
-        # FIXME: 注释掉fallback，强制要求必须有API KEY
+        # FIXME: Comment out fallback, enforce API KEY requirement
         # return _apply_fallback_strategy_parallel(batch, tokenizer), {"fallback_used": True, "evaluation_type": evaluation_type}
-        raise RuntimeError("No API key found in DASHSCOPE_API_KEY environment variable")  # ⭐ Ensure an API key is provided, otherwise raise an error
+        raise RuntimeError("No API key found in DASHSCOPE_API_KEY environment variable")
 
     api_client = AsyncOpenAI(
         api_key=api_key,
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
 
-    # 🚀 关键优化：按sample创建任务，而不是按step
+    # 🚀 Key optimization: create tasks by sample, not by step
     all_tasks = []
     flags_per_sample = [[] for _ in range(batch_size)]
     skipped_samples = 0
@@ -516,30 +516,30 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         query = tokenizer.decode(batch.batch["prompts"][sample_idx], skip_special_tokens=True)
         rollout = tokenizer.decode(batch.batch["responses"][sample_idx], skip_special_tokens=True)
         # shuchang: 0809
-        # FIXME: 这里改为直接用 batch.non_tensor_batch["steps"]，不需要再额外解析
+        # FIXME: Changed to use batch.non_tensor_batch["steps"] directly, no need for additional parsing
         # steps_struct = parse_rollout_to_steps(rollout)
         steps_struct = batch.non_tensor_batch["steps"][sample_idx]
 
-        # mask 与 overall_score 维持原逻辑
+        # mask and overall_score maintain original logic
         sample_mask = response_mask[sample_idx]
         advantage = _get_overall_advantage(batch.batch["advantages"][sample_idx], sample_mask)
         orm_reward = batch.batch["token_level_rewards"][sample_idx].sum().item()
         if overall_score_source == "token_level_rewards":
-            # 使用orm时，根据THRESHOLD进行rescale reward
+            # When using ORM, rescale reward based on THRESHOLD
             overall_score = rescale_score(orm_reward)
         elif overall_score_source == "advantages":
-            # SSA 模式：使用计算后的 advantage
+            # SSA mode: use calculated advantage
             overall_score = advantage
         else:
             overall_score = orm_reward
         # shuchang: 0906
-        # 只跳过 advantage 非常小的样本 或 全部为负的样本
-        # 决定是否应该跳过当前样本
+        # Only skip samples with very small advantage or all negative samples
+        # Decide whether to skip the current sample
         should_skip = False
         skip_reason = ""
 
         if skip_type == "skip_small_adv":
-            # 1. 只跳过 advantage 非常小的样本
+            # 1. Only skip samples with very small advantage
             if abs(advantage) < 1e-8:
                 should_skip = True
                 skip_reason = f"advantage≈0 ({advantage:.6f})"
@@ -551,16 +551,16 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
             Args:
                 orm_reward (float): The ORM reward value for the sample.
             """
-            # 2. 跳过 orm_reward 为负或零的样本
-            # 注意：orm_reward > 0.5 才是正样本，所以 <= 0.5 都属于“负”的范畴
+            # 2. Skip samples with negative or zero orm_reward
+            # Note: orm_reward > 0.5 is a positive sample, so <= 0.5 all belong to the "negative" category
             if orm_reward <= THRESHOLD:
                 should_skip = True
                 skip_reason = f"orm_reward is not positive ({orm_reward:.6f})"
 
-        # 如果满足任一跳过条件，则执行跳过逻辑
+        # If any skip condition is met, execute skip logic
         if should_skip:
             print(f"[parallel_eval] Sample {sample_idx}: Skipping evaluation due to {skip_reason}. Assigning flags based on overall_score.")
-            # 根据 overall_score 的正负来决定 flag 的值
+            # Decide flag value based on the sign of overall_score
             flag_value = overall_score > THRESHOLD
             flags_per_sample[sample_idx] = [flag_value] * len(steps_struct)
 
@@ -569,7 +569,7 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
                     sample_idx=sample_idx,
                     query=query,
                     rollout=rollout,
-                    # ✅ 日志里仍按原来的 List[str] 存
+                    # ✅ Still stored as List[str] in logs
                     steps=_steps_struct_to_text_list(steps_struct),
                     overall_score=overall_score,
                     llm_input_messages=[],
@@ -582,12 +582,12 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
                     global_step=global_step,
                     epoch=epoch
                 )
-                _save_evaluation_record(record, save_dir)  # ⭐ Save the skipped sample's record
+                _save_evaluation_record(record, save_dir)
             skipped_samples += 1
             continue
 
 
-       # ✅ EvaluationTask 使用结构化 steps
+       # ✅ EvaluationTask uses structured steps
         task = EvaluationTask(
             sample_idx=sample_idx,
             query=query,
@@ -598,9 +598,9 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         all_tasks.append(task)
 
     total_tasks = len(all_tasks)
-    total_api_calls = total_tasks  # 现在每个sample只需要一次API调用
+    total_api_calls = total_tasks  # Now each sample only needs one API call
     total_steps = sum(len(t.steps) for t in all_tasks)
-    # --- 指标准备：每个样本的step长度 ---
+    # --- Metric preparation: step length for each sample ---
     step_len_map = {t.sample_idx: len(t.steps) for t in all_tasks}
     step_len_list = list(step_len_map.values())
 
@@ -637,7 +637,7 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         for i in range(0, total_tasks, batch_size_limit):
             batch_tasks = all_tasks[i:i + batch_size_limit]
 
-            # 每个task调用_evaluate_single_sample_api，一次性评估整个sample的所有steps
+            # Each task calls _evaluate_single_sample_api to evaluate all steps of the entire sample at once
             coroutines = [
                 _evaluate_single_sample_api(api_client, model_name, task, semaphore, overall_score_source, api_max_retries, save_dir, global_step, epoch)
                 for task in batch_tasks
@@ -652,7 +652,7 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
 
             pbar.update(len(batch_tasks))
 
-    # 整理结果到flags_per_sample
+    # Organize results into flags_per_sample
     for result in all_results:
         flags_per_sample[result.sample_idx] = result.step_results
 
@@ -674,7 +674,7 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         "model_name": model_name,
         "api_max_retries": api_max_retries,
         "save_dir": save_dir,
-        "efficiency_gain": total_steps / max(1, len(all_results))  # 效率提升倍数
+        "efficiency_gain": total_steps / max(1, len(all_results))  # Efficiency gain multiplier
     }
     def _p95(vals):
         """
@@ -688,7 +688,7 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
         """
         if not vals:
             return 0.0
-        s = sorted(vals)  # ⭐ Sort the values to find the 95th percentile
+        s = sorted(vals)
         k = int(round(0.95 * (len(s) - 1)))
         return float(s[k])
 
@@ -704,9 +704,8 @@ async def evaluate_step_flags_parallel(tokenizer, batch, overall_score_source: s
     stats.update({
         "prm/parse_success_rate": parsed_ok / max(1, total_tasks),
         "prm/avg_steps_per_sample": (sum(step_len_list) / max(1, len(step_len_list))) if step_len_list else 0.0,
-        "prm/p95_steps_per_sample": _p95(step_len_list),  # ⭐ Calculate the 95th percentile of steps per sample
+        "prm/p95_steps_per_sample": _p95(step_len_list),
         "prm/flags_len_mismatch_rate": length_mismatch / max(1, total_tasks),
-        # 可选：原始计数，便于排错
         "prm/_parse_success_count": parsed_ok,
         "prm/_flags_len_mismatch_count": length_mismatch,
     })
@@ -736,9 +735,9 @@ def evaluate_step_flags_parallel_sync(tokenizer, batch, **kwargs):
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:
-        loop = asyncio.new_event_loop()  # ⭐ Create a new event loop if one is not available
+        loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-    return loop.run_until_complete(  # ⭐ Run the asynchronous function until completion
+    return loop.run_until_complete(
         evaluate_step_flags_parallel(tokenizer, batch, **kwargs)
     )
