@@ -47,7 +47,7 @@ This command starts the training process using the GRPO method.
 
 
 ```bash
-conda activate verl
+conda activate agentevolver
 bash examples/run_basic.sh
 ```
 
@@ -100,6 +100,6 @@ reme \
 With the environment and ReMe services running, start the AgentEvolver training.
 
 ```bash
-conda activate verl
+conda activate agentevolver
 bash examples/run_overall.sh
 ```

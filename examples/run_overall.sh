@@ -72,7 +72,7 @@ python3 -m agentevolver.main_ppo \
     actor_rollout_ref.rollout.response_length=4096 \
     actor_rollout_ref.rollout.max_model_len=25580 \
     actor_rollout_ref.rollout.temperature=0.9 \
-    actor_rollout_ref.model.path=models/Qwen2.5-7B-Instruct \
+    actor_rollout_ref.model.path=Qwen/Qwen2.5-7B-Instruct \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
