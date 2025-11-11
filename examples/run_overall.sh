@@ -16,8 +16,7 @@
 #   llm.default.model_name=qwen-max-2025-01-25 \
 #   embedding_model.default.model_name=text-embedding-v4 \
 #   vector_store.default.backend=local \
-#   op.rerank_memory_op.params.enable_llm_rerank=false \
-#   flow.summary_task_memory.flow_content="trajectory_preprocess_op >> (success_extraction_op|failure_extraction_op|comparative_extraction_op) >> memory_validation_op >> memory_deduplication_op >> update_vector_store_op"
+#   op.rerank_memory_op.params.enable_llm_rerank=false
 
 
 # ---- Start Training ----

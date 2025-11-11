@@ -71,6 +71,14 @@ bash env_service/launch_script/appworld.sh
 
 This service gives the agent long-term memory and the ability to reflect on past actions. *This service will listen for requests on http://127.0.0.1:8001. Keep this terminal open.*
 
+Configure API Endpoints:
+
+```bash
+export FLOW_EMBEDDING_API_KEY="<YOUR_API_KEY>"
+export FLOW_EMBEDDING_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+export FLOW_LLM_API_KEY="<YOUR_API_KEY>"
+export FLOW_LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+```
 
 ```bash
 conda activate reme
@@ -85,8 +93,7 @@ reme \
   llm.default.model_name=qwen-max-2025-01-25 \
   embedding_model.default.model_name=text-embedding-v4 \
   vector_store.default.backend=local \
-  op.rerank_memory_op.params.enable_llm_rerank=false \
-  flow.summary_task_memory.flow_content="trajectory_preprocess_op >> (success_extraction_op|failure_extraction_op|comparative_extraction_op) >> memory_validation_op >> memory_deduplication_op >> update_vector_store_op"
+  op.rerank_memory_op.params.enable_llm_rerank=false
 ```
 
 
