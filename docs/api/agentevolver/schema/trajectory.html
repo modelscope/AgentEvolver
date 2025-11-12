@@ -1,0 +1,1250 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="pdoc 16.0.0"/>
+    <title>agentevolver.schema.trajectory API documentation</title>
+
+    <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
+    <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
+    <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
+    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note{color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.tip{color:#0a3622;background-color:#d1e7dd;border-color:#a3cfbb;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%230a3622%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%206a6%206%200%201%201%2010.174%204.31c-.203.196-.359.4-.453.619l-.762%201.769A.5.5%200%200%201%2010.5%2013a.5.5%200%200%201%200%201%20.5.5%200%200%201%200%201l-.224.447a1%201%200%200%201-.894.553H6.618a1%201%200%200%201-.894-.553L5.5%2015a.5.5%200%200%201%200-1%20.5.5%200%200%201%200-1%20.5.5%200%200%201-.46-.302l-.761-1.77a2%202%200%200%200-.453-.618A5.98%205.98%200%200%201%202%206m6-5a5%205%200%200%200-3.479%208.592c.263.254.514.564.676.941L5.83%2012h4.342l.632-1.467c.162-.377.413-.687.676-.941A5%205%200%200%200%208%201%22/%3E%3C/svg%3E");}.pdoc .alert.important{color:#055160;background-color:#cff4fc;border-color:#9eeaf9;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23055160%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%200a2%202%200%200%200-2%202v12a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V2a2%202%200%200%200-2-2zm6%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.caution{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M11.46.146A.5.5%200%200%200%2011.107%200H4.893a.5.5%200%200%200-.353.146L.146%204.54A.5.5%200%200%200%200%204.893v6.214a.5.5%200%200%200%20.146.353l4.394%204.394a.5.5%200%200%200%20.353.146h6.214a.5.5%200%200%200%20.353-.146l4.394-4.394a.5.5%200%200%200%20.146-.353V4.893a.5.5%200%200%200-.146-.353zM8%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .decorator-deprecated{color:#842029;}.pdoc .decorator-deprecated ~ span{filter:grayscale(1) opacity(0.8);}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:27px;vertical-align:bottom;width:50px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! custom.css */</style></head>
+<body>
+    <nav class="pdoc">
+        <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
+        <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
+        <div>            <a class="pdoc-button module-list-button" href="../schema.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                &nbsp;agentevolver.schema</a>
+
+
+            <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                   pattern=".+" required>
+
+
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#Reward">Reward</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Reward.outcome">outcome</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Reward.success_rate">success_rate</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Reward.madness">madness</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Reward.description">description</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Reward.metadata">metadata</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Reward.success">success</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Trajectory">Trajectory</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Trajectory.__init__">Trajectory</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.data_id">data_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.rollout_id">rollout_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.steps">steps</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.query">query</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.is_terminated">is_terminated</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.reward">reward</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.metadata">metadata</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Trajectory.success">success</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Sample">Sample</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Sample.data_id">data_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.task_id">task_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.rollout_id">rollout_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.minor_index_id">minor_index_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.messages">messages</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.extras">extras</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.input_ids">input_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.prompt_ids">prompt_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.response_ids">response_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.attention_mask">attention_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.prompt_attention_mask">prompt_attention_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.response_attention_mask">response_attention_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.position_ids">position_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.prompt_position_ids">prompt_position_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.response_position_ids">response_position_ids</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.loss_mask">loss_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.prompt_loss_mask">prompt_loss_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.response_loss_mask">response_loss_mask</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.reward_scores">reward_scores</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.max_prompt_len">max_prompt_len</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.max_response_len">max_response_len</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Sample.max_model_len">max_model_len</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Sample.truncate_output_ids">truncate_output_ids</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Sample.discard">discard</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
+
+
+
+        <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
+            built with <span class="visually-hidden">pdoc</span><img
+                alt="pdoc logo"
+                src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20role%3D%22img%22%20aria-label%3D%22pdoc%20logo%22%20width%3D%22300%22%20height%3D%22160%22%20viewBox%3D%220%200%20150%2080%22%3E%3Ctitle%3Epdoc%3C/title%3E%3Cpath%20d%3D%22M132.316%2048.886c.276-4.679%202.342-6.698%204.409-7.982s4.27-1.165%206.751-1.055c1.586.07%203.044.156%204.222-.482%201.142-.619%202.026-1.932%202.162-3.739.268-3.576-1.929-5.368-5.006-5.551s-7.599.524-10.517%201.606c-4.455%201.652-8.588%206.606-9.552%208.992s-2.342%206.193-1.745%2010.873%202.664%209.221%205.878%2011.79%205.878%203.808%2010.103%204.312%203.444.229%206.062.229%205.006-2.202%204.914-4.909-2.296-5.001-4.501-4.863-3.077.505-5.281.229-7.715-2.064-7.899-9.451z%22%20fill%3D%22%23198754%22/%3E%3Ccircle%20cx%3D%22101.504%22%20cy%3D%2248.943%22%20r%3D%2214.208%22%20fill%3D%22none%22%20stroke%3D%22%23198754%22%20stroke-width%3D%229.354%22/%3E%3Cpath%20d%3D%22M87.81.002c-3.637.065-5.001.454-7.014%201.232s-3.443%201.363-6.3%204.282c-1.723%201.76-3.148%205.019-3.776%207.329-.413%201.521-.316%202.63-.316%202.63l-.195%2034.612c.065%205.774-6.755%208.305-9.612%208.37s-9.678-1.038-9.743-9.408%207.128-9.521%208.362-9.521c1.413-.13%202.526-.021%203.718-.016%202.071.009%204.157-.778%204.092-4.671s-4.157-4.736-4.157-4.736c-6.3-.843-11.43%202.206-11.43%202.206S40.917%2038.15%2041.372%2049.634%2051.568%2068.19%2061.311%2068.125s18.316-7.007%2018.445-17.193l.13-22.772c.046-2.291%202.683-3.644%204.476-4.203.745-.232%201.694-.274%201.694-.274l10.457-.13s4.871-.324%207.729-3.114%204.352-6.294%204.352-6.294.974-3.049.13-4.606-.195-1.233-2.792-3.309-8.573-4.477-8.573-4.477S91.447-.063%2087.81.002zM0%2047.169l.065%2028.417S0%2080.127%204.481%2079.997s5.072-3.866%205.049-4.152l-.113-28.482s1.624-7.656%209.937-7.721%2010.002%206.942%2010.002%208.499-.909%2010.51-9.093%2010.51c-.948%200-2.99-.567-4.145-.272-3.919%201-3.194%204.554-3.194%204.554s.065%205.061%207.404%204.996%2018.575-6.034%2018.575-19.074S26.953%2030.04%2019.549%2029.91%201.234%2035.296%200%2047.169z%22%20fill%3D%22%23198754%22/%3E%3Cg%20transform%3D%22matrix%28.325601%200%200%20.325256%20-10.32669%20-45.802786%29%22%3E%3Ccircle%20cx%3D%22297.554%22%20cy%3D%22172.286%22%20r%3D%2216.5%22%20fill%3D%22%23fff%22/%3E%3Cellipse%20cx%3D%22297.709%22%20cy%3D%22172.642%22%20rx%3D%2211.071%22%20ry%3D%2210.871%22%20fill%3D%22%23105a48%22/%3E%3Ccircle%20cx%3D%22304.104%22%20cy%3D%22167.667%22%20r%3D%224.5%22%20fill%3D%22%23fff%22/%3E%3C/g%3E%3Cpath%20d%3D%22M94.661%2017.032l.893-1.476s.99.714%201.916.925%201.575.114%202.955.114l14.565-.162c1.283-.032%203.085-.762%203.02-3.293s-.373-3.503-.373-3.503l1.283-.487s.52.503.877%201.573.309%201.995.292%202.66-.227%201.541-.227%201.541%201.564-.308%202.359-1.038.823-.779%201.489-1.508.812-.86.812-.86.552-.13.877.26.341.957.065%201.46-1.672%202.206-3.247%203.066-2.76%201.427-3.929%201.768-3.848.73-7.063.714l-10.944-.114s-2.143-.081-3.02-.373-2.241-.973-2.598-1.265z%22%20fill%3D%22%23d36d49%22/%3E%3Cg%20fill%3D%22%23105a48%22%3E%3Cellipse%20cx%3D%2293.052%22%20cy%3D%2243.567%22%20rx%3D%22.869%22%20ry%3D%221.014%22%20transform%3D%22rotate%28341.022%29%22/%3E%3Cellipse%20cx%3D%22104.3%22%20cy%3D%22-16.184%22%20rx%3D%22.865%22%20ry%3D%221.009%22%20transform%3D%22rotate%2814.786%29%22/%3E%3C/g%3E%3C/svg%3E"/>
+        </a>
+</div>
+    </nav>
+    <main class="pdoc">
+            <section class="module-info">
+                    <h1 class="modulename">
+<a href="./../../agentevolver.html">agentevolver</a><wbr>.<a href="./../schema.html">schema</a><wbr>.trajectory    </h1>
+
+                
+                        <input id="mod-trajectory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <label class="view-source-button" for="mod-trajectory-view-source"><span>View Source</span></label>
+
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Reward</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>    <span class="n">success_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>    <span class="n">madness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Outcome 1 denotes success, and 0 denotes failure.&quot;</span><span class="p">)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="nd">@property</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Trajectory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">reward</span><span class="p">:</span> <span class="n">Reward</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>                 <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>                 <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>                 <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>                 <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>                 <span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>                 <span class="n">reward</span><span class="p">:</span> <span class="n">Reward</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>                 <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_id</span> <span class="o">=</span> <span class="n">data_id</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rollout_id</span> <span class="o">=</span> <span class="n">rollout_id</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>  <span class="c1"># when init in cmt: skip this because steps is a function in cmt</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_terminated</span> <span class="o">=</span> <span class="n">is_terminated</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="o">=</span> <span class="n">reward</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="nd">@property</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The data model for single sample.&quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">minor_index_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">messages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">extras</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">input_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">prompt_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">response_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="n">prompt_attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="n">response_attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">prompt_position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">response_position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">prompt_loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">response_loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">reward_scores</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">max_prompt_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">max_response_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">max_model_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">truncate_output_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">)</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: prompt_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_prompt_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Prompt length exceeds maximum allowed length. Please adjust the input data.&quot;</span><span class="p">)</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">:</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: response_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_response_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="k">if</span> <span class="n">truncate_any</span><span class="p">:</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        Discard the experience.</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Never use this method.&#39;</span><span class="p">)</span>
+</span></pre></div>
+
+
+            </section>
+                <section id="Reward">
+                            <input id="Reward-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Reward</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+
+                <label class="view-source-button" for="Reward-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Reward"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Reward-7"><a href="#Reward-7"><span class="linenos"> 7</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Reward</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="Reward-8"><a href="#Reward-8"><span class="linenos"> 8</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="Reward-9"><a href="#Reward-9"><span class="linenos"> 9</span></a>    <span class="n">success_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="Reward-10"><a href="#Reward-10"><span class="linenos">10</span></a>    <span class="n">madness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="Reward-11"><a href="#Reward-11"><span class="linenos">11</span></a>    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Outcome 1 denotes success, and 0 denotes failure.&quot;</span><span class="p">)</span>
+</span><span id="Reward-12"><a href="#Reward-12"><span class="linenos">12</span></a>
+</span><span id="Reward-13"><a href="#Reward-13"><span class="linenos">13</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="Reward-14"><a href="#Reward-14"><span class="linenos">14</span></a>
+</span><span id="Reward-15"><a href="#Reward-15"><span class="linenos">15</span></a>    <span class="nd">@property</span>
+</span><span id="Reward-16"><a href="#Reward-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Reward-17"><a href="#Reward-17"><span class="linenos">17</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>!!! abstract "Usage Documentation"
+    <a href="../concepts/models.md">Models</a></p>
+
+<p>A base class for creating Pydantic models.</p>
+
+<h6 id="attributes">Attributes:</h6>
+
+<ul>
+<li><strong>__class_vars__:</strong>  The names of the class variables defined on the model.</li>
+<li><strong>__private_attributes__:</strong>  Metadata about the private attributes of the model.</li>
+<li><strong>__signature__:</strong>  The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</li>
+<li><strong>__pydantic_complete__:</strong>  Whether model building is completed, or if there are still undefined fields.</li>
+<li><strong>__pydantic_core_schema__:</strong>  The core schema of the model.</li>
+<li><strong>__pydantic_custom_init__:</strong>  Whether the model has a custom <code>__init__</code> function.</li>
+<li><strong>__pydantic_decorators__:</strong>  Metadata containing the decorators defined on the model.
+This replaces <code>Model.__validators__</code> and <code>Model.__root_validators__</code> from Pydantic V1.</li>
+<li><strong>__pydantic_generic_metadata__:</strong>  Metadata for generic models; contains data used for a similar purpose to
+__args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.</li>
+<li><strong>__pydantic_parent_namespace__:</strong>  Parent namespace of the model, used for automatic rebuilding of models.</li>
+<li><strong>__pydantic_post_init__:</strong>  The name of the post-init method for the model, if defined.</li>
+<li><strong>__pydantic_root_model__:</strong>  Whether the model is a [<code>RootModel</code>][pydantic.root_model.RootModel].</li>
+<li><strong>__pydantic_serializer__:</strong>  The <code>pydantic-core</code> <code>SchemaSerializer</code> used to dump instances of the model.</li>
+<li><strong>__pydantic_validator__:</strong>  The <code>pydantic-core</code> <code>SchemaValidator</code> used to validate instances of the model.</li>
+<li><strong>__pydantic_fields__:</strong>  A dictionary of field names and their corresponding [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</li>
+<li><strong>__pydantic_computed_fields__:</strong>  A dictionary of computed field names and their corresponding [<code>ComputedFieldInfo</code>][pydantic.fields.ComputedFieldInfo] objects.</li>
+<li><strong>__pydantic_extra__:</strong>  A dictionary containing extra values, if [<code>extra</code>][pydantic.config.ConfigDict.extra]
+is set to <code>'allow'</code>.</li>
+<li><strong>__pydantic_fields_set__:</strong>  The names of fields explicitly set during instantiation.</li>
+<li><strong>__pydantic_private__:</strong>  Values of private attributes set on the model instance.</li>
+</ul>
+</div>
+
+
+                            <div id="Reward.outcome" class="classattr">
+                                <div class="attr variable">
+            <span class="name">outcome</span><span class="annotation">: float</span>        =
+<span class="default_value">0.0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Reward.outcome"></a>
+    
+    
+
+                            </div>
+                            <div id="Reward.success_rate" class="classattr">
+                                <div class="attr variable">
+            <span class="name">success_rate</span><span class="annotation">: float</span>        =
+<span class="default_value">0.0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Reward.success_rate"></a>
+    
+    
+
+                            </div>
+                            <div id="Reward.madness" class="classattr">
+                                <div class="attr variable">
+            <span class="name">madness</span><span class="annotation">: float</span>        =
+<span class="default_value">0.0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Reward.madness"></a>
+    
+    
+
+                            </div>
+                            <div id="Reward.description" class="classattr">
+                                <div class="attr variable">
+            <span class="name">description</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;Outcome 1 denotes success, and 0 denotes failure.&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Reward.description"></a>
+    
+    
+
+                            </div>
+                            <div id="Reward.metadata" class="classattr">
+                                <div class="attr variable">
+            <span class="name">metadata</span><span class="annotation">: dict</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Reward.metadata"></a>
+    
+    
+
+                            </div>
+                            <div id="Reward.success" class="classattr">
+                                        <input id="Reward.success-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">success</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="Reward.success-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Reward.success"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Reward.success-15"><a href="#Reward.success-15"><span class="linenos">15</span></a>    <span class="nd">@property</span>
+</span><span id="Reward.success-16"><a href="#Reward.success-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Reward.success-17"><a href="#Reward.success-17"><span class="linenos">17</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="Trajectory">
+                            <input id="Trajectory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Trajectory</span>:
+
+                <label class="view-source-button" for="Trajectory-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Trajectory"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Trajectory-20"><a href="#Trajectory-20"><span class="linenos">20</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Trajectory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span id="Trajectory-21"><a href="#Trajectory-21"><span class="linenos">21</span></a>    <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="Trajectory-22"><a href="#Trajectory-22"><span class="linenos">22</span></a>    <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="Trajectory-23"><a href="#Trajectory-23"><span class="linenos">23</span></a>
+</span><span id="Trajectory-24"><a href="#Trajectory-24"><span class="linenos">24</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Trajectory-25"><a href="#Trajectory-25"><span class="linenos">25</span></a>    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="Trajectory-26"><a href="#Trajectory-26"><span class="linenos">26</span></a>
+</span><span id="Trajectory-27"><a href="#Trajectory-27"><span class="linenos">27</span></a>    <span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="Trajectory-28"><a href="#Trajectory-28"><span class="linenos">28</span></a>    <span class="n">reward</span><span class="p">:</span> <span class="n">Reward</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Trajectory-29"><a href="#Trajectory-29"><span class="linenos">29</span></a>
+</span><span id="Trajectory-30"><a href="#Trajectory-30"><span class="linenos">30</span></a>    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Trajectory-31"><a href="#Trajectory-31"><span class="linenos">31</span></a>    
+</span><span id="Trajectory-32"><a href="#Trajectory-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Trajectory-33"><a href="#Trajectory-33"><span class="linenos">33</span></a>                 <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory-34"><a href="#Trajectory-34"><span class="linenos">34</span></a>                 <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory-35"><a href="#Trajectory-35"><span class="linenos">35</span></a>                 <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trajectory-36"><a href="#Trajectory-36"><span class="linenos">36</span></a>                 <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory-37"><a href="#Trajectory-37"><span class="linenos">37</span></a>                 <span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="Trajectory-38"><a href="#Trajectory-38"><span class="linenos">38</span></a>                 <span class="n">reward</span><span class="p">:</span> <span class="n">Reward</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trajectory-39"><a href="#Trajectory-39"><span class="linenos">39</span></a>                 <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="Trajectory-40"><a href="#Trajectory-40"><span class="linenos">40</span></a>
+</span><span id="Trajectory-41"><a href="#Trajectory-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_id</span> <span class="o">=</span> <span class="n">data_id</span>
+</span><span id="Trajectory-42"><a href="#Trajectory-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rollout_id</span> <span class="o">=</span> <span class="n">rollout_id</span>
+</span><span id="Trajectory-43"><a href="#Trajectory-43"><span class="linenos">43</span></a>        <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Trajectory-44"><a href="#Trajectory-44"><span class="linenos">44</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>  <span class="c1"># when init in cmt: skip this because steps is a function in cmt</span>
+</span><span id="Trajectory-45"><a href="#Trajectory-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+</span><span id="Trajectory-46"><a href="#Trajectory-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_terminated</span> <span class="o">=</span> <span class="n">is_terminated</span>
+</span><span id="Trajectory-47"><a href="#Trajectory-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="o">=</span> <span class="n">reward</span>
+</span><span id="Trajectory-48"><a href="#Trajectory-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+</span><span id="Trajectory-49"><a href="#Trajectory-49"><span class="linenos">49</span></a>    
+</span><span id="Trajectory-50"><a href="#Trajectory-50"><span class="linenos">50</span></a>
+</span><span id="Trajectory-51"><a href="#Trajectory-51"><span class="linenos">51</span></a>    <span class="nd">@property</span>
+</span><span id="Trajectory-52"><a href="#Trajectory-52"><span class="linenos">52</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Trajectory-53"><a href="#Trajectory-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+    
+
+                            <div id="Trajectory.__init__" class="classattr">
+                                        <input id="Trajectory.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">Trajectory</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">reward</span><span class="p">:</span> <span class="n"><a href="#Reward">Reward</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="Trajectory.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Trajectory.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Trajectory.__init__-32"><a href="#Trajectory.__init__-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Trajectory.__init__-33"><a href="#Trajectory.__init__-33"><span class="linenos">33</span></a>                 <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-34"><a href="#Trajectory.__init__-34"><span class="linenos">34</span></a>                 <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-35"><a href="#Trajectory.__init__-35"><span class="linenos">35</span></a>                 <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-36"><a href="#Trajectory.__init__-36"><span class="linenos">36</span></a>                 <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-37"><a href="#Trajectory.__init__-37"><span class="linenos">37</span></a>                 <span class="n">is_terminated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-38"><a href="#Trajectory.__init__-38"><span class="linenos">38</span></a>                 <span class="n">reward</span><span class="p">:</span> <span class="n">Reward</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trajectory.__init__-39"><a href="#Trajectory.__init__-39"><span class="linenos">39</span></a>                 <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="Trajectory.__init__-40"><a href="#Trajectory.__init__-40"><span class="linenos">40</span></a>
+</span><span id="Trajectory.__init__-41"><a href="#Trajectory.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_id</span> <span class="o">=</span> <span class="n">data_id</span>
+</span><span id="Trajectory.__init__-42"><a href="#Trajectory.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rollout_id</span> <span class="o">=</span> <span class="n">rollout_id</span>
+</span><span id="Trajectory.__init__-43"><a href="#Trajectory.__init__-43"><span class="linenos">43</span></a>        <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Trajectory.__init__-44"><a href="#Trajectory.__init__-44"><span class="linenos">44</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>  <span class="c1"># when init in cmt: skip this because steps is a function in cmt</span>
+</span><span id="Trajectory.__init__-45"><a href="#Trajectory.__init__-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+</span><span id="Trajectory.__init__-46"><a href="#Trajectory.__init__-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_terminated</span> <span class="o">=</span> <span class="n">is_terminated</span>
+</span><span id="Trajectory.__init__-47"><a href="#Trajectory.__init__-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="o">=</span> <span class="n">reward</span>
+</span><span id="Trajectory.__init__-48"><a href="#Trajectory.__init__-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="Trajectory.data_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">data_id</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.data_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.rollout_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">rollout_id</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.rollout_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.steps" class="classattr">
+                                <div class="attr variable">
+            <span class="name">steps</span><span class="annotation">: Optional[List[dict]]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.steps"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.query" class="classattr">
+                                <div class="attr variable">
+            <span class="name">query</span><span class="annotation">: str</span>        =
+<span class="default_value">&#39;&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.query"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.is_terminated" class="classattr">
+                                <div class="attr variable">
+            <span class="name">is_terminated</span><span class="annotation">: bool</span>        =
+<span class="default_value">False</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.is_terminated"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.reward" class="classattr">
+                                <div class="attr variable">
+            <span class="name">reward</span><span class="annotation">: <a href="#Reward">Reward</a> | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.reward"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.metadata" class="classattr">
+                                <div class="attr variable">
+            <span class="name">metadata</span><span class="annotation">: dict | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Trajectory.metadata"></a>
+    
+    
+
+                            </div>
+                            <div id="Trajectory.success" class="classattr">
+                                        <input id="Trajectory.success-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">success</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="Trajectory.success-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Trajectory.success"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Trajectory.success-51"><a href="#Trajectory.success-51"><span class="linenos">51</span></a>    <span class="nd">@property</span>
+</span><span id="Trajectory.success-52"><a href="#Trajectory.success-52"><span class="linenos">52</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Trajectory.success-53"><a href="#Trajectory.success-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">outcome</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="Sample">
+                            <input id="Sample-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Sample</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+
+                <label class="view-source-button" for="Sample-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Sample"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sample-56"><a href="#Sample-56"><span class="linenos"> 56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="Sample-57"><a href="#Sample-57"><span class="linenos"> 57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The data model for single sample.&quot;&quot;&quot;</span>
+</span><span id="Sample-58"><a href="#Sample-58"><span class="linenos"> 58</span></a>
+</span><span id="Sample-59"><a href="#Sample-59"><span class="linenos"> 59</span></a>    <span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="Sample-60"><a href="#Sample-60"><span class="linenos"> 60</span></a>    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="Sample-61"><a href="#Sample-61"><span class="linenos"> 61</span></a>    <span class="n">rollout_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="Sample-62"><a href="#Sample-62"><span class="linenos"> 62</span></a>    <span class="n">minor_index_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="Sample-63"><a href="#Sample-63"><span class="linenos"> 63</span></a>    <span class="n">messages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="Sample-64"><a href="#Sample-64"><span class="linenos"> 64</span></a>    <span class="n">extras</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="Sample-65"><a href="#Sample-65"><span class="linenos"> 65</span></a>    <span class="n">input_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-66"><a href="#Sample-66"><span class="linenos"> 66</span></a>    <span class="n">prompt_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-67"><a href="#Sample-67"><span class="linenos"> 67</span></a>    <span class="n">response_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-68"><a href="#Sample-68"><span class="linenos"> 68</span></a>    <span class="n">attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-69"><a href="#Sample-69"><span class="linenos"> 69</span></a>    <span class="n">prompt_attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-70"><a href="#Sample-70"><span class="linenos"> 70</span></a>    <span class="n">response_attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-71"><a href="#Sample-71"><span class="linenos"> 71</span></a>    <span class="n">position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-72"><a href="#Sample-72"><span class="linenos"> 72</span></a>    <span class="n">prompt_position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-73"><a href="#Sample-73"><span class="linenos"> 73</span></a>    <span class="n">response_position_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-74"><a href="#Sample-74"><span class="linenos"> 74</span></a>    <span class="n">loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-75"><a href="#Sample-75"><span class="linenos"> 75</span></a>    <span class="n">prompt_loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-76"><a href="#Sample-76"><span class="linenos"> 76</span></a>    <span class="n">response_loss_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-77"><a href="#Sample-77"><span class="linenos"> 77</span></a>    <span class="n">reward_scores</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Sample-78"><a href="#Sample-78"><span class="linenos"> 78</span></a>    <span class="n">max_prompt_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="Sample-79"><a href="#Sample-79"><span class="linenos"> 79</span></a>    <span class="n">max_response_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="Sample-80"><a href="#Sample-80"><span class="linenos"> 80</span></a>    <span class="n">max_model_len</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="Sample-81"><a href="#Sample-81"><span class="linenos"> 81</span></a>
+</span><span id="Sample-82"><a href="#Sample-82"><span class="linenos"> 82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">truncate_output_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Sample-83"><a href="#Sample-83"><span class="linenos"> 83</span></a>
+</span><span id="Sample-84"><a href="#Sample-84"><span class="linenos"> 84</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span><span class="p">)</span>
+</span><span id="Sample-85"><a href="#Sample-85"><span class="linenos"> 85</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">)</span>
+</span><span id="Sample-86"><a href="#Sample-86"><span class="linenos"> 86</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">)</span>
+</span><span id="Sample-87"><a href="#Sample-87"><span class="linenos"> 87</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="Sample-88"><a href="#Sample-88"><span class="linenos"> 88</span></a>
+</span><span id="Sample-89"><a href="#Sample-89"><span class="linenos"> 89</span></a>        <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="Sample-90"><a href="#Sample-90"><span class="linenos"> 90</span></a>
+</span><span id="Sample-91"><a href="#Sample-91"><span class="linenos"> 91</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:</span>
+</span><span id="Sample-92"><a href="#Sample-92"><span class="linenos"> 92</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Sample-93"><a href="#Sample-93"><span class="linenos"> 93</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample-94"><a href="#Sample-94"><span class="linenos"> 94</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: prompt_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_prompt_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="Sample-95"><a href="#Sample-95"><span class="linenos"> 95</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample-96"><a href="#Sample-96"><span class="linenos"> 96</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Prompt length exceeds maximum allowed length. Please adjust the input data.&quot;</span><span class="p">)</span>
+</span><span id="Sample-97"><a href="#Sample-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample-98"><a href="#Sample-98"><span class="linenos"> 98</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample-99"><a href="#Sample-99"><span class="linenos"> 99</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample-100"><a href="#Sample-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample-101"><a href="#Sample-101"><span class="linenos">101</span></a>
+</span><span id="Sample-102"><a href="#Sample-102"><span class="linenos">102</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">:</span>
+</span><span id="Sample-103"><a href="#Sample-103"><span class="linenos">103</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Sample-104"><a href="#Sample-104"><span class="linenos">104</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample-105"><a href="#Sample-105"><span class="linenos">105</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: response_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_response_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="Sample-106"><a href="#Sample-106"><span class="linenos">106</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample-107"><a href="#Sample-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample-108"><a href="#Sample-108"><span class="linenos">108</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample-109"><a href="#Sample-109"><span class="linenos">109</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample-110"><a href="#Sample-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample-111"><a href="#Sample-111"><span class="linenos">111</span></a>
+</span><span id="Sample-112"><a href="#Sample-112"><span class="linenos">112</span></a>        <span class="k">if</span> <span class="n">truncate_any</span><span class="p">:</span>
+</span><span id="Sample-113"><a href="#Sample-113"><span class="linenos">113</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span>
+</span><span id="Sample-114"><a href="#Sample-114"><span class="linenos">114</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span>
+</span><span id="Sample-115"><a href="#Sample-115"><span class="linenos">115</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span>
+</span><span id="Sample-116"><a href="#Sample-116"><span class="linenos">116</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span>
+</span><span id="Sample-117"><a href="#Sample-117"><span class="linenos">117</span></a>
+</span><span id="Sample-118"><a href="#Sample-118"><span class="linenos">118</span></a>
+</span><span id="Sample-119"><a href="#Sample-119"><span class="linenos">119</span></a>
+</span><span id="Sample-120"><a href="#Sample-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Sample-121"><a href="#Sample-121"><span class="linenos">121</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Sample-122"><a href="#Sample-122"><span class="linenos">122</span></a><span class="sd">        Discard the experience.</span>
+</span><span id="Sample-123"><a href="#Sample-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Sample-124"><a href="#Sample-124"><span class="linenos">124</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Never use this method.&#39;</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>The data model for single sample.</p>
+</div>
+
+
+                            <div id="Sample.data_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">data_id</span><span class="annotation">: str</span>        =
+<span class="default_value">0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.data_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.task_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">task_id</span><span class="annotation">: str</span>        =
+<span class="default_value">0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.task_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.rollout_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">rollout_id</span><span class="annotation">: str</span>        =
+<span class="default_value">0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.rollout_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.minor_index_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">minor_index_id</span><span class="annotation">: int</span>        =
+<span class="default_value">0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.minor_index_id"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.messages" class="classattr">
+                                <div class="attr variable">
+            <span class="name">messages</span><span class="annotation">: List[dict]</span>        =
+<span class="default_value">[]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.messages"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.extras" class="classattr">
+                                <div class="attr variable">
+            <span class="name">extras</span><span class="annotation">: Dict[str, Any]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.extras"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.input_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">input_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.input_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.prompt_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">prompt_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.prompt_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.response_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">response_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.response_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.attention_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">attention_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.attention_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.prompt_attention_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">prompt_attention_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.prompt_attention_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.response_attention_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">response_attention_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.response_attention_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.position_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">position_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.position_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.prompt_position_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">prompt_position_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.prompt_position_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.response_position_ids" class="classattr">
+                                <div class="attr variable">
+            <span class="name">response_position_ids</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.response_position_ids"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.loss_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">loss_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.loss_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.prompt_loss_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">prompt_loss_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.prompt_loss_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.response_loss_mask" class="classattr">
+                                <div class="attr variable">
+            <span class="name">response_loss_mask</span><span class="annotation">: List[int]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.response_loss_mask"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.reward_scores" class="classattr">
+                                <div class="attr variable">
+            <span class="name">reward_scores</span><span class="annotation">: Dict[str, Any]</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.reward_scores"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.max_prompt_len" class="classattr">
+                                <div class="attr variable">
+            <span class="name">max_prompt_len</span><span class="annotation">: int</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.max_prompt_len"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.max_response_len" class="classattr">
+                                <div class="attr variable">
+            <span class="name">max_response_len</span><span class="annotation">: int</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.max_response_len"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.max_model_len" class="classattr">
+                                <div class="attr variable">
+            <span class="name">max_model_len</span><span class="annotation">: int</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sample.max_model_len"></a>
+    
+    
+
+                            </div>
+                            <div id="Sample.truncate_output_ids" class="classattr">
+                                        <input id="Sample.truncate_output_ids-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">truncate_output_ids</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="Sample.truncate_output_ids-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Sample.truncate_output_ids"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sample.truncate_output_ids-82"><a href="#Sample.truncate_output_ids-82"><span class="linenos"> 82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">truncate_output_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Sample.truncate_output_ids-83"><a href="#Sample.truncate_output_ids-83"><span class="linenos"> 83</span></a>
+</span><span id="Sample.truncate_output_ids-84"><a href="#Sample.truncate_output_ids-84"><span class="linenos"> 84</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-85"><a href="#Sample.truncate_output_ids-85"><span class="linenos"> 85</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-86"><a href="#Sample.truncate_output_ids-86"><span class="linenos"> 86</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-87"><a href="#Sample.truncate_output_ids-87"><span class="linenos"> 87</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-88"><a href="#Sample.truncate_output_ids-88"><span class="linenos"> 88</span></a>
+</span><span id="Sample.truncate_output_ids-89"><a href="#Sample.truncate_output_ids-89"><span class="linenos"> 89</span></a>        <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="Sample.truncate_output_ids-90"><a href="#Sample.truncate_output_ids-90"><span class="linenos"> 90</span></a>
+</span><span id="Sample.truncate_output_ids-91"><a href="#Sample.truncate_output_ids-91"><span class="linenos"> 91</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:</span>
+</span><span id="Sample.truncate_output_ids-92"><a href="#Sample.truncate_output_ids-92"><span class="linenos"> 92</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Sample.truncate_output_ids-93"><a href="#Sample.truncate_output_ids-93"><span class="linenos"> 93</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-94"><a href="#Sample.truncate_output_ids-94"><span class="linenos"> 94</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: prompt_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_prompt_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-95"><a href="#Sample.truncate_output_ids-95"><span class="linenos"> 95</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-96"><a href="#Sample.truncate_output_ids-96"><span class="linenos"> 96</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Prompt length exceeds maximum allowed length. Please adjust the input data.&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-97"><a href="#Sample.truncate_output_ids-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample.truncate_output_ids-98"><a href="#Sample.truncate_output_ids-98"><span class="linenos"> 98</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample.truncate_output_ids-99"><a href="#Sample.truncate_output_ids-99"><span class="linenos"> 99</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample.truncate_output_ids-100"><a href="#Sample.truncate_output_ids-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_prompt_len</span><span class="p">:]</span>
+</span><span id="Sample.truncate_output_ids-101"><a href="#Sample.truncate_output_ids-101"><span class="linenos">101</span></a>
+</span><span id="Sample.truncate_output_ids-102"><a href="#Sample.truncate_output_ids-102"><span class="linenos">102</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">:</span>
+</span><span id="Sample.truncate_output_ids-103"><a href="#Sample.truncate_output_ids-103"><span class="linenos">103</span></a>            <span class="n">truncate_any</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Sample.truncate_output_ids-104"><a href="#Sample.truncate_output_ids-104"><span class="linenos">104</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-105"><a href="#Sample.truncate_output_ids-105"><span class="linenos">105</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: response_ids length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> exceeds max_response_len </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="si">}</span><span class="s2">, truncating.&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-106"><a href="#Sample.truncate_output_ids-106"><span class="linenos">106</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------------------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+</span><span id="Sample.truncate_output_ids-107"><a href="#Sample.truncate_output_ids-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample.truncate_output_ids-108"><a href="#Sample.truncate_output_ids-108"><span class="linenos">108</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample.truncate_output_ids-109"><a href="#Sample.truncate_output_ids-109"><span class="linenos">109</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample.truncate_output_ids-110"><a href="#Sample.truncate_output_ids-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len</span><span class="p">]</span>
+</span><span id="Sample.truncate_output_ids-111"><a href="#Sample.truncate_output_ids-111"><span class="linenos">111</span></a>
+</span><span id="Sample.truncate_output_ids-112"><a href="#Sample.truncate_output_ids-112"><span class="linenos">112</span></a>        <span class="k">if</span> <span class="n">truncate_any</span><span class="p">:</span>
+</span><span id="Sample.truncate_output_ids-113"><a href="#Sample.truncate_output_ids-113"><span class="linenos">113</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span>
+</span><span id="Sample.truncate_output_ids-114"><a href="#Sample.truncate_output_ids-114"><span class="linenos">114</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">attention_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_attention_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_attention_mask</span>
+</span><span id="Sample.truncate_output_ids-115"><a href="#Sample.truncate_output_ids-115"><span class="linenos">115</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">position_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_position_ids</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_position_ids</span>
+</span><span id="Sample.truncate_output_ids-116"><a href="#Sample.truncate_output_ids-116"><span class="linenos">116</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_loss_mask</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_loss_mask</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="Sample.discard" class="classattr">
+                                        <input id="Sample.discard-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">discard</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="Sample.discard-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Sample.discard"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sample.discard-120"><a href="#Sample.discard-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Sample.discard-121"><a href="#Sample.discard-121"><span class="linenos">121</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Sample.discard-122"><a href="#Sample.discard-122"><span class="linenos">122</span></a><span class="sd">        Discard the experience.</span>
+</span><span id="Sample.discard-123"><a href="#Sample.discard-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Sample.discard-124"><a href="#Sample.discard-124"><span class="linenos">124</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Never use this method.&#39;</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Discard the experience.</p>
+</div>
+
+
+                            </div>
+                </section>
+    </main>
+<script>
+    function escapeHTML(html) {
+        return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+    }
+
+    const originalContent = document.querySelector("main.pdoc");
+    let currentContent = originalContent;
+
+    function setContent(innerHTML) {
+        let elem;
+        if (innerHTML) {
+            elem = document.createElement("main");
+            elem.classList.add("pdoc");
+            elem.innerHTML = innerHTML;
+        } else {
+            elem = originalContent;
+        }
+        if (currentContent !== elem) {
+            currentContent.replaceWith(elem);
+            currentContent = elem;
+        }
+    }
+
+    function getSearchTerm() {
+        return (new URL(window.location)).searchParams.get("search");
+    }
+
+    const searchBox = document.querySelector(".pdoc input[type=search]");
+    searchBox.addEventListener("input", function () {
+        let url = new URL(window.location);
+        if (searchBox.value.trim()) {
+            url.hash = "";
+            url.searchParams.set("search", searchBox.value);
+        } else {
+            url.searchParams.delete("search");
+        }
+        history.replaceState("", "", url.toString());
+        onInput();
+    });
+    window.addEventListener("popstate", onInput);
+
+
+    let search, searchErr;
+
+    async function initialize() {
+        try {
+            search = await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.async = true;
+                script.onload = () => resolve(window.pdocSearch);
+                script.onerror = (e) => reject(e);
+                script.src = "../../search.js";
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
+        } catch (e) {
+            console.error("Cannot fetch pdoc search index");
+            searchErr = "Cannot fetch search index.";
+        }
+        onInput();
+
+        document.querySelector("nav.pdoc").addEventListener("click", e => {
+            if (e.target.hash) {
+                searchBox.value = "";
+                searchBox.dispatchEvent(new Event("input"));
+            }
+        });
+    }
+
+    function onInput() {
+        setContent((() => {
+            const term = getSearchTerm();
+            if (!term) {
+                return null
+            }
+            if (searchErr) {
+                return `<h3>Error: ${searchErr}</h3>`
+            }
+            if (!search) {
+                return "<h3>Searching...</h3>"
+            }
+
+            window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+
+            const results = search(term);
+
+            let html;
+            if (results.length === 0) {
+                html = `No search results for '${escapeHTML(term)}'.`
+            } else {
+                html = `<h4>${results.length} search result${results.length > 1 ? "s" : ""} for '${escapeHTML(term)}'.</h4>`;
+            }
+            for (let result of results.slice(0, 10)) {
+                let doc = result.doc;
+                let url = `../../${doc.modulename.replaceAll(".", "/")}.html`;
+                if (doc.qualname) {
+                    url += `#${doc.qualname}`;
+                }
+
+                let heading;
+                switch (result.doc.kind) {
+                    case "function":
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
+                        break;
+                    case "class":
+                        heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
+                        if (doc.bases)
+                            heading += `<wbr>(<span class="base">${doc.bases}</span>)`;
+                        heading += `:`;
+                        break;
+                    case "variable":
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        if (doc.annotation)
+                            heading += `<span class="annotation">${doc.annotation}</span>`;
+                        if (doc.default_value)
+                            heading += `<span class="default_value"> = ${doc.default_value}</span>`;
+                        break;
+                    default:
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        break;
+                }
+                html += `
+                        <section class="search-result">
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <div class="docstring">${doc.doc}</div>
+                        </section>
+                    `;
+
+            }
+            return html;
+        })());
+    }
+
+    if (getSearchTerm()) {
+        initialize();
+        searchBox.value = getSearchTerm();
+        onInput();
+    } else {
+        searchBox.addEventListener("focus", initialize, {once: true});
+    }
+
+    searchBox.addEventListener("keydown", e => {
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            let focused = currentContent.querySelector(".search-result.focused");
+            if (!focused) {
+                currentContent.querySelector(".search-result").classList.add("focused");
+            } else if (
+                e.key === "ArrowDown"
+                && focused.nextElementSibling
+                && focused.nextElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.nextElementSibling.classList.add("focused");
+                focused.nextElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "ArrowUp"
+                && focused.previousElementSibling
+                && focused.previousElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.previousElementSibling.classList.add("focused");
+                focused.previousElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "Enter"
+            ) {
+                focused.querySelector("a").click();
+            }
+        }
+    });
+</script></body>
+</html>

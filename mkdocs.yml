@@ -38,7 +38,7 @@ nav:
       - Experience Manager: guidelines/exp_manager.md
       - Advantage Processor: guidelines/adv_processor.md
   - API Reference:
-      - API Reference: api/api_1.md
+      - API Reference: api/index.html
 
 
 markdown_extensions:
