@@ -1,0 +1,46 @@
+# mkdocs.yml
+site_name: AgentEvolver
+site_url: https://modelscope.github.io/AgentEvolver/
+site_description: "AgentEvolver is an end-to-end, self-evolving training framework that unifies self-questioning, self-navigating, and self-attributing into a cohesive system. "
+site_author: "The AgentEvolver Team"
+repo_url: https://github.com/modelscope/AgentEvolver
+repo_name: modelscope/AgentEvolver
+copyright: "Copyright &copy; 2025 AgentEvolver Team"
+
+theme:
+  name: shadcn
+  show_title: true # show the title in the top bar
+  show_stargazers: true # show the stargazers in the top bar
+  pygments_style: # default styles 
+        light: shadcn-light
+        dark: github-dark
+  icon: heroicons:rocket-launch # use the shadcn svg if not defined
+  topbar_sections: false # NEW!
+  katex_options: # optional
+    macros: # example of macros
+      "\\RR": "\\mathbb{R}" 
+      "\\dx": "\\mathrm{d}x"
+  show_datetime: false 
+
+plugins:
+  - search:
+      lang: [zh, en]   
+nav:
+  - Welcome: index.md
+  - Tutorial: 
+      - Installation: tutorial/install.md
+      - Configuration: tutorial/configuration.md
+      - Quick Start: tutorial/quick_start.md
+  - Guidelines: 
+      - Environment Service: guidelines/env_service.md
+      - Task Manager: guidelines/task_manager.md
+      # - Context Manager: guidelines/context_manager.md
+      - Experience Manager: guidelines/exp_manager.md
+      - Advantage Processor: guidelines/adv_processor.md
+  # - API Reference:
+  #     - API Reference: api/index.html
+
+
+markdown_extensions:
+  - admonition
+  - codehilite

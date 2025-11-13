@@ -1,0 +1,142 @@
+# Model files and checkpoints
+**/*.pt
+!important_models/*.pt  # Exclude important models that need to be tracked
+**/checkpoints
+**/*.ckpt
+*.lock
+
+# Build and temporary files
+**/wget-log
+**/_build/
+**/*.tar.gz
+**/wandb
+**/__pycache__/
+
+# Outputs and logs (more specific rules)
+**/outputs/
+!**/outputs/README.md  # Keep important README files
+**/logs/
+**/log/
+python_log/
+experiments/
+
+# Development and testing
+**/playground/
+!**/playground/README.md  # Keep important README files
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+tensorflow/my_graph/*
+.idea/
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+tmp/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# dotenv
+.env
+
+# virtualenv
+venv/
+.venv/
+
+# Spyder project settings
+.spyderproject
+
+# Rope project settings
+.ropeproject
+
+# vscode
+.vscode
+
+# Mac
+.DS_Store
+
+# vim
+*.swp
+
+# Data files
+*.parquet
+
+# Local resources and scripts
+/_resources
+/sync_*.sh
+/best_logger
+launcher
+cradle.py
+Note
+temp.sh
+
+scripts/*
+synthetic_data/*
+
+site
+launcher_record

@@ -1,0 +1,241 @@
+# please refer to external/config_fallback/ppo_trainer.yaml for more details about verl configuration.
+algorithm:
+  adv_estimator: grpo
+  use_kl_in_reward: false
+
+data:
+  train_batch_size: 32         
+  max_prompt_length: 4000      
+  max_response_length: 21580   
+  filter_overlong_prompts: true
+  truncation: "error"
+  return_raw_chat: true
+  train_files: null
+  val_files: null
+  val_batch_size: 256
+  # shuchang: 'val' or 'test_norm' for easy switching to test test_norm
+  val_type: "val"
+
+actor_rollout_ref:
+  hybrid_engine: true          
+  model:
+    path: Qwen/Qwen2.5-14B-Instruct      
+    use_remove_padding: true
+    enable_gradient_checkpointing: true
+  rollout:
+    use_qwen3: false                      
+    enable_request_id: false
+    prompt_length: 20480
+    response_length: 4096
+    max_model_len: 25580                  
+    temperature: 0.9
+    log_prob_micro_batch_size_per_gpu: 1
+    tensor_model_parallel_size: 1
+    name: vllm
+    mode: async
+    gpu_memory_utilization: 0.6
+    n: 8
+    log_prob_max_token_len_per_gpu: 25580
+    val_kwargs:
+      n: 8
+    
+    debug_llm_io: false
+    multi_turn:
+      completion_callback: agentevolver.module.trainer.simple_completion_callback.SimpleCompletionCallback
+      enable: true
+      format: llama3_json
+      max_steps: 30
+      tool_config_path: ""
+    custom_dataflow_cls:
+      path: ""
+      name: ""
+    max_env_worker: 32
+    context_template: "linear"
+    context_template_train_sp_action: false
+    max_env_len: 4096
+    sparse: true
+  actor:
+    # clip range high for off-policy samples
+    off_cliprange_high: 0.6
+    optim:
+      lr: 1e-6
+    ppo_micro_batch_size_per_gpu: 1
+    # micro batch size for PPO
+    ppo_mini_batch_size: 8
+    use_kl_loss: true
+    kl_loss_coef: 0.001
+    kl_loss_type: low_var_kl
+    entropy_coeff: 0
+    ppo_max_token_len_per_gpu: 25580
+    fsdp_config:
+      param_offload: false
+      optimizer_offload: false
+    
+    loss_agg_mode: token-mean
+    clip_ratio_high: 0.28
+  ref:
+    log_prob_micro_batch_size_per_gpu: 1
+    fsdp_config:
+      param_offload: true
+    log_prob_max_token_len_per_gpu: 25580
+
+critic:
+  ppo_max_token_len_per_gpu: 25580
+  forward_max_token_len_per_gpu: 25580
+
+
+env_service:
+  env_type: "appworld"
+  env_url: "http://127.0.0.1:8080"
+  env_feedin_preference: code # code, text, box
+
+trainer:
+  n_gpus_per_node: 8
+  nnodes: 1
+  critic_warmup: 0
+  logger: ["console"]
+  project_name: "appworld_qwen25-7b"
+  experiment_name: "appworld_qwen25-7b_baseline"
+  save_freq: 10000
+  test_freq: 10
+  total_epochs: 40
+  val_before_train: true
+  validation_data_dir: "experiments/tech_synthetic/${trainer.experiment_name}/validation_log"
+  rollout_data_dir: "experiments/tech_synthetic/${trainer.experiment_name}/rollout_log"
+  val_only: false
+
+
+
+###############################################################################
+# AgentEvolver settings
+# The details of the following settings can be found in our docs.
+
+thread_pool:
+  # max number of threads
+  max_workers: 8
+
+task_manager:
+  # tasks will be explored once if set. use it if you want to keep the same explorations.
+  train_data_path: tasks_explored.train.json
+  val_data_path: tasks_explored.val.json
+  # model used to explore the environment
+  llm_client: qwen-plus
+
+  # repetation of exploration
+  # 0 - stop exploration
+  n: 0
+  # env profiles used in exploration. If you set n to 0, just ignore this.
+  env_profile: cookbook/env_profiles/appworld.json
+  # batch size of dynamic synthetic data
+  # this should be the same as train_batch_size
+  bs: ${data.train_batch_size}
+  # max number of threads for exploration
+  num_explore_threads: ${thread_pool.max_workers}
+
+  # mixture strategy
+  mixture:
+    # whether to use original tasks from the environment
+    use_original_tasks: true
+    # ratio of synthetic data
+    synthetic_data_ratio: 0.0
+    # whether to shuffle tasks *after* mixture
+    shuffle: true
+
+  # grader settings                 
+  grader:
+    # grader used for original tasks
+    original_grader: env
+    # grader used for synthetic data
+    synthetic_grader: llm-binary-gt-no_constraint
+    
+  # strategy settings
+  strategy: random
+  strategy_args:
+    # max number of steps for exploration
+    max_explore_step: 30
+    # max number of LLM retries
+    max_llm_retries: 6
+    # env url
+    env_url: ${env_service.env_url}
+    # LLM parameters for exploration
+    exploration_llm_temperature: 1.0
+    exploration_llm_top_p: 1.0
+    exploration_llm_top_k: 100
+
+exp_manager:
+  # rollout mode on dev/test set: ["mixed", "all", "woexp"]
+  val_rollout_mode: "woexp"
+  # rollout mode on train set: ["mixed", "all", "woexp"]
+  train_rollout_mode: "woexp"
+  # ratio of adding experience within group during rollout
+  rollout_ratio: 0.0
+  # sample mode after train rollout: ["allkeep", "alldiscard", "hybrid"]
+  train_sample_mode: "alldiscard"
+  # task-level ratio for keeping experience
+  train_sample_keepratio: 1.0
+  # template for inserting experience
+  experience_template: "\n\nSome Related Experience to help you to complete the task:<EXP>{}</EXP>\n\n"
+  # whether to init experience pool before training
+  init_exp_before_training: false
+  # whether to only init experience pool
+  init_exp_only: false
+  # batch size for experience summarization
+  summary_batch_size: 8
+  reme:
+    # base URL for ReMe service
+    base_url: "http://127.0.0.1:8001"
+    workspace_id: "default"
+    enable_summarizer: false
+    enable_context_generator: false
+    retrieve_top_k: 3
+    updated_freq: 0
+
+     
+
+attribution_driven_credit_assignment:
+  # main switch
+  enable: false
+  # evaluation type ("local" or "api")
+  evaluation_type: "api"
+  # consistent step scaling factor
+  consistent_scale: 1.0
+  # inconsistent step scaling factor
+  pos_unconsistent_scale: 0.2
+  # inconsistent step negative scaling factor
+  neg_unconsistent_scale: -0.2
+  # concurrent processing count
+  concurrent: 5
+  # model used for semantic evaluation
+  model: "qwen-max"
+  # maximum API call retries, default 200 times
+  api_max_retries: 200
+  # set to specific path to enable, for example: "/path/to/llm_evaluation_logs"
+  llm_evaluation_log_dir: null
+  adca_grpo:
+    # allocation | decouple
+    prm_scheme: "decouple"
+    # must be true to ensure signal scale consistency and training stability
+    do_batch_norm: true
+    # generally recommended to be true to ensure equal contribution from each trajectory
+    equal_trajectory_weight: true
+    # base value for GOOD/BAD labels under the "decouple" scheme
+    fix_base: 0.2
+    # true or false (after closing, use constant alpha)
+    alpha_cosine_decay_enable: false
+    # key hyperparameter to tune; start with a small value (e.g., 0.05 ~ 0.2)
+    alpha: 0.1
+    # pure cosine lower limit
+    alpha_min: 0.0
+    # total training steps (used for p = global_steps/total_steps)
+    total_steps: 100
+    # recommended to be "last_step" as it is more intuitive
+    orm_distribution: last_step
+    # default is false; can be enabled for tasks with high variance in trajectory length
+    enable_length_normalization: false
+    # balance effectiveness and API cost; enables attribution for the first 100 epochs
+    prm_steps: 100
+    # "none" | "skip_small_adv" | "skip_all_neg"
+    # recommended to save API costs by not evaluating low-value trajectories
+    skip_type: "none"
+    # recommended to be true to monitor the attribution module's internal state
+    enable_adca_metric: false

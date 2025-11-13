@@ -1,0 +1,287 @@
+{
+  "name": "Bob",
+  "background": "A general computer user.",
+  "entities": [
+    {
+      "name": "Venmo",
+      "description": "A mobile payment service to send, request, and manage money transactions.",
+      "attrs": {
+        "Account": "User's Venmo account details.",
+        "Friends": "List of Venmo friends.",
+        "Transactions": "History of sent and received payments."
+      },
+      "opts": [
+        {
+          "name": "accept_request",
+          "description": "Accept pending payment requests."
+        },
+        {
+          "name": "reject_request",
+          "description": "Reject payment requests."
+        },
+        {
+          "name": "send_money",
+          "description": "Send money to a user."
+        },
+        {
+          "name": "request_money",
+          "description": "Request money from a user."
+        },
+        {
+          "name": "like_transaction",
+          "description": "Like a Venmo transaction."
+        },
+        {
+          "name": "remind_request",
+          "description": "Send reminders for pending requests."
+        },
+        {
+          "name": "manage_friends",
+          "description": "Befriend or unfriend users on Venmo."
+        },
+        {
+          "name": "change_password",
+          "description": "Change account password."
+        }
+      ]
+    },
+    {
+      "name": "Amazon",
+      "description": "An online e-commerce platform for purchasing, returning, and reviewing products.",
+      "attrs": {
+        "Account": "User's Amazon account details.",
+        "Cart": "Items currently in the shopping cart.",
+        "Wishlist": "Products saved for later purchase.",
+        "Orders": "Purchase history and delivery details."
+      },
+      "opts": [
+        {
+          "name": "place_order",
+          "description": "Place an order for products."
+        },
+        {
+          "name": "return_item",
+          "description": "Initiate a return process."
+        },
+        {
+          "name": "manage_cart",
+          "description": "Add, remove, or move items in the cart."
+        },
+        {
+          "name": "manage_wishlist",
+          "description": "Add or remove items from wishlist."
+        },
+        {
+          "name": "post_question",
+          "description": "Post a product-related question."
+        },
+        {
+          "name": "write_review",
+          "description": "Write or update a product review."
+        },
+        {
+          "name": "check_delivery",
+          "description": "Check delivery date for an order."
+        }
+      ]
+    },
+    {
+      "name": "Spotify",
+      "description": "A music streaming service with song, album, and playlist management.",
+      "attrs": {
+        "Song Library": "Songs saved by the user.",
+        "Album Library": "Albums saved by the user.",
+        "Playlists": "User-created or followed playlists."
+      },
+      "opts": [
+        {
+          "name": "play_song",
+          "description": "Play a song, album, or playlist."
+        },
+        {
+          "name": "like_song",
+          "description": "Like songs or albums."
+        },
+        {
+          "name": "unfollow_artist",
+          "description": "Unfollow an artist."
+        },
+        {
+          "name": "follow_artist",
+          "description": "Follow an artist."
+        },
+        {
+          "name": "create_playlist",
+          "description": "Create a new playlist."
+        },
+        {
+          "name": "remove_song",
+          "description": "Remove songs from library or playlist."
+        },
+        {
+          "name": "export_library",
+          "description": "Export song/album/playlist data."
+        }
+      ]
+    },
+    {
+      "name": "Gmail",
+      "description": "An email service for sending, receiving, labeling, and managing emails.",
+      "attrs": {
+        "Inbox": "List of received email threads.",
+        "Outbox": "List of sent email threads.",
+        "Labels": "Custom labels to organize emails."
+      },
+      "opts": [
+        {
+          "name": "send_email",
+          "description": "Send an email."
+        },
+        {
+          "name": "forward_email",
+          "description": "Forward an email."
+        },
+        {
+          "name": "reply_email",
+          "description": "Reply to an email."
+        },
+        {
+          "name": "delete_email",
+          "description": "Delete emails."
+        },
+        {
+          "name": "label_email",
+          "description": "Label emails."
+        },
+        {
+          "name": "star_email",
+          "description": "Star or unstar email threads."
+        }
+      ]
+    },
+    {
+      "name": "Simple Note",
+      "description": "A note-taking app for storing and managing notes and lists.",
+      "attrs": {
+        "Notes": "Collection of user notes.",
+        "Tags": "Tags for organizing notes."
+      },
+      "opts": [
+        {
+          "name": "export_note",
+          "description": "Export notes."
+        },
+        {
+          "name": "update_note",
+          "description": "Update or edit a note."
+        },
+        {
+          "name": "add_note",
+          "description": "Add a new note."
+        },
+        {
+          "name": "note_to_playlist",
+          "description": "Create a playlist from note content."
+        }
+      ]
+    },
+    {
+      "name": "Phone",
+      "description": "A mobile device for calls, text messages, voice messages, and alarms.",
+      "attrs": {
+        "Contacts": "List of saved contacts.",
+        "Messages": "Text and voice messages.",
+        "Alarms": "Configured alarms on the device."
+      },
+      "opts": [
+        {
+          "name": "send_text",
+          "description": "Send a text message."
+        },
+        {
+          "name": "send_voice",
+          "description": "Send a voice message."
+        },
+        {
+          "name": "set_alarm",
+          "description": "Set or update an alarm."
+        }
+      ]
+    },
+    {
+      "name": "Todoist",
+      "description": "A task management and to-do list application.",
+      "attrs": {
+        "Projects": "User's task projects.",
+        "Tasks": "Individual tasks in projects."
+      },
+      "opts": [
+        {
+          "name": "complete_task",
+          "description": "Complete tasks."
+        },
+        {
+          "name": "update_task",
+          "description": "Update tasks."
+        },
+        {
+          "name": "move_task",
+          "description": "Move tasks between projects."
+        }
+      ]
+    },
+    {
+      "name": "Splitwise",
+      "description": "An app for tracking shared expenses and balances.",
+      "attrs": {
+        "Groups": "Expense sharing groups.",
+        "Expenses": "List of shared expenses."
+      },
+      "opts": [
+        {
+          "name": "add_expense",
+          "description": "Add a shared expense."
+        },
+        {
+          "name": "settle_expense",
+          "description": "Settle or record payments."
+        }
+      ]
+    },
+    {
+      "name": "File System",
+      "description": "A local file storage system for managing files and directories.",
+      "attrs": {
+        "Directories": "Folder structure for files.",
+        "Files": "Stored documents, images, and other file types."
+      },
+      "opts": [
+        {
+          "name": "download_file",
+          "description": "Download a file."
+        },
+        {
+          "name": "move_file",
+          "description": "Move files."
+        },
+        {
+          "name": "compress_file",
+          "description": "Compress files."
+        },
+        {
+          "name": "delete_file",
+          "description": "Delete files."
+        },
+        {
+          "name": "reorganize_files",
+          "description": "Change file organization structure."
+        }
+      ]
+    }
+  ],
+  "task_preference": {
+    "num_entities": 2,
+    "num_opts": 3,
+    "relation_difficulty": 3
+  }
+}

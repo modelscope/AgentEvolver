@@ -1,0 +1,215 @@
+{
+  "name": "Alice",
+  "background": "A general user.",
+  "entities": [
+    {
+      "name": "FileSystem",
+      "description": "Represents the user's file system for file and directory management.",
+      "attrs": {
+        "directory_structure": "Hierarchy of folders and files.",
+        "file_metadata": "File names, sizes, modification times.",
+        "permissions": "Access rights for files and directories."
+      },
+      "opts": [
+        {
+          "name": "create",
+          "description": "Create a new file or directory."
+        },
+        {
+          "name": "read",
+          "description": "Read contents of a file or list directory."
+        },
+        {
+          "name": "update",
+          "description": "Modify contents or metadata of a file."
+        },
+        {
+          "name": "delete",
+          "description": "Delete a file or directory."
+        },
+        {
+          "name": "move_copy",
+          "description": "Move or copy files and directories."
+        },
+        {
+          "name": "search",
+          "description": "Search for files or content."
+        },
+        {
+          "name": "compare",
+          "description": "Compare two files and show differences."
+        }
+      ]
+    },
+    {
+      "name": "Vehicle",
+      "description": "Represents a vehicle with controllable systems for travel readiness.",
+      "attrs": {
+        "fuel_level": "Current fuel in the tank.",
+        "tire_pressure": "Pressure of each tire.",
+        "door_lock_status": "Whether doors are locked or unlocked.",
+        "battery_voltage": "Current battery voltage.",
+        "ac_settings": "Air conditioning temperature and fan speed."
+      },
+      "opts": [
+        {
+          "name": "start_engine",
+          "description": "Start the vehicle engine."
+        },
+        {
+          "name": "stop_engine",
+          "description": "Stop the vehicle engine."
+        },
+        {
+          "name": "refuel",
+          "description": "Add fuel to the vehicle."
+        },
+        {
+          "name": "check_tire_pressure",
+          "description": "Check the tire pressure."
+        },
+        {
+          "name": "lock_unlock_doors",
+          "description": "Lock or unlock vehicle doors."
+        },
+        {
+          "name": "set_navigation",
+          "description": "Set the vehicle navigation system."
+        },
+        {
+          "name": "check_battery",
+          "description": "Check the vehicle battery status."
+        }
+      ]
+    },
+    {
+      "name": "FlightBookingSystem",
+      "description": "System for searching, booking, and managing flights.",
+      "attrs": {
+        "departure_airport": "Code of the departure airport.",
+        "arrival_airport": "Code of the arrival airport.",
+        "class_type": "Travel class (economy, business, first).",
+        "flight_cost": "Cost of the flight ticket.",
+        "booking_id": "Unique booking identifier."
+      },
+      "opts": [
+        {
+          "name": "check_flight_cost",
+          "description": "Retrieve flight cost for given route."
+        },
+        {
+          "name": "book_flight",
+          "description": "Book a flight ticket."
+        },
+        {
+          "name": "cancel_flight",
+          "description": "Cancel an existing flight booking."
+        },
+        {
+          "name": "purchase_insurance",
+          "description": "Buy travel insurance for a booking."
+        }
+      ]
+    },
+    {
+      "name": "SocialMediaAccount",
+      "description": "Platform for posting updates, retweeting, and interacting with others.",
+      "attrs": {
+        "username": "Account username.",
+        "followers_count": "Number of followers.",
+        "posts": "List of published posts."
+      },
+      "opts": [
+        {
+          "name": "post",
+          "description": "Post a new message."
+        },
+        {
+          "name": "retweet",
+          "description": "Retweet an existing post."
+        },
+        {
+          "name": "comment",
+          "description": "Comment on a post."
+        },
+        {
+          "name": "delete_message",
+          "description": "Delete a sent message."
+        },
+        {
+          "name": "view_sent_messages",
+          "description": "List all sent messages."
+        }
+      ]
+    },
+    {
+      "name": "TradingAccount",
+      "description": "Represents a stock trading account for investments.",
+      "attrs": {
+        "balance": "Available account balance.",
+        "watchlist": "List of stocks being monitored.",
+        "order_history": "Record of past and current orders."
+      },
+      "opts": [
+        {
+          "name": "get_stock_info",
+          "description": "Retrieve details of a stock."
+        },
+        {
+          "name": "add_watchlist",
+          "description": "Add a stock to watchlist."
+        },
+        {
+          "name": "remove_watchlist",
+          "description": "Remove a stock from watchlist."
+        },
+        {
+          "name": "place_order",
+          "description": "Place a buy or sell order."
+        },
+        {
+          "name": "cancel_order",
+          "description": "Cancel an existing order."
+        },
+        {
+          "name": "get_account_details",
+          "description": "Retrieve account balance and linked cards."
+        }
+      ]
+    },
+    {
+      "name": "CustomerSupportTicket",
+      "description": "System for tracking and resolving user-reported issues.",
+      "attrs": {
+        "ticket_id": "Unique identifier for the ticket.",
+        "title": "Ticket title.",
+        "description": "Detailed description of the issue.",
+        "priority": "Ticket priority level.",
+        "status": "Current status of the ticket."
+      },
+      "opts": [
+        {
+          "name": "create_ticket",
+          "description": "Create a new support ticket."
+        },
+        {
+          "name": "update_ticket",
+          "description": "Update ticket details."
+        },
+        {
+          "name": "close_ticket",
+          "description": "Close a support ticket."
+        },
+        {
+          "name": "view_ticket",
+          "description": "View details of a support ticket."
+        }
+      ]
+    }
+  ],
+  "task_preference": {
+    "num_entities": 2,
+    "num_opts": 3,
+    "relation_difficulty": 3
+  }
+}

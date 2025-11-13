@@ -1,0 +1,35 @@
+hydra:
+  searchpath:
+    - file://external/config_fallback
+    - file://config
+
+defaults:
+  - ppo_trainer
+  - agentevolver
+  - _self_
+
+trainer:
+  experiment_name: basic
+
+# self-navigating
+exp_manager:
+  val_rollout_mode: "woexp"    # rollout mode on dev/test set: ["mixed", "all", "woexp"]
+  train_rollout_mode: "woexp"  # rollout mode on train set: ["mixed", "all", "woexp"]
+  rollout_ratio: 0.0           # ratio of adding experience within group during rollout
+  train_sample_mode: "alldiscard"    # sample mode after train rollout: ["allkeep", "alldiscard", "hybrid"]
+  train_sample_keepratio: 1.0     # task-level ratio for keeping experience
+  experience_template: "\n\nSome Related Experience to help you to complete the task:<EXP>{}</EXP>\n\n"  # template for inserting experience
+  init_exp_before_training: False  # whether to init experience pool before training
+  init_exp_only: False  # whether to only init experience pool
+  summary_batch_size: 8  # batch size for experience summarization
+  reme:
+    base_url: "http://127.0.0.1:8001"  # base URL for ReMe service
+    workspace_id: "default"  # workspace ID for ReMe
+    enable_summarizer: False  # whether to enable experience summarizer
+    enable_context_generator: False  # whether to enable context generator
+    retrieve_top_k: 3  # number of top experiences to retrieve
+    updated_freq: 0   # experience pool update frequency (in steps, 0=disabled)
+
+# self-attributing
+attribution_driven_credit_assignment:
+  enable: false

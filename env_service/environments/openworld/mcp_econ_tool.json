@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "阿里云百炼_上市公司财报数据精灵": {
+      "type": "sse",
+      "url": "https://dashscope.aliyuncs.com/api/v1/mcps/finance-spirit/sse",
+      "headers": {
+        "Authorization": ""
+      }
+    }
+  }
+}
