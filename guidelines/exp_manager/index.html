@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // for search plugin notably
+        const base_url = "https://modelscope.github.io/AgentEvolver/";
+    </script>
+    <script>
+    const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    darkTheme.onchange = (e) => {
+        if (e.matches) {
+            document.documentElement.classList.add("dark")
+            localStorage.theme = 'dark';
+        } else {
+            document.documentElement.classList.remove("dark")
+            localStorage.removeItem("theme")
+        }
+    };
+
+    // On page load. Priotiry to lcaolStorage
+    if (localStorage.theme === "dark") {
+        document.documentElement.classList.add("dark")
+    } else if (localStorage.theme === "light") {
+        document.documentElement.classList.remove("dark")
+    } else if (darkTheme.matches) {
+        document.documentElement.classList.add("dark")
+    } else {
+        document.documentElement.classList.remove("dark")
+    }
+
+    // set the layout based on localStorage
+    document.documentElement.classList.add(localStorage.getItem("html-layout") || "layout-fixed");
+</script>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Experience Manager - AgentEvolver</title>
+    
+
+
+<title>Experience Manager</title>
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://modelscope.github.io/AgentEvolver/guidelines/exp_manager/">
+
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+
+<meta property="og:title" content="Experience Manager">
+
+
+
+
+
+<meta property="og:url" content="https://modelscope.github.io/AgentEvolver/guidelines/exp_manager/">
+
+
+
+
+
+
+<!-- Twitter Card -->
+
+<meta name="twitter:title" content="Experience Manager">
+
+
+
+
+
+
+<!-- JSON-LD Structured Data -->
+
+
+
+    <link rel="icon" href="../../img/favicon.ico">
+
+    <link href="../../css/base.css" rel="stylesheet">
+    <link href="../../css/geist.css" rel="stylesheet">
+
+    
+    
+
+<link id="pygments-light" rel="stylesheet"
+    href="../../css/pygments/shadcn-light.css">
+<link id="pygments-dark" rel="stylesheet"
+    href="../../css/pygments/github-dark.css"
+    media="(prefers-color-scheme: dark)">
+
+
+    
+
+    
+
+    <script src="../../js/callbacks.js"></script>
+
+    
+
+    
+
+    
+
+</head>
+
+<body
+    class="text-foreground group/body overscroll-none font-sans antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)] theme-default">
+    <div id="inner-body" class="bg-background relative z-10 flex min-h-svh flex-col">
+        <header class="bg-background sticky top-0 z-50 w-full" view-transition-name="header">
+    <div class="container-wrapper 3xl:fixed:px-0 px-6">
+        <div class="3xl:fixed:container flex h-(--header-height) items-center gap-2 **:data-[slot=separator]:!h-4">
+            <button id="menu-button" data-slot="popover-trigger" onclick="onMobileMenuButtonClick(event)"
+                class="group whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground px-4 py-2 has-[&gt;svg]:px-3 extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 !p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent flex lg:hidden"
+                type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«Rmplb»"
+                data-state="closed">
+                <div class="relative flex h-8 w-4 items-center justify-center">
+                    <div class="relative size-4">
+                        <!-- 16px x 16px -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="0" x2="16" y1="5" y2="5"
+                                class="group-data-[state=open]:translate-y-[2.25px] group-data-[state=open]:-translate-x-[2.25px] group-data-[state=open]:rotate-45 transition-all duration-300 origin-center" />
+                            <line x1="0" x2="16" y1="11" y2="11"
+                                class="group-data-[state=open]:-translate-y-[2.25px] group-data-[state=open]:-translate-x-[2.25px] group-data-[state=open]:-rotate-45 transition-all duration-300 origin-center" />
+                        </svg>
+                    </div>
+
+                    <span class="sr-only">Toggle Menu</span>
+                </div>
+                <span class="flex h-8 items-center text-lg leading-none font-medium">Menu</span>
+            </button>
+            <a data-slot="button"
+                class="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 hidden h-8 lg:flex"
+                href="https://modelscope.github.io/AgentEvolver/">
+                <span class="size-8 flex flex-row justify-center items-center">
+                    
+
+<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.59 14.37q.159.666.16 1.38a6 6 0 0 1-6 6v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.9 14.9 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.9 14.9 0 0 0-2.58 5.84m2.699 2.7q-.155.032-.311.06a15 15 0 0 1-2.448-2.448l.06-.312m-2.24 2.39a4.49 4.49 0 0 0-1.757 4.306q.341.054.696.054a4.5 4.5 0 0 0 3.61-1.812M16.5 9a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/></svg>
+
+
+                </span>
+
+                
+                <h1 class="pr-2">AgentEvolver</h1>
+                
+            </a>
+            
+            <div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
+                <div class="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
+                    <button data-slot="dialog-trigger" onclick="onSearchBarClick(event)"
+    class="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-secondary/80 px-4 py-2 has-[&gt;svg]:px-3 bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
+    type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«R66plb»" data-state="closed">
+    <span class="text-muted-foreground hidden lg:inline-flex">Search documentation...</span>
+    <span class="text-muted-foreground inline-flex lg:hidden">Search...</span>
+    <div class="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
+        <kbd
+            class="bg-background text-muted-foreground pointer-events-none flex h-5 items-center justify-center gap-1 rounded border px-1 font-sans text-[0.7rem] font-medium select-none [&amp;_svg:not([class*='size-'])]:size-3">Ctrl</kbd><kbd
+            class="bg-background text-muted-foreground pointer-events-none flex h-5 items-center justify-center gap-1 rounded border px-1 font-sans text-[0.7rem] font-medium select-none [&amp;_svg:not([class*='size-'])]:size-3 aspect-square">K</kbd>
+    </div>
+</button>
+<dialog id="search-dialog" onclick="onSearchDialogClick(event)"
+    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg border overflow-hidden p-0">
+    <div class="w-lg gap-4">
+        <div class="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground">
+            <div data-slot="command-input-wrapper" class="flex h-9 items-center gap-2 border-b px-3"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-search size-4 shrink-0 opacity-50">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+                <input data-slot="command-input"
+                    class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Search documentation..." cmdk-input="" autocomplete="off" autocorrect="off"
+                    spellcheck="false" aria-autocomplete="list" role="combobox" aria-expanded="true"
+                    aria-controls="radix-«r1t6»" aria-labelledby="radix-«r1t7»" id="radix-«r1t8»" type="text" value=""
+                    aria-activedescendant="radix-«r1th»" oninput="onInputHandler(event)">
+            </div>
+        </div>
+        <div id="mkdocs-search-results">
+            <!-- search results go there -->
+        </div>
+    </div>
+</dialog>
+<script>
+    document.removeEventListener("keydown", searchShortcutHandler);
+    document.addEventListener("keydown", searchShortcutHandler);
+</script>
+                </div>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px ml-2 hidden lg:block">
+                </div>
+                <a target="_blank" rel="noreferrer" data-slot="button"
+                    class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 h-8 shadow-none"
+                    href="https://github.com/modelscope/AgentEvolver">
+                    <svg viewBox="0 0 438.549 438.549">
+                        <path fill="currentColor"
+                            d="M409.132 114.573c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.063-29.408-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8C9.803 148.168 0 184.854 0 224.63c0 47.78 13.94 90.745 41.827 128.906 27.884 38.164 63.906 64.572 108.063 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417a2549.81 2549.81 0 01-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289 1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136 6.28 0 11.704-.476 16.274-1.423 4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.068-79.226 27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049z">
+                        </path>
+                    </svg>
+                    
+                    <span id="stargazers" class="text-muted-foreground w-8 text-xs tabular-nums" onload="test()">
+                    </span>
+                    
+                </a>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px 3xl:flex hidden">
+                </div>
+                <button data-slot="button"
+                    class="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-8 3xl:flex hidden"
+                    title="Toggle layout" onclick="toggleLayout(event)">
+                    <span class="sr-only">Toggle layout</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-gallery-horizontal">
+                        <path d="M2 3v18"></path>
+                        <rect width="12" height="18" x="6" y="3" rx="2"></rect>
+                        <path d="M22 3v18"></path>
+                    </svg>
+                </button>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px">
+                </div>
+                <button data-slot="button"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 group/toggle extend-touch-target size-8"
+                    title="Toggle theme" onclick="onThemeSwitch(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="size-4.5">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                        <path d="M12 3l0 18"></path>
+                        <path d="M12 9l4.65 -4.65"></path>
+                        <path d="M12 14.3l7.37 -7.37"></path>
+                        <path d="M12 19.6l8.85 -8.85"></path>
+                    </svg>
+                    <span class="sr-only">Toggle theme</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+        <main class="flex flex-1 flex-col">
+            <div class="container-wrapper flex flex-1 flex-col px-2">
+                <div data-slot="sidebar-wrapper" style="--sidebar-width: 16rem; --sidebar-width-icon: 3rem;"
+                    class="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex w-full 3xl:fixed:container 3xl:fixed:px-3 min-h-min flex-1 items-start px-0 [--sidebar-width:220px] [--top-spacing:0] lg:grid lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:[--sidebar-width:240px] lg:[--top-spacing:calc(var(--spacing)*4)]">
+                    <div data-slot="sidebar"
+                        class="text-sidebar-foreground w-(--sidebar-width) flex-col sticky top-[calc(var(--header-height)+1px)] z-30 hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] bg-transparent lg:flex">
+                        <div data-slot="sidebar-content" data-sidebar="content"
+                            class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden no-scrollbar px-2 pb-12">
+                            <div class="h-(--top-spacing) shrink-0"></div>
+                            <div view-transition-name="sidebar" data-slot="sidebar-group" data-sidebar="group"
+    class="relative flex w-full min-w-0 flex-col p-2 no-scrollbar">
+    
+
+    
+    
+    
+
+    
+
+    
+    
+
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Welcome
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+    
+
+    
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-label" data-sidebar="group-label"
+            class="ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&amp;&gt;svg]:size-4 [&amp;&gt;svg]:shrink-0 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 text-muted-foreground font-medium">
+            Tutorial</div>
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/install/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Installation
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/configuration/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Configuration
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/quick_start/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Quick Start
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+            </ul>
+        </div>
+    </div>
+    
+    
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-label" data-sidebar="group-label"
+            class="ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&amp;&gt;svg]:size-4 [&amp;&gt;svg]:shrink-0 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 text-muted-foreground font-medium">
+            Guidelines</div>
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/env_service/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Environment Service
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/task_manager/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Task Manager
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="true" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/exp_manager/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Experience Manager
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/adv_processor/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Advantage Processor
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+            </ul>
+        </div>
+    </div>
+    
+    
+
+
+    
+</div>
+                        </div>
+                    </div>
+                    <div class="h-full w-full">
+                        <div data-slot="docs" class="flex items-stretch text-[1.05rem] sm:text-[15px] xl:w-full">
+                            <div class="flex min-w-0 flex-1 flex-col">
+                                <div class="h-(--top-spacing) shrink-0"></div>
+                                <article class="w-full" view-transition-name="page">
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
+      <div id="page-header" class="flex items-start justify-between">
+        <h1
+          class="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl"
+        >
+          Experience Manager
+        </h1>
+
+        <div class="flex items-center gap-2 pt-1.5">
+          
+<button onclick="fetch(`https://modelscope.github.io/AgentEvolver/guidelines/exp_manager.md`).then((r) => r.blob()).then((blob) => navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })]))" 
+        data-slot="button" 
+        class="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md gap-1.5 px-3 has-[&>svg]:px-2.5 h-8 shadow-none md:h-7 md:text-[0.8rem]">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-copy ">
+    <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path>
+</svg>
+<span class="max-md:hidden">Copy Page</span>
+</button> 
+          
+          <a
+            data-slot="button"
+            id="previous-button"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 extend-touch-target size-8 shadow-none md:size-7"
+            href="/AgentEvolver/guidelines/task_manager/"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="tabler-icon tabler-icon-arrow-left"
+            >
+              <path d="M5 12l14 0"></path>
+              <path d="M5 12l6 6"></path>
+              <path d="M5 12l6 -6"></path>
+            </svg>
+            <span class="sr-only">Previous</span>
+          </a>
+           
+          
+          <a
+            data-slot="button"
+            id="next-button"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 extend-touch-target size-8 shadow-none md:size-7"
+            href="/AgentEvolver/guidelines/adv_processor/"
+          >
+            <span class="sr-only">Next</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="tabler-icon tabler-icon-arrow-right"
+            >
+              <path d="M5 12l14 0"></path>
+              <path d="M13 18l6 -6"></path>
+              <path d="M13 6l6 6"></path>
+            </svg>
+          </a>
+          
+        </div>
+      </div>
+      
+    </div>
+    <div class="flex justify-end items-center">
+       
+    </div>
+  </div>
+  <div class="typography w-full flex-1 *:data-[slot=alert]:first:mt-0">
+    <h2 id="overview">🚀 Overview</h2>
+<p>Exploration in complex environments is a key challenge for autonomous agents. Traditional reinforcement learning approaches rely heavily on trial-and-error, often generating redundant trajectories and converging slowly. In contrast, humans efficiently leverage past experiences to guide future actions, learning faster and more systematically.</p>
+<p>The <strong><code>Self-Navigating</code></strong> framework adopts this principle by enabling agents to internalize and reuse prior experiences. It shifts exploration from unguided trial-and-error to structured, knowledge-driven self-improvement, improving both learning efficiency and policy quality.</p>
+<p>At the core of the framework, the <strong>Experience Manager</strong> oversees all aspects of experience handling, including:</p>
+<ol>
+<li><strong>Experience Pool Management</strong> – Constructing and updating the experience pool with new trajectories and summaries.</li>
+<li><strong>Experience Mode Control</strong> – Determining whether to add experiences during rollouts and whether to remove experience information during training.</li>
+<li><strong>Rollout &amp; Training Context Management</strong> – Providing relevant historical context during rollouts and maintaining experience-strippped training messages.</li>
+<li><strong>Training Loss Management</strong> – Aggregating and processing losses with respect to experience-based adjustments for stable learning.</li>
+</ol>
+<h2 id="core-features">🧩 Core Features</h2>
+<p>The <code>Self-Navigating</code> framework enhances reinforcement learning by transforming how agents <strong>create, reuse, and refine experiences</strong>.
+It introduces structured mechanisms that make exploration <strong>more efficient</strong>, <strong>context-aware</strong>, and <strong>self-evolving</strong>.</p>
+<p>At its core are two classes:</p>
+<ul>
+<li><strong><code>ExperienceManager</code></strong> — handles experience scheduling and allocation.  </li>
+<li><strong><code>ExperienceWorker</code></strong> — manages context injection during rollout and cleanup during training.</li>
+</ul>
+<h3 id="1-dynamic-experience-allocation">1. Dynamic Experience Allocation</h3>
+<p><strong>Purpose</strong>: 
+Dynamically decide <strong>how much and when</strong> to use experience during both <strong>training</strong> and <strong>rollout</strong> stages.</p>
+<p><strong>How it works</strong>: 
+This module performs two levels of adaptive allocation:</p>
+<ul>
+<li><strong>Task-Level Allocation</strong>  <ul>
+<li>Determines whether each training task should <strong>keep</strong> or <strong>discard</strong> experience.</li>
+<li>Controlled by <code>train_sample_mode</code>:  <ul>
+<li><code>"allkeep"</code> → all tasks retain experience  </li>
+<li><code>"alldiscard"</code> → all tasks discard experience  </li>
+<li><code>"hybrid"</code> → keep ratio controlled by <code>train_sample_keepratio</code></li>
+</ul>
+</li>
+<li>Key Codes:</li>
+</ul>
+</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Class: ExperienceManager
+# Function: allocate_train_mode()
+mode_to_ratio = {
+    &quot;allkeep&quot;: 1.0,
+    &quot;alldiscard&quot;: 0.0,
+    &quot;hybrid&quot;: self.train_sample_keepratio
+}
+keep_ratio = mode_to_ratio.get(
+    self.train_sample_mode, self.train_sample_keepratio
+)
+keep_count = int(len(tasks) * keep_ratio)
+exp_modes = ['keep'] * keep_count + ['discard'] * (len(tasks) - keep_count)
+</code></pre>
+
+<ul>
+<li><strong>Rollout-Level Allocation</strong><ul>
+<li>Determines the proportion of rollouts within one task that will <strong>include experience</strong>.</li>
+<li>Controlled by <code>val_rollout_mode</code> and <code>train_rollout_mode</code>:<ul>
+<li><code>"woexp"</code> → no rollout uses experience (pure exploration) </li>
+<li><code>"all"</code> → all rollouts use experience (fully guided) </li>
+<li><code>"mixed"</code> → <em>partially guided</em>, rollout experience usage ratio determined by <code>rollout_ratio</code></li>
+</ul>
+</li>
+<li>The parameter <code>rollout_ratio</code> only takes effect when <code>val_rollout_mode/train_rollout_mode="mixed"</code>. For example, <code>rollout_expratio=0.3</code> means <em>30%</em> of rollouts will include experience, while the remaining <em>70%</em> proceed without it.</li>
+</ul>
+</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Class: ExperienceManager
+# Function: allocate_add_exp()
+add_exp_choices = {
+    &quot;woexp&quot;: [False] * rollout_n,
+    &quot;mixed&quot;: sorted(
+        [i &lt; round(rollout_n * self.rollout_expratio) for i in range(rollout_n)],
+        key=lambda _: random.random()
+    ),
+    &quot;all&quot;: [True] * rollout_n
+}[exp_mode]
+</code></pre>
+
+<p><strong>✅Effect</strong>:</p>
+<ul>
+<li>
+<p><code>train_sample_mode</code> controls how experience is used in training samples.</p>
+</li>
+<li>
+<p><code>val_rollout_mode/train_rollout_mode</code> defines the exploration regime (<code>woexp</code> / <code>mixed</code> / <code>all</code>).</p>
+</li>
+<li>
+<p><code>rollout_ratio</code> refines <code>mixed</code> mode by determining how many rollouts reuse experience.</p>
+</li>
+</ul>
+<p>Together, they enable dynamic balancing between exploration and exploitation.</p>
+<h3 id="2-asynchronous-experience-summarization">2. Asynchronous Experience Summarization</h3>
+<p><strong>Purpose</strong>: 
+Convert raw trajectories into summarized experiences <strong>asynchronously</strong>, ensuring continuous learning without blocking.</p>
+<p><strong>How it works</strong>: </p>
+<ul>
+<li>
+<p>Periodically triggered by training steps (<code>updated_freq</code>).</p>
+</li>
+<li>
+<p>Executes summarization jobs via a background thread (<code>ThreadPoolExecutor</code>).</p>
+</li>
+<li>
+<p>Stores summarized results in the shared experience pool.</p>
+</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Class: ExperienceManager
+# FUnction: submit_summary_task()
+summary_task = self.thread_pool.submit(
+    self.em_client.call_summarizer,
+    trajectories=trajectories,
+    workspace_id=reme_config.workspace_id
+    )
+</code></pre>
+
+<p><strong>✅Effect</strong>:
+The experience pool grows in parallel with training, keeping the agent’s knowledge base continuously updated.</p>
+<h3 id="3-context-aware-rollout-management">3. Context-Aware Rollout Management</h3>
+<p><strong>Purpose</strong>: 
+Make rollouts context-aware by injecting relevant past experiences into prompts.</p>
+<p><strong>How it works</strong>: </p>
+<ul>
+<li>
+<p>Retrieves top-K related experiences via <code>EMClient</code>.</p>
+</li>
+<li>
+<p>Formats and prepends them to the rollout message.</p>
+</li>
+<li>
+<p>Enhances rollout context without modifying the underlying task.</p>
+</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Class: ExperienceWorker
+# Function: manage_rollout_context()
+history_experience = self.em_client.call_context_generator(
+    trajectory=trajectory,
+    retrieve_top_k=reme_config.retrieve_top_k,
+    workspace_id=reme_config.workspace_id
+    )
+formatted_experience = self.experience_template.format(history_experience)
+new_content = formatted_experience + trajectory.steps[-1][&quot;content&quot;]
+trajectory.steps[-1][&quot;content&quot;] = new_content
+</code></pre>
+
+<p><strong>✅Effect</strong>:
+Each rollout benefits from relevant prior knowledge, reducing redundant exploration.</p>
+<h3 id="4-training-context-management">4. Training Context Management</h3>
+<p><strong>Purpose</strong>: 
+Ensure training messages remain clean by removing injected experience when not needed.</p>
+<p><strong>How it works</strong>: </p>
+<ul>
+<li>
+<p>Detects experience templates in training messages using regex.</p>
+</li>
+<li>
+<p>Removes them when <code>train_mode="discard"</code> while retaining extracted text for analysis.</p>
+</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Class: ExperienceWorker
+# Function: manage_training_context()
+pattern = re.escape(self.experience_template).replace(r'\{\}', '(.*?)')
+cleaned_message = re.sub(pattern, '', message, flags=re.DOTALL)
+</code></pre>
+
+<p><strong>✅Effect</strong>:
+Guarantees that training data integrity aligns with the current experience policy.</p>
+<h3 id="5-training-loss-processing">5. Training Loss Processing</h3>
+<p><strong>Purpose</strong>:<br />
+Ensure stable policy updates when mixing <strong>on-policy rollouts</strong> and <strong>off-policy experience replays</strong>, allowing the agent to leverage past trajectories without destabilizing learning.</p>
+<p><strong>How it Works</strong>:</p>
+<ul>
+<li>This module computes a <em>heterogeneous PPO loss</em> that combines:<ul>
+<li><strong>On-policy loss</strong>: derived from fresh rollouts.  </li>
+<li><strong>Off-policy loss</strong>: derived from experience-augmented samples.  </li>
+</ul>
+</li>
+<li>An <strong>experience mask (<code>exp_mask</code>)</strong> distinguishes the two. Each loss is clipped and optionally adjusted for negative advantages. Finally, the losses are combined and aggregated according to <code>loss_agg_mode</code>.</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># Function: het_compute_token_on_off_policy_loss()
+
+# 1️⃣ Compute policy ratio and approximate KL divergence
+negative_approx_kl = log_prob - old_log_prob  # difference between new and old log-probabilities
+ratio = torch.exp(negative_approx_kl)       # policy ratio r_t = exp(log_pi_new - log_pi_old)
+ppo_kl = verl_F.masked_mean(-negative_approx_kl, response_mask)  # approximate KL divergence
+
+# 2️⃣ Compute on-policy losses (exp_mask = 0)
+on_pg_losses, _, _ = compute_pg_losses(cliprange_low, cliprange_high)
+# Mask out experience tokens to ensure only fresh rollouts contribute
+on_pg_loss = verl_F.masked_mean(on_pg_losses, (1.0 - exp_mask) * response_mask)
+
+# 3️⃣ Compute off-policy losses (exp_mask = 1)
+off_pg_losses, _, _ = compute_pg_losses(off_cliprange_low, off_cliprange_high)
+# Mask to include only experience tokens
+off_pg_loss = verl_F.masked_mean(off_pg_losses, exp_mask * response_mask)
+# Ensure numerical stability
+off_pg_loss = torch.tensor(0.0) if off_pg_loss.isnan().item() else off_pg_loss
+
+# 4️⃣ Combine both losses using the experience mask
+pg_losses = off_pg_losses * exp_mask + on_pg_losses * (1.0 - exp_mask)
+# Aggregate token-level losses according to selected mode (e.g., &quot;token-mean&quot;)
+pg_loss = agg_loss(loss_mat=pg_losses, loss_mask=response_mask, loss_agg_mode=loss_agg_mode)
+</code></pre>
+
+<p><strong>✅Effect</strong>:</p>
+<ul>
+<li>
+<p><code>exp_mask</code> separates on-policy and off-policy contributions cleanly.</p>
+</li>
+<li>
+<p><code>off_cliprange_high</code> enforce trust regions for stable updates.</p>
+</li>
+</ul>
+<h2 id="key-parameters-configuration">⚙️ Key Parameters &amp; Configuration</h2>
+<h3 id="rollout-modes">Rollout Modes</h3>
+<p><strong><code>train_rollout_mode</code></strong> (<em>str</em>)<br />
+: Controls how experiences are used during <strong>training rollouts</strong>.<br />
+Options:<br />
+- <code>"woexp"</code> → rollouts without any experience guidance (pure exploration)<br />
+- <code>"mixed"</code> → partially inject experiences based on <code>rollout_ratio</code><br />
+- <code>"all"</code> → all rollouts include retrieved experiences<br />
+Default: <code>"woexp"</code>.</p>
+<p><strong><code>val_rollout_mode</code></strong> (<em>str</em>)<br />
+: Controls how experiences are used during <strong>validation/test rollouts</strong>.<br />
+Same options as <code>train_rollout_mode</code>. Typically set to <code>"woexp"</code> for unbiased evaluation.<br />
+Default: <code>"woexp"</code>.</p>
+<p><strong><code>rollout_ratio</code></strong> (<em>float</em>, range: [0.0, 1.0])<br />
+: When rollout mode is <code>"mixed"</code>, this ratio determines the proportion of rollouts that include experience.<br />
+Example: <code>0.3</code> means 30% experience-guided, 70% exploratory.<br />
+Default: <code>0.0</code>.</p>
+<hr />
+<h3 id="training-sample-processing"><strong>Training Sample Processing</strong></h3>
+<p><strong><code>train_sample_mode</code></strong> (<em>str</em>)<br />
+: Defines whether to keep or discard experience context in <strong>training samples</strong> after rollout.<br />
+Options:<br />
+- <code>"allkeep"</code> → all samples retain experience information<br />
+- <code>"alldiscard"</code> → strip experience from all samples (model learns from raw reasoning)<br />
+- <code>"hybrid"</code> → selective retention based on <code>train_sample_keepratio</code><br />
+Default: <code>"alldiscard"</code>.</p>
+<p><strong><code>train_sample_keepratio</code></strong> (<em>float</em>, range: [0.0, 1.0])<br />
+: When <code>train_sample_mode="hybrid"</code>, controls the <strong>task-level</strong> proportion of samples that retain experience.<br />
+Default: <code>1.0</code>.</p>
+<hr />
+<h3 id="experience-retrieval-injection"><strong>Experience Retrieval &amp; Injection</strong></h3>
+<p><strong><code>experience_template</code></strong> (<em>str</em>)<br />
+: Template string for wrapping retrieved experiences before injecting into prompts.<br />
+The <code>{}</code> placeholder is replaced with formatted experience content.<br />
+Example: <code>"\n\nSome Related Experience to help you to complete the task:&lt;EXP&gt;{}&lt;/EXP&gt;\n\n"</code></p>
+<p><strong><code>retrieve_top_k</code></strong> (<em>int</em>)<br />
+: Number of most relevant experiences to retrieve per query when <code>enable_context_generator=True</code>.<br />
+Default: <code>3</code>.</p>
+<hr />
+<h3 id="reme-service-configuration"><strong>ReMe Service Configuration</strong></h3>
+<p><strong><code>base_url</code></strong> (<em>str</em>)<br />
+: HTTP endpoint of the <strong>ReMe service</strong> (Reflective Memory Engine).<br />
+Handles experience summarization, storage, and retrieval.<br />
+Example: <code>"http://127.0.0.1:8001"</code>.</p>
+<p><strong><code>workspace_id</code></strong> (<em>str</em>)<br />
+: Unique identifier for the experience workspace. Different workspaces maintain isolated experience pools.<br />
+Default: <code>"default"</code>.</p>
+<p><strong><code>enable_summarizer</code></strong> (<em>bool</em>)<br />
+: Whether to activate <strong>automatic experience summarization</strong> from rollout trajectories.<br />
+When <code>True</code>, raw reasoning traces are distilled into reusable experience snippets.<br />
+Default: <code>False</code>.</p>
+<p><strong><code>enable_context_generator</code></strong> (<em>bool</em>)<br />
+: Whether to enable <strong>experience retrieval and context injection</strong> during rollouts.<br />
+Must be <code>True</code> for experience-guided rollouts to function.<br />
+Default: <code>False</code>.</p>
+<p><strong><code>updated_freq</code></strong> (<em>int</em>)<br />
+: Frequency (in training steps) to refresh the experience pool.<br />
+Set to <code>0</code> to disable periodic updates.<br />
+Default: <code>0</code>.</p>
+<hr />
+<h3 id="initialization-utilities"><strong>Initialization &amp; Utilities</strong></h3>
+<p><strong><code>init_exp_before_training</code></strong> (<em>bool</em>)<br />
+: Whether to <strong>pre-populate the experience pool</strong> before training begins.<br />
+Useful for warm-start scenarios with prior knowledge.<br />
+Default: <code>False</code>.</p>
+<p><strong><code>init_exp_only</code></strong> (<em>bool</em>)<br />
+: If <code>True</code>, only initializes the experience pool without starting training.<br />
+Useful for pre-computing embeddings or validating summarization quality.<br />
+Default: <code>False</code>.</p>
+<p><strong><code>summary_batch_size</code></strong> (<em>int</em>)<br />
+: Batch size for processing experience summarization requests.<br />
+Larger values improve throughput but require more memory.<br />
+Default: <code>8</code>.</p>
+<h2 id="quick-start-recommended-configuration">🧭 Quick Start &amp; Recommended Configuration</h2>
+<h3 id="step-1-set-up-reme-service">Step 1: Set Up ReMe Service</h3>
+<ol>
+<li>
+<p>Ensure you have completed the <a href="https://github.com/agentscope-ai/ReMe?tab=readme-ov-file#%EF%B8%8F-installation">ReMe installation</a>;</p>
+</li>
+<li>
+<p>Ensure you have modified the <a href="https://github.com/agentscope-ai/ReMe?tab=readme-ov-file#environment-configuration">environment configuration</a>;</p>
+</li>
+<li>
+<p>Start the ReMe service with the following command:</p>
+</li>
+</ol>
+<pre class="codehilite"><code class="language-bash">cd path_to_reme/ReMe
+
+reme \
+  config=default \
+  backend=http \
+  thread_pool_max_workers=256 \
+  http.host=&quot;127.0.0.1&quot; \
+  http.port=8001 \
+  http.limit_concurrency=256 \
+  llm.default.model_name=qwen-max-2025-01-25 \
+  embedding_model.default.model_name=text-embedding-v4 \
+  vector_store.default.backend=local \
+  op.rerank_memory_op.params.enable_llm_rerank=false \
+  flow.summary_task_memory.flow_content=&quot;trajectory_preprocess_op &gt;&gt; (success_extraction_op|failure_extraction_op|comparative_extraction_op) &gt;&gt; memory_validation_op &gt;&gt; memory_deduplication_op &gt;&gt; update_vector_store_op&quot;
+</code></pre>
+
+<h3 id="step-2-recommended-configuration"><strong>Step 2: Recommended Configuration</strong></h3>
+<p>Add the following configuration to your experiment settings:</p>
+<pre class="codehilite"><code class="language-yaml">exp_manager:
+  val_rollout_mode: &quot;woexp&quot;    # rollout mode on dev/test set: [&quot;mixed&quot;, &quot;all&quot;, &quot;woexp&quot;]
+  train_rollout_mode: &quot;mixed&quot;  # rollout mode on train set: [&quot;mixed&quot;, &quot;all&quot;, &quot;woexp&quot;]
+  rollout_ratio: 0.5           # ratio of adding experience within group during rollout
+  train_sample_mode: &quot;alldiscard&quot;    # sample mode after train rollout: [&quot;allkeep&quot;, &quot;alldiscard&quot;, &quot;hybrid&quot;]
+  train_sample_keepratio: 0.0     # task-level ratio for keeping experience
+  experience_template: &quot;\n\nSome Related Experience to help you to complete the task:&lt;EXP&gt;{}&lt;/EXP&gt;\n\n&quot;  # template for inserting experience
+  init_exp_before_training: True  # whether to init experience pool before training
+  init_exp_only: False  # whether to only init experience pool
+  summary_batch_size: 8  # batch size for experience summarization
+  reme:
+    base_url: &quot;http://127.0.0.1:8001&quot;  # base URL for ReMe service
+    workspace_id: &quot;default&quot;  # workspace ID for ReMe
+    enable_summarizer: True  # whether to enable experience summarizer
+    enable_context_generator: True  # whether to enable context generator
+    retrieve_top_k: 3  # number of top experiences to retrieve
+    updated_freq: 0   # experience pool update frequency (in steps, 0=disabled)
+</code></pre>
+
+<h3 id="step-3-understanding-different-usage-modes"><strong>Step 3: Understanding Different Usage Modes</strong></h3>
+<p>The experience pool system supports multiple usage modes to fit different experimental needs. Configure the parameters according to the table below:</p>
+<h4 id="mode-descriptions">Mode Descriptions</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Usage Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>No Pool</strong></td>
+<td>Training without any experience pool (baseline mode)</td>
+</tr>
+<tr>
+<td><strong>Init Only</strong></td>
+<td>Initialize experience pool from trajectories only, without using it during training</td>
+</tr>
+<tr>
+<td><strong>Init + Train</strong></td>
+<td>Initialize experience pool before training and use it throughout the training process</td>
+</tr>
+<tr>
+<td><strong>Init + Train + Update</strong></td>
+<td>Initialize experience pool, use during training, and continuously update it with new experiences</td>
+</tr>
+<tr>
+<td><strong>Exist + Train</strong></td>
+<td>Use an existing experience pool during training without initialization or updates</td>
+</tr>
+<tr>
+<td><strong>Exist + Train + Update</strong></td>
+<td>Use an existing experience pool during training and continuously update it with new experiences</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="configuration-matrix">Configuration Matrix</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th>No<br>Pool</th>
+<th>Init<br>Only</th>
+<th>Init +<br>Train</th>
+<th>Init + Train<br>+ Update</th>
+<th>Exist +<br>Train</th>
+<th>Exist + Train<br>+ Update</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>updated_freq</code></td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>k != 0</td>
+<td>0</td>
+<td>k != 0</td>
+</tr>
+<tr>
+<td><code>init_exp_only</code></td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>init_exp_before_training</code></td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>enable_summarizer</code></td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>enable_context_generator</code></td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>workspace_id</code></td>
+<td>-</td>
+<td>New ID</td>
+<td>New ID</td>
+<td>New ID</td>
+<td>Exist ID</td>
+<td>Exist ID</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="configuration-notes">Configuration Notes</h4>
+<ul>
+<li>
+<p><strong><code>updated_freq</code></strong>: Set to a non-zero value (e.g., <code>100</code>) to enable periodic experience pool updates during training. <code>0</code> disables updates.</p>
+</li>
+<li>
+<p><strong><code>workspace_id</code></strong>: </p>
+</li>
+<li>Use a <strong>new workspace ID</strong> to create a fresh experience pool</li>
+<li>Specify an <strong>existing workspace ID</strong> to reuse a previously created pool</li>
+<li>
+<p>When using <code>vector_store.default.backend=local</code>, the experience pool is saved at: <code>ReMe/local_vector_store/{workspace_id}.jsonl</code></p>
+</li>
+<li>
+<p><strong>Recommended starting point</strong>: For most use cases, we recommend starting with <strong><code>Init + Train</code></strong> mode.</p>
+</li>
+</ul>
+  </div>
+</article>
+                                <div class="mx-auto flex flex-wrap h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
+    
+    <a data-slot="button"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 shadow-none"
+        href="/AgentEvolver/guidelines/task_manager/">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="tabler-icon tabler-icon-arrow-left ">
+            <path d="M5 12l14 0"></path>
+            <path d="M5 12l6 6"></path>
+            <path d="M5 12l6 -6"></path>
+        </svg>
+        <span class="max-[500px]:hidden">Task Manager</span>
+    </a>
+    
+    
+    <a data-slot="button"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 ml-auto shadow-none"
+        href="/AgentEvolver/guidelines/adv_processor/">
+        <span class="max-[500px]:hidden">Advantage Processor</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="tabler-icon tabler-icon-arrow-right ">
+            <path d="M5 12l14 0"></path>
+            <path d="M13 18l6 -6"></path>
+            <path d="M13 6l6 6"></path>
+        </svg>
+    </a>
+    
+</div>
+                                <dialog id="bottom-sidebar" onclick="onBottomSidebarDialogClick(event)" class="bg-transparent"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 58px); min-width: max-content; --radix-popper-transform-origin: 0% 0px; will-change: transform; z-index: 50; --radix-popper-available-width: 504px; --radix-popper-available-height: 857px; --radix-popper-anchor-width: 72.94999694824219px; --radix-popper-anchor-height: 32px;">
+    <div data-side="bottom" data-align="start" data-state="open" role="dialog" data-slot="popover-content"
+        class="text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 origin-(--radix-popover-content-transform-origin) border outline-hidden bg-background/90 no-scrollbar h-(--radix-popper-available-height) w-(--radix-popper-available-width) overflow-y-auto rounded-none border-none p-0 shadow-none backdrop-blur duration-100"
+        style="--radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+        tabindex="-1">
+        <div class="flex flex-col gap-12 overflow-auto px-6 py-6">
+            
+            
+            
+
+            
+            <div class="flex flex-col gap-4">
+                <div class="text-muted-foreground text-sm font-medium">Menu</div>
+                <div class="flex flex-col gap-3">
+                    
+                    <a class="text-2xl font-medium" href="../..">
+                        
+                        Welcome
+                        
+                    </a>
+                    
+                </div>
+            </div>
+            
+
+            
+            <div class="flex flex-col gap-8">
+                
+                <div class="flex flex-col gap-4">
+                    <div class="text-muted-foreground text-sm font-medium">Tutorial</div>
+                    
+                    <div class="flex flex-col gap-3">
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/install/">
+                            
+                            Installation
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/configuration/">
+                            
+                            Configuration
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/quick_start/">
+                            
+                            Quick Start
+                            
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="flex flex-col gap-4">
+                    <div class="text-muted-foreground text-sm font-medium">Guidelines</div>
+                    
+                    <div class="flex flex-col gap-3">
+                        
+                        <a class="text-2xl font-medium" href="../env_service/">
+                            
+                            Environment Service
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../task_manager/">
+                            
+                            Task Manager
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="./">
+                            
+                            Experience Manager
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../adv_processor/">
+                            
+                            Advantage Processor
+                            
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+            
+
+        </div>
+    </div>
+</dialog>
+                            </div>
+                            <div
+                                class="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] w-72 flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex">
+                                <div class="h-(--top-spacing) shrink-0"></div>
+                                <div view-transition-name="toc" class="no-scrollbar overflow-y-auto px-8">
+    <div class="flex flex-col gap-2 p-4 pt-0 text-sm">
+        <p class="text-muted-foreground bg-background sticky top-0 h-6 text-xs">On This Page</p>
+        
+        
+        
+        
+        <a href="#overview"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            🚀 Overview
+        </a>
+        
+
+        
+        <a href="#core-features"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            🧩 Core Features
+        </a>
+        
+        
+        <a href="#1-dynamic-experience-allocation"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            1. Dynamic Experience Allocation
+        </a>
+        
+        <a href="#2-asynchronous-experience-summarization"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            2. Asynchronous Experience Summarization
+        </a>
+        
+        <a href="#3-context-aware-rollout-management"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            3. Context-Aware Rollout Management
+        </a>
+        
+        <a href="#4-training-context-management"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            4. Training Context Management
+        </a>
+        
+        <a href="#5-training-loss-processing"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            5. Training Loss Processing
+        </a>
+        
+        
+
+        
+        <a href="#key-parameters-configuration"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            ⚙️ Key Parameters &amp; Configuration
+        </a>
+        
+        
+        <a href="#rollout-modes"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Rollout Modes
+        </a>
+        
+        <a href="#training-sample-processing"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Training Sample Processing
+        </a>
+        
+        <a href="#experience-retrieval-injection"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Experience Retrieval &amp; Injection
+        </a>
+        
+        <a href="#reme-service-configuration"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            ReMe Service Configuration
+        </a>
+        
+        <a href="#initialization-utilities"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Initialization &amp; Utilities
+        </a>
+        
+        
+
+        
+        <a href="#quick-start-recommended-configuration"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            🧭 Quick Start &amp; Recommended Configuration
+        </a>
+        
+        
+        <a href="#step-1-set-up-reme-service"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 1: Set Up ReMe Service
+        </a>
+        
+        <a href="#step-2-recommended-configuration"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 2: Recommended Configuration
+        </a>
+        
+        <a href="#step-3-understanding-different-usage-modes"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 3: Understanding Different Usage Modes
+        </a>
+        
+        
+
+        
+        
+        
+        
+
+    </div>
+    <div class="h-12"></div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer view-transition-name="footer"
+    class="group-has-[.section-soft]/body:bg-surface/40 3xl:fixed:bg-transparent dark:bg-transparent">
+    <div class="container-wrapper px-4 xl:px-6">
+        <div class="flex h-(--footer-height) items-center justify-between">
+            <div class="text-muted-foreground w-full text-center text-xs leading-loose sm:text-sm">
+                
+                Built by<!-- --> <span>The AgentEvolver Team</span> &mdash;
+                
+                <a href="https://github.com/asiffer/mkdocs-shadcn">shadcn theme</a> provided by
+                <a href="https://github.com/asiffer">@asiffer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    </div>
+     
+
+<script src="../../search/main.js"></script>
+
+
+    
+
+    <script src="../../js/copy-button.js"></script>
+    <script>updatePygmentsStylesheet();</script>
+    
+    <script>fetchStargazers("https://github.com/modelscope/AgentEvolver");</script>
+    
+    
+    
+    <script type="speculationrules">
+{
+  "prerender": [
+    {
+      "where": {
+          "selector_matches": ["#next-button", "#previous-button"],
+      }
+    }
+  ]
+}
+</script>
+</body>
+
+</html>

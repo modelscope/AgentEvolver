@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // for search plugin notably
+        const base_url = "https://modelscope.github.io/AgentEvolver/";
+    </script>
+    <script>
+    const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    darkTheme.onchange = (e) => {
+        if (e.matches) {
+            document.documentElement.classList.add("dark")
+            localStorage.theme = 'dark';
+        } else {
+            document.documentElement.classList.remove("dark")
+            localStorage.removeItem("theme")
+        }
+    };
+
+    // On page load. Priotiry to lcaolStorage
+    if (localStorage.theme === "dark") {
+        document.documentElement.classList.add("dark")
+    } else if (localStorage.theme === "light") {
+        document.documentElement.classList.remove("dark")
+    } else if (darkTheme.matches) {
+        document.documentElement.classList.add("dark")
+    } else {
+        document.documentElement.classList.remove("dark")
+    }
+
+    // set the layout based on localStorage
+    document.documentElement.classList.add(localStorage.getItem("html-layout") || "layout-fixed");
+</script>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Manager - AgentEvolver</title>
+    
+
+
+<title>Task Manager</title>
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://modelscope.github.io/AgentEvolver/guidelines/task_manager/">
+
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+
+<meta property="og:title" content="Task Manager">
+
+
+
+
+
+<meta property="og:url" content="https://modelscope.github.io/AgentEvolver/guidelines/task_manager/">
+
+
+
+
+
+
+<!-- Twitter Card -->
+
+<meta name="twitter:title" content="Task Manager">
+
+
+
+
+
+
+<!-- JSON-LD Structured Data -->
+
+
+
+    <link rel="icon" href="../../img/favicon.ico">
+
+    <link href="../../css/base.css" rel="stylesheet">
+    <link href="../../css/geist.css" rel="stylesheet">
+
+    
+    
+
+<link id="pygments-light" rel="stylesheet"
+    href="../../css/pygments/shadcn-light.css">
+<link id="pygments-dark" rel="stylesheet"
+    href="../../css/pygments/github-dark.css"
+    media="(prefers-color-scheme: dark)">
+
+
+    
+
+    
+
+    <script src="../../js/callbacks.js"></script>
+
+    
+
+    
+
+    
+
+</head>
+
+<body
+    class="text-foreground group/body overscroll-none font-sans antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)] theme-default">
+    <div id="inner-body" class="bg-background relative z-10 flex min-h-svh flex-col">
+        <header class="bg-background sticky top-0 z-50 w-full" view-transition-name="header">
+    <div class="container-wrapper 3xl:fixed:px-0 px-6">
+        <div class="3xl:fixed:container flex h-(--header-height) items-center gap-2 **:data-[slot=separator]:!h-4">
+            <button id="menu-button" data-slot="popover-trigger" onclick="onMobileMenuButtonClick(event)"
+                class="group whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground px-4 py-2 has-[&gt;svg]:px-3 extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 !p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent flex lg:hidden"
+                type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«Rmplb»"
+                data-state="closed">
+                <div class="relative flex h-8 w-4 items-center justify-center">
+                    <div class="relative size-4">
+                        <!-- 16px x 16px -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="0" x2="16" y1="5" y2="5"
+                                class="group-data-[state=open]:translate-y-[2.25px] group-data-[state=open]:-translate-x-[2.25px] group-data-[state=open]:rotate-45 transition-all duration-300 origin-center" />
+                            <line x1="0" x2="16" y1="11" y2="11"
+                                class="group-data-[state=open]:-translate-y-[2.25px] group-data-[state=open]:-translate-x-[2.25px] group-data-[state=open]:-rotate-45 transition-all duration-300 origin-center" />
+                        </svg>
+                    </div>
+
+                    <span class="sr-only">Toggle Menu</span>
+                </div>
+                <span class="flex h-8 items-center text-lg leading-none font-medium">Menu</span>
+            </button>
+            <a data-slot="button"
+                class="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 hidden h-8 lg:flex"
+                href="https://modelscope.github.io/AgentEvolver/">
+                <span class="size-8 flex flex-row justify-center items-center">
+                    
+
+<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.59 14.37q.159.666.16 1.38a6 6 0 0 1-6 6v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.9 14.9 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.9 14.9 0 0 0-2.58 5.84m2.699 2.7q-.155.032-.311.06a15 15 0 0 1-2.448-2.448l.06-.312m-2.24 2.39a4.49 4.49 0 0 0-1.757 4.306q.341.054.696.054a4.5 4.5 0 0 0 3.61-1.812M16.5 9a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/></svg>
+
+
+                </span>
+
+                
+                <h1 class="pr-2">AgentEvolver</h1>
+                
+            </a>
+            
+            <div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
+                <div class="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
+                    <button data-slot="dialog-trigger" onclick="onSearchBarClick(event)"
+    class="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-secondary/80 px-4 py-2 has-[&gt;svg]:px-3 bg-surface text-surface-foreground/60 dark:bg-card relative h-8 w-full justify-start pl-2.5 font-normal shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
+    type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-«R66plb»" data-state="closed">
+    <span class="text-muted-foreground hidden lg:inline-flex">Search documentation...</span>
+    <span class="text-muted-foreground inline-flex lg:hidden">Search...</span>
+    <div class="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
+        <kbd
+            class="bg-background text-muted-foreground pointer-events-none flex h-5 items-center justify-center gap-1 rounded border px-1 font-sans text-[0.7rem] font-medium select-none [&amp;_svg:not([class*='size-'])]:size-3">Ctrl</kbd><kbd
+            class="bg-background text-muted-foreground pointer-events-none flex h-5 items-center justify-center gap-1 rounded border px-1 font-sans text-[0.7rem] font-medium select-none [&amp;_svg:not([class*='size-'])]:size-3 aspect-square">K</kbd>
+    </div>
+</button>
+<dialog id="search-dialog" onclick="onSearchDialogClick(event)"
+    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg border overflow-hidden p-0">
+    <div class="w-lg gap-4">
+        <div class="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground">
+            <div data-slot="command-input-wrapper" class="flex h-9 items-center gap-2 border-b px-3"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-search size-4 shrink-0 opacity-50">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+                <input data-slot="command-input"
+                    class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Search documentation..." cmdk-input="" autocomplete="off" autocorrect="off"
+                    spellcheck="false" aria-autocomplete="list" role="combobox" aria-expanded="true"
+                    aria-controls="radix-«r1t6»" aria-labelledby="radix-«r1t7»" id="radix-«r1t8»" type="text" value=""
+                    aria-activedescendant="radix-«r1th»" oninput="onInputHandler(event)">
+            </div>
+        </div>
+        <div id="mkdocs-search-results">
+            <!-- search results go there -->
+        </div>
+    </div>
+</dialog>
+<script>
+    document.removeEventListener("keydown", searchShortcutHandler);
+    document.addEventListener("keydown", searchShortcutHandler);
+</script>
+                </div>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px ml-2 hidden lg:block">
+                </div>
+                <a target="_blank" rel="noreferrer" data-slot="button"
+                    class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 h-8 shadow-none"
+                    href="https://github.com/modelscope/AgentEvolver">
+                    <svg viewBox="0 0 438.549 438.549">
+                        <path fill="currentColor"
+                            d="M409.132 114.573c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.063-29.408-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8C9.803 148.168 0 184.854 0 224.63c0 47.78 13.94 90.745 41.827 128.906 27.884 38.164 63.906 64.572 108.063 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417a2549.81 2549.81 0 01-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289 1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136 6.28 0 11.704-.476 16.274-1.423 4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.068-79.226 27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049z">
+                        </path>
+                    </svg>
+                    
+                    <span id="stargazers" class="text-muted-foreground w-8 text-xs tabular-nums" onload="test()">
+                    </span>
+                    
+                </a>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px 3xl:flex hidden">
+                </div>
+                <button data-slot="button"
+                    class="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-8 3xl:flex hidden"
+                    title="Toggle layout" onclick="toggleLayout(event)">
+                    <span class="sr-only">Toggle layout</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-gallery-horizontal">
+                        <path d="M2 3v18"></path>
+                        <rect width="12" height="18" x="6" y="3" rx="2"></rect>
+                        <path d="M22 3v18"></path>
+                    </svg>
+                </button>
+                <div data-orientation="vertical" role="none" data-slot="separator"
+                    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px">
+                </div>
+                <button data-slot="button"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 group/toggle extend-touch-target size-8"
+                    title="Toggle theme" onclick="onThemeSwitch(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="size-4.5">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                        <path d="M12 3l0 18"></path>
+                        <path d="M12 9l4.65 -4.65"></path>
+                        <path d="M12 14.3l7.37 -7.37"></path>
+                        <path d="M12 19.6l8.85 -8.85"></path>
+                    </svg>
+                    <span class="sr-only">Toggle theme</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+        <main class="flex flex-1 flex-col">
+            <div class="container-wrapper flex flex-1 flex-col px-2">
+                <div data-slot="sidebar-wrapper" style="--sidebar-width: 16rem; --sidebar-width-icon: 3rem;"
+                    class="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex w-full 3xl:fixed:container 3xl:fixed:px-3 min-h-min flex-1 items-start px-0 [--sidebar-width:220px] [--top-spacing:0] lg:grid lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:[--sidebar-width:240px] lg:[--top-spacing:calc(var(--spacing)*4)]">
+                    <div data-slot="sidebar"
+                        class="text-sidebar-foreground w-(--sidebar-width) flex-col sticky top-[calc(var(--header-height)+1px)] z-30 hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] bg-transparent lg:flex">
+                        <div data-slot="sidebar-content" data-sidebar="content"
+                            class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden no-scrollbar px-2 pb-12">
+                            <div class="h-(--top-spacing) shrink-0"></div>
+                            <div view-transition-name="sidebar" data-slot="sidebar-group" data-sidebar="group"
+    class="relative flex w-full min-w-0 flex-col p-2 no-scrollbar">
+    
+
+    
+    
+    
+
+    
+
+    
+    
+
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Welcome
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+    
+
+    
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-label" data-sidebar="group-label"
+            class="ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&amp;&gt;svg]:size-4 [&amp;&gt;svg]:shrink-0 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 text-muted-foreground font-medium">
+            Tutorial</div>
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/install/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Installation
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/configuration/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Configuration
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/tutorial/quick_start/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Quick Start
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+            </ul>
+        </div>
+    </div>
+    
+    
+    
+    <div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+        <div data-slot="sidebar-group-label" data-sidebar="group-label"
+            class="ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&amp;&gt;svg]:size-4 [&amp;&gt;svg]:shrink-0 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 text-muted-foreground font-medium">
+            Guidelines</div>
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/env_service/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Environment Service
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="true" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/task_manager/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Task Manager
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/exp_manager/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Experience Manager
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/AgentEvolver/guidelines/adv_processor/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Advantage Processor
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+            </ul>
+        </div>
+    </div>
+    
+    
+
+
+    
+</div>
+                        </div>
+                    </div>
+                    <div class="h-full w-full">
+                        <div data-slot="docs" class="flex items-stretch text-[1.05rem] sm:text-[15px] xl:w-full">
+                            <div class="flex min-w-0 flex-1 flex-col">
+                                <div class="h-(--top-spacing) shrink-0"></div>
+                                <article class="w-full" view-transition-name="page">
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
+      <div id="page-header" class="flex items-start justify-between">
+        <h1
+          class="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl"
+        >
+          Task Manager
+        </h1>
+
+        <div class="flex items-center gap-2 pt-1.5">
+          
+<button onclick="fetch(`https://modelscope.github.io/AgentEvolver/guidelines/task_manager.md`).then((r) => r.blob()).then((blob) => navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })]))" 
+        data-slot="button" 
+        class="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md gap-1.5 px-3 has-[&>svg]:px-2.5 h-8 shadow-none md:h-7 md:text-[0.8rem]">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-copy ">
+    <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path>
+</svg>
+<span class="max-md:hidden">Copy Page</span>
+</button> 
+          
+          <a
+            data-slot="button"
+            id="previous-button"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 extend-touch-target size-8 shadow-none md:size-7"
+            href="/AgentEvolver/guidelines/env_service/"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="tabler-icon tabler-icon-arrow-left"
+            >
+              <path d="M5 12l14 0"></path>
+              <path d="M5 12l6 6"></path>
+              <path d="M5 12l6 -6"></path>
+            </svg>
+            <span class="sr-only">Previous</span>
+          </a>
+           
+          
+          <a
+            data-slot="button"
+            id="next-button"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 extend-touch-target size-8 shadow-none md:size-7"
+            href="/AgentEvolver/guidelines/exp_manager/"
+          >
+            <span class="sr-only">Next</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="tabler-icon tabler-icon-arrow-right"
+            >
+              <path d="M5 12l14 0"></path>
+              <path d="M13 18l6 -6"></path>
+              <path d="M13 6l6 6"></path>
+            </svg>
+          </a>
+          
+        </div>
+      </div>
+      
+    </div>
+    <div class="flex justify-end items-center">
+       
+    </div>
+  </div>
+  <div class="typography w-full flex-1 *:data-[slot=alert]:first:mt-0">
+    <p>To evolve an agent in a data-driven manner within your own environment, the first step is to collect training data that maps the agent's abilities to your requirements.</p>
+<p>Task Manager provides the training data for AgentEvolver. It is responsible for:</p>
+<ul>
+<li>Exploring unknown environments and profiling potential tasks,  </li>
+<li>Discovering new synthetic tasks and capturing user requirements,  </li>
+<li>Curating training tasks and managing their quality and quantity,  </li>
+<li>Providing a built-in synthetic reward mechanism as a fallback.  </li>
+</ul>
+<p>In this section, we introduce Task Manager and explain how to efficiently collect appropriate training data for agent training, including the configuration of Environment Profiling, Task Derivation, and Task Curation strategies.</p>
+<h2 id="collect-your-first-training-data">Collect Your First Training Data</h2>
+<p>To collect your training data, perform the following five steps:</p>
+<ol>
+<li>Integrate your environment with Environment Service (as described in the previous section).  </li>
+<li>Profile the environment.  </li>
+<li>Configure the strategies to be applied, including their parameters.  </li>
+<li>Execute Task Manager and collect the training data.</li>
+<li>Check your data.</li>
+</ol>
+<h3 id="1-adopt-the-environment">1. Adopt the Environment</h3>
+<p>Assume the environment has already been integrated with Environment Service. If not, please refer to the previous section for setup instructions.</p>
+<h3 id="2-profile-the-environment">2. Profile the Environment</h3>
+<p>Task Manager requires not only the API specifications but also conceptual knowledge of the environment. For example, in a file system, APIs define file operations, but they do not capture high-level concepts such as file types or formats. These conceptual elements must be explicitly represented.</p>
+<p>We introduce the <strong>Environment Profile</strong> to capture these concepts. An Environment Profile is a JSON file that specifies <em>Entity</em>, <em>Attribute</em>, and <em>Operation</em> definitions for the environment.</p>
+<ul>
+<li><strong>Entity</strong>: Represents a core object in the environment. Entities are the targets of interaction and can typically be created, modified, or deleted.  </li>
+<li><strong>Attribute</strong>: Defines descriptive properties or metadata of an entity. Attributes provide contextual information but are not executable actions.  </li>
+<li><strong>Operation</strong>: Specifies the actions that can be performed on an entity. Operations represent the functional capabilities of the environment and are often aligned with API calls.  </li>
+</ul>
+<p>Additionally, the Environment Profile defines <strong>task preferences</strong>, which control the style and scope of the generated tasks.</p>
+<p>A basic Environment Profile example is shown below:</p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;name&quot;: &quot;Alice&quot;,
+  &quot;background&quot;: &quot;A general user working with a file system.&quot;,
+  &quot;entities&quot;: [
+    {
+      &quot;name&quot;: &quot;file&quot;,
+      &quot;description&quot;: &quot;A file in a file system.&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;The name of the file.&quot;,
+        &quot;size&quot;: &quot;The size of the file in bytes.&quot;,
+        &quot;type&quot;: &quot;The type of the file, e.g. text, image, video, etc.&quot;,
+        &quot;parent&quot;: &quot;The parent directory of the file.&quot;
+      },
+      &quot;opts&quot;: [
+        { &quot;name&quot;: &quot;create&quot;, &quot;description&quot;: &quot;Create a new file.&quot; },
+        { &quot;name&quot;: &quot;delete&quot;, &quot;description&quot;: &quot;Delete a file.&quot; },
+        { &quot;name&quot;: &quot;read&quot;, &quot;description&quot;: &quot;Read a file.&quot; },
+        { &quot;name&quot;: &quot;write&quot;, &quot;description&quot;: &quot;Write to a file.&quot; }
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;directory&quot;,
+      &quot;description&quot;: &quot;A directory in a file system.&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;The name of the directory.&quot;,
+        &quot;parent&quot;: &quot;The parent directory of the directory.&quot;
+      },
+      &quot;opts&quot;: [
+        { &quot;name&quot;: &quot;create&quot;, &quot;description&quot;: &quot;Create a new directory.&quot; },
+        { &quot;name&quot;: &quot;delete&quot;, &quot;description&quot;: &quot;Delete a directory.&quot; },
+        { &quot;name&quot;: &quot;list&quot;, &quot;description&quot;: &quot;List the contents of a directory.&quot; }
+      ]
+    }
+  ],
+  &quot;task_preference&quot;: {
+    &quot;num_entities&quot;: 2,
+    &quot;num_opts&quot;: 3,
+    &quot;relation_difficulty&quot;: 3
+  }
+}
+</code></pre>
+
+<p>In this profile, entities <code>file</code> and <code>directory</code> are defined with attributes (<code>name</code>, <code>size</code>, <code>type</code>, <code>parent</code>) and operations (<code>create</code>, <code>delete</code>, <code>read</code>, <code>write</code>, <code>list</code>). Based on these definitions, Task Manager gains a structured understanding of the environment to support task derivation and curation.</p>
+<p>To create your own Environment Profile, copy the template <code>environment_profile_template.json</code> to <code>environment_profile.json</code> and fill in the details. Using an LLM to assist in drafting the profile can reduce manual effort.</p>
+<h3 id="3-configure-the-strategies">3. Configure the Strategies</h3>
+<p>Transforming profiles into synthetic tasks involves two stages: <strong>task derivation</strong> and <strong>task curation</strong>.</p>
+<p><strong>Task derivation</strong> is the process of generating candidate tasks from the profile. During derivation, exploration and summarization are performed under the guidance of a chosen strategy. Strategies determine how the environment is traversed and how structured tasks are extracted from exploration trajectories.</p>
+<p><strong>Task curation</strong> ensures task quality and diversity. Filters are applied to discard infeasible, redundant, or irrelevant tasks. Mixture strategies combine tasks from multiple sources and control properties such as difficulty distribution.</p>
+<p>By default, Task Manager provides:</p>
+<ul>
+<li><em>RandomWalk Strategy</em> for task derivation,</li>
+<li><em>DeduplicationFilter</em>, <em>FeasibilityFilter</em>, and <em>UnifiedMixtureStrategy</em> for task curation.</li>
+</ul>
+<p>These can be configured in the YAML configuration file. After configuring strategies, the whole configuration file looks like this:</p>
+<pre class="codehilite"><code class="language-yaml">task_manager:
+  # tasks will be explored once if set. use it if you want to keep the same explorations.
+  train_data_path: tasks_explored.train.json
+  val_data_path: tasks_explored.val.json
+  # model used to explore the environment
+  llm_client: qwen-plus
+  # repetation of exploration
+  n: 0
+  # env profiles used in exploration
+  env_profile: cookbook/env_profiles/appworld.json
+  # batch size of dynamic synthetic data
+  bs: ${data.train_batch_size} # use the same batch size as train_batch_size
+  # number of threads for exploration
+  num_explore_threads: 16
+
+  # mixture strategy
+  mixture:
+    # whether to use original tasks provided by the environment
+    use_original_tasks: True
+    synthetic_data_ratio: 0.0
+    # whether to shuffle tasks *after* mixture
+    shuffle: True
+
+  # the grader used to evaluate tasks
+  grader:
+    # grader used to evaluate tasks: env, llm
+    original_grader: env
+    synthetic_grader: llm
+
+  # strategy used to explore the environment
+  strategy: random
+  strategy_args:
+    max_explore_step: 30
+    max_llm_retries: 6
+    env_url: ${env_service.env_url} # refer to env_service.env_url
+    exploration_llm_temperature: 1.0
+    exploration_llm_top_p: 1.0
+    exploration_llm_top_k: 100
+</code></pre>
+
+<h3 id="4-start-task-synthesis">4. Start Task Synthesis</h3>
+<p>Once configuration is complete, task synthesis can be initiated.</p>
+<ol>
+<li>Start the Environment Service.</li>
+<li>Start Task Manager.</li>
+</ol>
+<h4 id="standalone-mode">Standalone Mode</h4>
+<p>Task Manager can be executed in standalone mode for simple task synthesis.</p>
+<p>Example command:</p>
+<pre class="codehilite"><code class="language-bash">$ python -m agentevolver.module.task_manager
+</code></pre>
+
+<p>The synthesis progress will be displayed. When the process completes, the path to the generated tasks will be printed.</p>
+<h4 id="integrated-mode">Integrated Mode</h4>
+<p>In most workflows, Task Manager is integrated with AgentEvolver. Launching AgentEvolver automatically starts the training and task synthesis pipeline.</p>
+<div class="admonition info">
+<p class="admonition-title">Standalone vs Integrated</p>
+<p>Task Manager can be run independently for rapid prototyping or small-scale data generation. It is recommended to tune strategies in standalone mode, and then use integrated mode in production, where additional features are available within AgentEvolver.</p>
+</div>
+<h3 id="5-check-the-data">5. Check the Data</h3>
+<p>The generated synthetic tasks are stored in the path specified in the YAML configuration file.</p>
+<pre class="codehilite"><code class="language-yaml">task_manager:
+  # where to save the generated tasks
+  train_data_path: tasks_explored.train.json # tasks will be explored once if set. use it if you want to keep the same explorations.
+  val_data_path: tasks_explored.val.json # tasks will be explored once if set. use it if you want to keep the same explorations.
+</code></pre>
+
+<div class="admonition note">
+<p class="admonition-title">Dynamic vs Static</p>
+<p><code>train_data_path</code> and <code>val_data_path</code> set, tasks will be explored once and saved to the specified path. If no path is set for integrated mode, Task Manager will generate tasks dynamically during training. All synthetic tasks will be discarded after training.</p>
+</div>
+<p>Inspect the generated data to ensure it aligns with your training requirements.</p>
+<h2 id="workflow-of-task-manager">Workflow of Task Manager</h2>
+<p>In data-driven model optimization, agent training is formulated as trajectory tuning over environment-specific tasks. Consequently, the quality of training data directly determines the resulting agent capabilities. However, in real environments, acquiring and controlling the quality of training tasks is inherently difficult.</p>
+<p>Task Manager addresses this challenge by providing a dynamic and general-purpose workflow for environment exploration, task generation, and quality control.</p>
+<p><img alt="The Whole Workflow of Task Manager" src="../../img/task_manager/workflow.png" /></p>
+<p>From the figure, the workflow consists of three major steps and corresponding components:</p>
+<ol>
+<li><strong>Environment Exploration</strong><ul>
+<li><strong>Environment Service</strong> – Provides interface for the environment.</li>
+<li><strong>Environment Profile</strong> – Describes the environment.</li>
+</ul>
+</li>
+<li><strong>Task Derivation</strong>:<ul>
+<li><strong>Strategy</strong> – Control the exploration and summarization process.</li>
+</ul>
+</li>
+<li><strong>Task Curation</strong>:<ul>
+<li><strong>Filter</strong> – Control the quality of tasks.</li>
+<li><strong>Mixture Strategy</strong> – Control the distribution of tasks.</li>
+</ul>
+</li>
+</ol>
+<p>And</p>
+<ul>
+<li><strong>Judge</strong>: Provide rewards for training.</li>
+</ul>
+<p>The following sections describe each component of Task Manager in detail, including extension points for customization.</p>
+<h2 id="environment-profiling">Environment Profiling</h2>
+<p>An Environment Profile describes the concepts of an environment using <strong>entities</strong>, <strong>attributes</strong>, and <strong>operations</strong>. Similar to object-oriented programming and database schemas, these components are considered fundamental.</p>
+<ul>
+<li><strong>Entity</strong>: Represents an object in the environment.</li>
+<li><strong>Attributes</strong>: Define the properties of the entity.</li>
+<li><strong>Operations</strong>: Specify the actions that can be applied to the entity.</li>
+</ul>
+<p>For example:</p>
+<pre class="codehilite"><code>Entity: File
+Attributes
+    - name: The name of the file.
+    - size: The size of the file in bytes.
+    - type: The type of the file, e.g. text, image, video, etc.
+    - permission: The permission of the file.
+Operations
+    - create: Create a new file.
+    - delete: Delete a file.
+    - read: Read a file.
+    - write: Write to a file.
+    - chmod: Change the permission of a file.
+</code></pre>
+
+<p>The granularity of a profile is flexible. With the assistance of LLMs, profiles can be constructed at multiple levels, ranging from a single generic entity to highly specialized entities. The choice of granularity is a trade-off between manual specification and the capability of the LLM to generalize.</p>
+<p>Task Manager leverages the Environment Profile to recognize concepts, explore relationships between entities, and synthesize meaningful tasks. Operations are combined to form candidate solutions reflecting real-world problem-solving.</p>
+<p>Users may optionally specify a <strong>User Preference</strong> in addition to the Environment Profile. Preferences define expectations for the agent's capabilities, such as desired task difficulty or task categories.</p>
+<h3 id="write-a-profile">Write a Profile</h3>
+<p>Profiles can be specified in <strong>JSON</strong> (recommended) or in <strong>Python</strong>.</p>
+<p>Top-level structure:</p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;name&quot;: string,
+  &quot;background&quot;: string,
+  &quot;entities&quot;: [ ... ],
+  &quot;task_preference&quot;: {
+    &quot;num_entities&quot;: integer,
+    &quot;num_opts&quot;: integer,
+    &quot;relation_difficulty&quot;: integer
+  }
+}
+</code></pre>
+
+<p>Example entity definition:</p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;name&quot;: &quot;file&quot;,
+  &quot;description&quot;: &quot;A file in a file system.&quot;,
+  &quot;attrs&quot;: {
+    &quot;name&quot;: &quot;The name of the file.&quot;
+  },
+  &quot;opts&quot;: [
+    { &quot;name&quot;: &quot;create&quot;, &quot;description&quot;: &quot;Create a new file.&quot; }
+  ]
+}
+</code></pre>
+
+<p>A minimal working example:</p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;name&quot;: &quot;Alice&quot;,
+  &quot;background&quot;: &quot;A general user working with a file system.&quot;,
+  &quot;entities&quot;: [
+    {
+      &quot;name&quot;: &quot;file&quot;,
+      &quot;description&quot;: &quot;A file in a file system.&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;The name of the file.&quot;,
+        &quot;size&quot;: &quot;The size of the file in bytes.&quot;,
+        &quot;type&quot;: &quot;The type of the file (e.g., text, image, video).&quot;,
+        &quot;parent&quot;: &quot;The parent directory of the file.&quot;
+      },
+      &quot;opts&quot;: [
+        { &quot;name&quot;: &quot;create&quot;, &quot;description&quot;: &quot;Create a new file.&quot; },
+        { &quot;name&quot;: &quot;delete&quot;, &quot;description&quot;: &quot;Delete a file.&quot; },
+        { &quot;name&quot;: &quot;read&quot;, &quot;description&quot;: &quot;Read a file.&quot; },
+        { &quot;name&quot;: &quot;write&quot;, &quot;description&quot;: &quot;Write to a file.&quot; }
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;directory&quot;,
+      &quot;description&quot;: &quot;A directory in a file system.&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;The name of the directory.&quot;,
+        &quot;parent&quot;: &quot;The parent directory of the directory.&quot;
+      },
+      &quot;opts&quot;: [
+        { &quot;name&quot;: &quot;create&quot;, &quot;description&quot;: &quot;Create a new directory.&quot; },
+        { &quot;name&quot;: &quot;delete&quot;, &quot;description&quot;: &quot;Delete a directory.&quot; },
+        { &quot;name&quot;: &quot;list&quot;, &quot;description&quot;: &quot;List the contents of a directory.&quot; }
+      ]
+    }
+  ],
+  &quot;task_preference&quot;: {
+    &quot;num_entities&quot;: 2,
+    &quot;num_opts&quot;: 3,
+    &quot;relation_difficulty&quot;: 3
+  }
+}
+</code></pre>
+
+<p>For examples in real environments, please refer to <code>cookbook</code> in the root directory.</p>
+<p>If Python is preferred, an example is</p>
+<pre class="codehilite"><code class="language-python">from agentevolver.module.task_manager.env_profiles import EnvEntity, EnvEntityOpt, TaskPreference, EnvProfile
+
+spotify = EnvEntity(
+    name=&quot;Spotify&quot;,
+    description=&quot;A music streaming service with song, album, and playlist management.&quot;,
+    attrs={
+        &quot;Song Library&quot;: &quot;Songs saved by the user.&quot;,
+        &quot;Album Library&quot;: &quot;Albums saved by the user.&quot;,
+        &quot;Playlists&quot;: &quot;User-created or followed playlists.&quot;
+    },
+    opts=[
+        EnvEntityOpt(&quot;play_song&quot;, &quot;Play a song, album, or playlist.&quot;),
+        EnvEntityOpt(&quot;like_song&quot;, &quot;Like songs or albums.&quot;),
+        EnvEntityOpt(&quot;unfollow_artist&quot;, &quot;Unfollow an artist.&quot;),
+        EnvEntityOpt(&quot;follow_artist&quot;, &quot;Follow an artist.&quot;),
+        EnvEntityOpt(&quot;create_playlist&quot;, &quot;Create a new playlist.&quot;),
+        EnvEntityOpt(&quot;remove_song&quot;, &quot;Remove songs from library or playlist.&quot;),
+        EnvEntityOpt(&quot;export_library&quot;, &quot;Export song/album/playlist data.&quot;)
+    ]
+)
+
+gmail = EnvEntity(
+    name=&quot;Gmail&quot;,
+    description=&quot;An email service for sending, receiving, labeling, and managing emails.&quot;,
+    attrs={
+        &quot;Inbox&quot;: &quot;List of received email threads.&quot;,
+        &quot;Outbox&quot;: &quot;List of sent email threads.&quot;,
+        &quot;Labels&quot;: &quot;Custom labels to organize emails.&quot;
+    },
+    opts=[
+        EnvEntityOpt(&quot;send_email&quot;, &quot;Send an email.&quot;),
+        EnvEntityOpt(&quot;forward_email&quot;, &quot;Forward an email.&quot;),
+        EnvEntityOpt(&quot;reply_email&quot;, &quot;Reply to an email.&quot;),
+        EnvEntityOpt(&quot;delete_email&quot;, &quot;Delete emails.&quot;),
+        EnvEntityOpt(&quot;label_email&quot;, &quot;Label emails.&quot;),
+        EnvEntityOpt(&quot;star_email&quot;, &quot;Star or unstar email threads.&quot;)
+    ]
+)
+
+env_profile = EnvProfile(
+    name=&quot;Bob&quot;,
+    background=&quot;A general computer user.&quot;,
+    task=TaskPreference(
+        num_entities=2,
+        num_opts=3,
+        relation_difficulty=3,
+    )
+)
+
+env_profile.reg_entities([spotify, gmail])
+</code></pre>
+
+<p>More examples can be found in <code>agentevolver/module/task_manager/prelude_profiles</code>.</p>
+<h2 id="task-derivation">Task Derivation</h2>
+<p>Task Derivation is the initial stage of synthetic task generation. It transforms the Environment Profile into preliminary task drafts by applying exploration and synthesis strategies.</p>
+<p>The primary objectives are:</p>
+<ol>
+<li><strong>Exploration</strong> – Cover the environment systematically or stochastically.</li>
+<li><strong>Summarization</strong> – Convert exploration trajectories into concise, structured candidate tasks.</li>
+</ol>
+<p>Available strategies:</p>
+<ul>
+<li><strong>RandomWalk Strategy</strong> – Random exploration producing a diverse task set.</li>
+<li>Additional strategies will be introduced in future versions.</li>
+</ul>
+<h3 id="randomwalk-strategy">RandomWalk Strategy</h3>
+<p>The RandomWalk Strategy is simple yet effective. It explores the environment by sampling entities and operations at random, generating diverse trajectories that can be summarized into tasks.</p>
+<p>Parameters:</p>
+<pre class="codehilite"><code class="language-yaml">task_manager:
+  strategy: random
+  strategy_args:
+    max_explore_step: 30
+    max_llm_retries: 6
+    env_url: ${env_service.env_url} # refer to env_service.env_url
+    exploration_llm_temperature: 1.0
+    exploration_llm_top_p: 1.0
+    exploration_llm_top_k: 100
+</code></pre>
+
+<h2 id="task-curation">Task Curation</h2>
+<p>Task Curation ensures the quality and diversity of tasks generated during derivation by applying filters and mixture strategies.</p>
+<ul>
+<li>
+<p><strong>Filters</strong></p>
+<ul>
+<li><em>DeduplicationFilter</em>: Removes redundant or near-duplicate tasks.</li>
+<li><em>FeasibilityFilter</em>: Removes tasks that cannot be executed in the environment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mixture Strategies</strong></p>
+<ul>
+<li><em>UnifiedMixtureStrategy</em>: Combines tasks from multiple sources to maintain balance.</li>
+</ul>
+</li>
+</ul>
+<p>Goals of curation:</p>
+<ul>
+<li><strong>Quality assurance</strong> – Ensure valid, feasible, and logically sound tasks.</li>
+<li><strong>Diversity preservation</strong> – Avoid bias toward a single task type.</li>
+<li><strong>Dynamic control</strong> – Adjust task selection according to agent progress.</li>
+</ul>
+<h3 id="deduplicationfilter">DeduplicationFilter</h3>
+<p>Removes duplicate or highly similar tasks to improve data diversity. Enabled by default.</p>
+<h3 id="feasibilityfilter">FeasibilityFilter</h3>
+<p>Filters out tasks that cannot be completed given the environment constraints.</p>
+<h2 id="synthetic-reward">Synthetic Reward</h2>
+<p>Task Manager provides a built-in <strong>synthetic reward</strong> as a fallback, enabling training without requiring user-defined reward functions.</p>
+<p>Key properties:</p>
+<ul>
+<li><strong>Generality</strong> – Applicable across diverse environments.</li>
+<li><strong>Zero-configuration</strong> – Works out of the box.</li>
+<li><strong>Extensibility</strong> – Can be replaced or extended with custom reward functions.</li>
+</ul>
+<p>Typical reward components:</p>
+<ul>
+<li><strong>Relevance check</strong> – Whether the trajectory matches the task.</li>
+<li><strong>Success check</strong> – Whether the task is successfully completed.</li>
+<li><strong>Efficiency check</strong> – Whether the task is solved within reasonable steps.</li>
+</ul>
+<blockquote>
+<p>Although the built-in synthetic reward provides a functional fallback, we strongly recommend implementing domain-specific reward functions to achieve optimal agent performance.</p>
+</blockquote>
+<p>Configuration example:</p>
+<pre class="codehilite"><code class="language-yaml">task_manager:
+  grader:
+    original_grader: env
+    synthetic_grader: llm
+</code></pre>
+
+<h2 id="extend-task-manager">Extend Task Manager</h2>
+<p>Task Manager is designed as a <strong>modular and extensible framework</strong>, adaptable to different training scenarios. To extend Task Manager, users can implement and replace the components used in three stages in the pipeline, including <strong>Strategy</strong>, <strong>Filter</strong>, <strong>Mixture Strategy</strong>, and <strong>Judge</strong>.</p>
+  </div>
+</article>
+                                <div class="mx-auto flex flex-wrap h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
+    
+    <a data-slot="button"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 shadow-none"
+        href="/AgentEvolver/guidelines/env_service/">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="tabler-icon tabler-icon-arrow-left ">
+            <path d="M5 12l14 0"></path>
+            <path d="M5 12l6 6"></path>
+            <path d="M5 12l6 -6"></path>
+        </svg>
+        <span class="max-[500px]:hidden">Environment Service</span>
+    </a>
+    
+    
+    <a data-slot="button"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 rounded-md gap-1.5 px-3 has-[&gt;svg]:px-2.5 ml-auto shadow-none"
+        href="/AgentEvolver/guidelines/exp_manager/">
+        <span class="max-[500px]:hidden">Experience Manager</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="tabler-icon tabler-icon-arrow-right ">
+            <path d="M5 12l14 0"></path>
+            <path d="M13 18l6 -6"></path>
+            <path d="M13 6l6 6"></path>
+        </svg>
+    </a>
+    
+</div>
+                                <dialog id="bottom-sidebar" onclick="onBottomSidebarDialogClick(event)" class="bg-transparent"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 58px); min-width: max-content; --radix-popper-transform-origin: 0% 0px; will-change: transform; z-index: 50; --radix-popper-available-width: 504px; --radix-popper-available-height: 857px; --radix-popper-anchor-width: 72.94999694824219px; --radix-popper-anchor-height: 32px;">
+    <div data-side="bottom" data-align="start" data-state="open" role="dialog" data-slot="popover-content"
+        class="text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 origin-(--radix-popover-content-transform-origin) border outline-hidden bg-background/90 no-scrollbar h-(--radix-popper-available-height) w-(--radix-popper-available-width) overflow-y-auto rounded-none border-none p-0 shadow-none backdrop-blur duration-100"
+        style="--radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+        tabindex="-1">
+        <div class="flex flex-col gap-12 overflow-auto px-6 py-6">
+            
+            
+            
+
+            
+            <div class="flex flex-col gap-4">
+                <div class="text-muted-foreground text-sm font-medium">Menu</div>
+                <div class="flex flex-col gap-3">
+                    
+                    <a class="text-2xl font-medium" href="../..">
+                        
+                        Welcome
+                        
+                    </a>
+                    
+                </div>
+            </div>
+            
+
+            
+            <div class="flex flex-col gap-8">
+                
+                <div class="flex flex-col gap-4">
+                    <div class="text-muted-foreground text-sm font-medium">Tutorial</div>
+                    
+                    <div class="flex flex-col gap-3">
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/install/">
+                            
+                            Installation
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/configuration/">
+                            
+                            Configuration
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../../tutorial/quick_start/">
+                            
+                            Quick Start
+                            
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="flex flex-col gap-4">
+                    <div class="text-muted-foreground text-sm font-medium">Guidelines</div>
+                    
+                    <div class="flex flex-col gap-3">
+                        
+                        <a class="text-2xl font-medium" href="../env_service/">
+                            
+                            Environment Service
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="./">
+                            
+                            Task Manager
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../exp_manager/">
+                            
+                            Experience Manager
+                            
+                        </a>
+                        
+                        <a class="text-2xl font-medium" href="../adv_processor/">
+                            
+                            Advantage Processor
+                            
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+            
+
+        </div>
+    </div>
+</dialog>
+                            </div>
+                            <div
+                                class="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[calc(100svh-var(--header-height)-var(--footer-height))] w-72 flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex">
+                                <div class="h-(--top-spacing) shrink-0"></div>
+                                <div view-transition-name="toc" class="no-scrollbar overflow-y-auto px-8">
+    <div class="flex flex-col gap-2 p-4 pt-0 text-sm">
+        <p class="text-muted-foreground bg-background sticky top-0 h-6 text-xs">On This Page</p>
+        
+        
+        
+        
+        <a href="#collect-your-first-training-data"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Collect Your First Training Data
+        </a>
+        
+        
+        <a href="#1-adopt-the-environment"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            1. Adopt the Environment
+        </a>
+        
+        <a href="#2-profile-the-environment"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            2. Profile the Environment
+        </a>
+        
+        <a href="#3-configure-the-strategies"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            3. Configure the Strategies
+        </a>
+        
+        <a href="#4-start-task-synthesis"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            4. Start Task Synthesis
+        </a>
+        
+        <a href="#5-check-the-data"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            5. Check the Data
+        </a>
+        
+        
+
+        
+        <a href="#workflow-of-task-manager"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Workflow of Task Manager
+        </a>
+        
+
+        
+        <a href="#environment-profiling"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Environment Profiling
+        </a>
+        
+        
+        <a href="#write-a-profile"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Write a Profile
+        </a>
+        
+        
+
+        
+        <a href="#task-derivation"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Task Derivation
+        </a>
+        
+        
+        <a href="#randomwalk-strategy"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            RandomWalk Strategy
+        </a>
+        
+        
+
+        
+        <a href="#task-curation"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Task Curation
+        </a>
+        
+        
+        <a href="#deduplicationfilter"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            DeduplicationFilter
+        </a>
+        
+        <a href="#feasibilityfilter"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            FeasibilityFilter
+        </a>
+        
+        
+
+        
+        <a href="#synthetic-reward"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Synthetic Reward
+        </a>
+        
+
+        
+        <a href="#extend-task-manager"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Extend Task Manager
+        </a>
+        
+
+        
+        
+        
+        
+
+    </div>
+    <div class="h-12"></div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer view-transition-name="footer"
+    class="group-has-[.section-soft]/body:bg-surface/40 3xl:fixed:bg-transparent dark:bg-transparent">
+    <div class="container-wrapper px-4 xl:px-6">
+        <div class="flex h-(--footer-height) items-center justify-between">
+            <div class="text-muted-foreground w-full text-center text-xs leading-loose sm:text-sm">
+                
+                Built by<!-- --> <span>The AgentEvolver Team</span> &mdash;
+                
+                <a href="https://github.com/asiffer/mkdocs-shadcn">shadcn theme</a> provided by
+                <a href="https://github.com/asiffer">@asiffer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    </div>
+     
+
+<script src="../../search/main.js"></script>
+
+
+    
+
+    <script src="../../js/copy-button.js"></script>
+    <script>updatePygmentsStylesheet();</script>
+    
+    <script>fetchStargazers("https://github.com/modelscope/AgentEvolver");</script>
+    
+    
+    
+    <script type="speculationrules">
+{
+  "prerender": [
+    {
+      "where": {
+          "selector_matches": ["#next-button", "#previous-button"],
+      }
+    }
+  ]
+}
+</script>
+</body>
+
+</html>
