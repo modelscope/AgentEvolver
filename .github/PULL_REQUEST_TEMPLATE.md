@@ -1,6 +1,6 @@
 ## AgentEvolver Version
 
-[The version of AgentEvolver you are working on, e.g. `import agentevolver; print(agentevolver.__version__)`]
+[The version of AgentEvolver you are working on]
 
 ## Description
 

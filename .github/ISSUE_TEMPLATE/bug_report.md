@@ -27,7 +27,7 @@ Detailed error messages.
 
 **Environment (please complete the following information):**
 
-- AgentEvolver Version: [e.g. 1.0.0 via `print(agentevolver.__version__)`]
+- AgentEvolver Version: [e.g. 1.0.0]
 - CUDA Version: [e.g. 12.2]
 - Python Version: [e.g. 3.10]
 - OS: [e.g. macos, windows]
