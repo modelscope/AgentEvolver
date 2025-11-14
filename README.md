@@ -69,20 +69,130 @@ Performance comparison on the AppWorld and BFCL-v3 benchmarks. AgentEvolver achi
 
 Performance on two benchmarks. Columns show avg@8 and best@8 for each benchmark, plus their averages (Avg.). All values are in percent (%). **Bolded numbers** highlight the best results.
 
-| **Model** | **Params** | **AppWorld** | | **BFCL v3** | | **Avg.** | |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| | | avg@8 | best@8 | avg@8 | best@8 | avg@8 | best@8 |
-| Qwen2.5-7B | 7B | 1.8 | 5.6 | 29.8 | 42.4 | 15.8 | 24.0 |
-| +Questioning | 7B | 23.2 | 40.3 | 49.0 | 60.6 | 36.1 | 50.5 |
-| +Questioning&Navigating | 7B | 26.3 | 43.1 | 53.3 | 61.0 | 39.8 | 52.1 |
-| +Questioning&Attributing | 7B | 25.7 | 43.7 | 56.8 | 65.3 | 41.3 | 54.5 |
-| **AgentEvolver (overall)** | **7B** | **32.4** | **51.2** | **57.9** | **69.0** | **45.2** | **60.1** |
-| | | | | | | | |
-| Qwen2.5-14B | 14B | 18.0 | 31.4 | 41.6 | 54.1 | 29.8 | 42.8 |
-| +Questioning | 14B | 44.3 | 65.5 | 60.3 | 72.1 | 52.3 | 68.8 |
-| +Questioning&Navigating | 14B | 45.4 | 65.3 | 62.8 | 74.5 | 54.1 | 69.9 |
-| +Questioning&Attributing | 14B | 47.8 | 65.6 | 64.9 | 76.3 | 56.4 | 71.0 |
-| **AgentEvolver (overall)** | **14B** | **48.7** | **69.4** | **66.5** | **76.7** | **57.6** | **73.1** |
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2" align="left"><strong>Model</strong></th>
+      <th rowspan="2" align="center"><strong>Params</strong></th>
+      <th colspan="2" align="center" style="text-align: center;"><strong>AppWorld</strong></th>
+      <th colspan="2" align="center" style="text-align: center;"><strong>BFCL v3</strong></th>
+      <th colspan="2" align="center" style="text-align: center;"><strong>Avg.</strong></th>
+    </tr>
+    <tr>
+      <th align="center">avg@8</th>
+      <th align="center">best@8</th>
+      <th align="center">avg@8</th>
+      <th align="center">best@8</th>
+      <th align="center">avg@8</th>
+      <th align="center">best@8</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">Qwen2.5-7B</td>
+      <td align="center">7B</td>
+      <td align="center">1.8</td>
+      <td align="center">5.6</td>
+      <td align="center">29.8</td>
+      <td align="center">42.4</td>
+      <td align="center">15.8</td>
+      <td align="center">24.0</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning</td>
+      <td align="center">7B</td>
+      <td align="center">23.2</td>
+      <td align="center">40.3</td>
+      <td align="center">49.0</td>
+      <td align="center">60.6</td>
+      <td align="center">36.1</td>
+      <td align="center">50.5</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning&amp;Navigating</td>
+      <td align="center">7B</td>
+      <td align="center">26.3</td>
+      <td align="center">43.1</td>
+      <td align="center">53.3</td>
+      <td align="center">61.0</td>
+      <td align="center">39.8</td>
+      <td align="center">52.1</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning&amp;Attributing</td>
+      <td align="center">7B</td>
+      <td align="center">25.7</td>
+      <td align="center">43.7</td>
+      <td align="center">56.8</td>
+      <td align="center">65.3</td>
+      <td align="center">41.3</td>
+      <td align="center">54.5</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>AgentEvolver (overall)</strong></td>
+      <td align="center"><strong>7B</strong></td>
+      <td align="center"><strong>32.4</strong></td>
+      <td align="center"><strong>51.2</strong></td>
+      <td align="center"><strong>57.9</strong></td>
+      <td align="center"><strong>69.0</strong></td>
+      <td align="center"><strong>45.2</strong></td>
+      <td align="center"><strong>60.1</strong></td>
+    </tr>
+    <tr>
+      <td colspan="8"></td>
+    </tr>
+    <tr>
+      <td align="left">Qwen2.5-14B</td>
+      <td align="center">14B</td>
+      <td align="center">18.0</td>
+      <td align="center">31.4</td>
+      <td align="center">41.6</td>
+      <td align="center">54.1</td>
+      <td align="center">29.8</td>
+      <td align="center">42.8</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning</td>
+      <td align="center">14B</td>
+      <td align="center">44.3</td>
+      <td align="center">65.5</td>
+      <td align="center">60.3</td>
+      <td align="center">72.1</td>
+      <td align="center">52.3</td>
+      <td align="center">68.8</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning&amp;Navigating</td>
+      <td align="center">14B</td>
+      <td align="center">45.4</td>
+      <td align="center">65.3</td>
+      <td align="center">62.8</td>
+      <td align="center">74.5</td>
+      <td align="center">54.1</td>
+      <td align="center">69.9</td>
+    </tr>
+    <tr>
+      <td align="left">+Questioning&amp;Attributing</td>
+      <td align="center">14B</td>
+      <td align="center">47.8</td>
+      <td align="center">65.6</td>
+      <td align="center">64.9</td>
+      <td align="center">76.3</td>
+      <td align="center">56.4</td>
+      <td align="center">71.0</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>AgentEvolver (overall)</strong></td>
+      <td align="center"><strong>14B</strong></td>
+      <td align="center"><strong>48.7</strong></td>
+      <td align="center"><strong>69.4</strong></td>
+      <td align="center"><strong>66.5</strong></td>
+      <td align="center"><strong>76.7</strong></td>
+      <td align="center"><strong>57.6</strong></td>
+      <td align="center"><strong>73.1</strong></td>
+    </tr>
+  </tbody>
+</table>
 
 
 ## 🚀 Quick Start
