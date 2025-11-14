@@ -9,9 +9,10 @@
   <!-- <a href="https://arxiv.org/abs/0000"><img src="https://img.shields.io/badge/cs.MA-0000-B31C1C?logo=arxiv&logoColor=B31C1C" alt="arxiv"/></a> -->
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11+-blue" alt="Python Version"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-black" alt="License"></a>
+  <a href="https://modelscope.github.io/AgentEvolver/"><img src="https://img.shields.io/badge/docs-online-blue?logo=markdown" alt="Documentation"></a>
+  <a href="https://arxiv.org/abs/2511.10395"><img src="https://img.shields.io/badge/arXiv-2511.10395-b31b1b.svg" alt="arXiv"></a>
   <a href="https://github.com/modelscope/AgentEvolver"><img src="https://img.shields.io/github/stars/modelscope/AgentEvolver?style=social" alt="GitHub Stars"></a>
 </p>
-
 
 
 <!-- <p align="center">
@@ -24,7 +25,7 @@ improve their capabilities, aiming for efficient, cost-effective, and continuous
 
 ## 📰 News
 
-- **[2025-11]** 📄 The AgentEvolver Technical Report is now available, detailing the framework’s architecture, methodology, and key findings.
+- **[2025-11]** 📄 [The AgentEvolver Technical Report is now available](https://arxiv.org/abs/2511.10395), detailing the framework’s architecture, methodology, and key findings.
 - **[2025-11]** 🧩 AgentEvolver v1 has been released now!
 
 
@@ -113,7 +114,7 @@ For more detailed installation, please refer to [ReMe](https://github.com/agents
 ### Step 4. Begin Training! 🚀 🚀
 Copy the `example.env` file to `.env` and modify the parameters, including your **API key**, **conda path**.
 
-Using AgentEvoler launcher to start environment, log dashboard and training process altogether.
+Using AgentEvolver launcher to start environment, log dashboard and training process altogether.
 
 ```bash
 conda activate agentevolver
@@ -165,10 +166,12 @@ If you find this work useful, please consider citing:
 
 ```bibtex
 @misc{AgentEvolver2025,
-  title={AgentEvolver: Towards Efficient Self-Evolving Agent System},
-  author={Yunpeng Zhai and Shuchang Tao and Cheng Chen and Anni Zou and Ziqian Chen and Qingxu Fu and Shinji Mai and Li Yu and Jiaji Deng and Zouying Cao and Zhaoyang Liu and Bolin Ding and Jingren Zhou},
-  year={2025},
-  archivePrefix={arXiv},
-  primaryClass={cs.LG},
+  title         = {AgentEvolver: Towards Efficient Self-Evolving Agent System},
+  author        = {Yunpeng Zhai and Shuchang Tao and Cheng Chen and Anni Zou and Ziqian Chen and Qingxu Fu and Shinji Mai and Li Yu and Jiaji Deng and Zouying Cao and Zhaoyang Liu and Bolin Ding and Jingren Zhou},
+  year          = {2025},
+  eprint        = {2511.10395},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2511.10395}
 }
 ```
