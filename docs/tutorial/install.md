@@ -15,7 +15,7 @@ The script below sets up an environment for appworld.
 ```bash
 cd env_service/environments/appworld && bash setup.sh
 ```
-For other environment setupx, refer to [docs/guidelines/env_service.md](../guidelines/env_service.md) 📄
+For other environment setup, refer to [docs/guidelines/env_service.md](../guidelines/env_service.md) 📄
 
 ### Step 3. Setup ReMe (Optional)
 Set up the ReMe for experience management by running the script:

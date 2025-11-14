@@ -92,7 +92,7 @@ For more detailed installation, please refer to [ReMe](https://github.com/agents
 ### Step 4. Begin Training! 🚀 🚀
 Copy the `example.env` file to `.env` and modify the parameters, including your **API key**, **conda path**.
 
-Using AgentEvoler launcher to start environment, log dashboard and training process altogether.
+Using AgentEvolver launcher to start environment, log dashboard and training process altogether.
 
 ```bash
 # minimal example without ReMe (using built-in datasets within environments).
