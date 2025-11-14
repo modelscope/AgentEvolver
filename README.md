@@ -25,7 +25,7 @@ improve their capabilities, aiming for efficient, cost-effective, and continuous
 
 ## 📰 News
 
-- **[2025-11]** 📄 The AgentEvolver Technical Report is now available, detailing the framework’s architecture, methodology, and key findings.
+- **[2025-11]** 📄 [The AgentEvolver Technical Report is now available](https://arxiv.org/abs/2511.10395), detailing the framework’s architecture, methodology, and key findings.
 - **[2025-11]** 🧩 AgentEvolver v1 has been released now!
 
 
