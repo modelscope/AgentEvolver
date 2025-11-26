@@ -198,8 +198,9 @@ def compute_grpo_outcome_advantage(
         for idx, scores_list in id2score.items():
             if len(scores_list) == 1:
                 device = scores_list[0].device
-                id2mean[idx] = torch.tensor(0.0, device=device)
-                id2std[idx] = torch.tensor(1.0, device=device)
+                dtype = scores_list[0].dtype
+                id2mean[idx] = torch.tensor(0.0, device=device, dtype=dtype)
+                id2std[idx] = torch.tensor(1.0, device=device, dtype=dtype)
             elif len(scores_list) > 1:
                 group_scores = torch.stack(scores_list)
                 id2mean[idx] = group_scores.mean()
