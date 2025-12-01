@@ -1,3 +1,6 @@
 [submodule "external/verl"]
 	path = external/verl
 	url = https://github.com/volcengine/verl.git
+[submodule "external/agentscope"]
+	path = external/agentscope
+	url = git@github.com:agentscope-ai/agentscope.git
