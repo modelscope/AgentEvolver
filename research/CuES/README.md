@@ -1,14 +1,11 @@
-<h2 align="left">
- <img src="figs/mozhang3.png" alt="CuES Logo" width="3%"> CuES: A Curiosity-driven and Environment-grounded Synthesis Framework for Agentic RL
-</h2>
-
-
-
 <p align="center">
   <img src="figs/cues.png" alt="CuES Logo" width="1200">
 </p>
 
----
+<h2 align="left">
+ <img src="figs/mozhang3.png" alt="CuES Logo" width="3%"> CuES: A Curiosity-driven and Environment-grounded Synthesis Framework for Agentic RL
+</h2>
+
 
 ## 🔍 Overview
 
