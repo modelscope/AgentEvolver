@@ -81,7 +81,6 @@ class TerminalUserAgent(UserAgent):
         input_content = Parser.extract_text_from_content(blocks_input)
         print("-" * 70)
         print(input_content)
-        # print(f"{blocks_input.name}: {content}")
         print("-" * 70)
         
         # Create reply message

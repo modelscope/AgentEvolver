@@ -84,6 +84,12 @@ async def _handle_websocket_connection(websocket: WebSocket, path: str = ""):
     print(f"WebSocket connection established: {connection_id}")
     
     try:
+        # If game was stopped, reset to waiting state to allow new game
+        current_status = state_manager.game_state.get("status")
+        if current_status == "stopped":
+            state_manager.reset()
+            print(f"[WebSocket] Reset game state from 'stopped' to 'waiting' for new connection")
+        
         # Send initial game state
         initial_state = state_manager.format_game_state()
         await websocket.send_json(initial_state)
@@ -109,24 +115,40 @@ async def _handle_websocket_connection(websocket: WebSocket, path: str = ""):
                     print(f"[WebSocket] Received user input: agent_id={agent_id}, content={content[:50]}...")
                     await state_manager.put_user_input(agent_id, content)
                 
+            except WebSocketDisconnect:
+                # Client disconnected, break the loop
+                print(f"WebSocket disconnected: {connection_id}")
+                break
             except json.JSONDecodeError:
-                await websocket.send_json({
-                    "type": "error",
-                    "message": "Invalid JSON format"
-                })
+                # Only send error if connection is still open
+                try:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": "Invalid JSON format"
+                    })
+                except (WebSocketDisconnect, Exception):
+                    # Connection closed, break the loop
+                    break
             except Exception as e:
-                await websocket.send_json({
-                    "type": "error",
-                    "message": str(e)
-                })
+                # Only send error if connection is still open
+                try:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": str(e)
+                    })
+                except (WebSocketDisconnect, Exception):
+                    # Connection closed, break the loop
+                    break
                 
     except WebSocketDisconnect:
+        # Normal disconnection, just log it
         print(f"WebSocket disconnected: {connection_id}")
-        state_manager.remove_websocket_connection(connection_id)
     except Exception as e:
         print(f"WebSocket error: {e}")
         import traceback
         traceback.print_exc()
+    finally:
+        # Always remove the connection in finally block
         state_manager.remove_websocket_connection(connection_id)
 
 
@@ -214,12 +236,20 @@ async def start_game(request: StartGameRequest):
     print(f"[API] Starting game: mode={mode}, num_players={num_players}, language={language}, user_agent_id={user_agent_id}")
     
     # Check if game is already running
-    if state_manager.game_state.get("status") == "running":
+    current_status = state_manager.game_state.get("status")
+    print(f"[API] Current game status: {current_status}")
+    
+    if current_status == "running":
         raise HTTPException(status_code=400, detail="Game is already running")
     
     # Validate mode
     if mode not in ["observe", "participate"]:
         raise HTTPException(status_code=400, detail="Mode must be 'observe' or 'participate'")
+    
+    # Reset state manager (this will reset status to "waiting" and clear should_stop flag)
+    # This ensures we can start a new game even if previous game was stopped or finished
+    state_manager.reset()
+    print(f"[API] State manager reset. New status: {state_manager.game_state.get('status')}")
     
     # Set mode
     state_manager.set_mode(mode, str(user_agent_id) if mode == "participate" else None)
@@ -240,6 +270,33 @@ async def start_game(request: StartGameRequest):
         "language": language,
         "user_agent_id": user_agent_id,
         "mode": mode,
+    }
+
+
+@app.post("/api/stop-game")
+async def stop_game():
+    """Stop the current game."""
+    print("[API] Stopping game")
+    
+    if state_manager.game_state.get("status") != "running":
+        raise HTTPException(status_code=400, detail="No game is currently running")
+    
+    # Stop the game
+    state_manager.stop_game()
+    
+    # Broadcast stopped state
+    await state_manager.broadcast_message(state_manager.format_game_state())
+    
+    stop_msg = state_manager.format_message(
+        sender="System",
+        content="Game stopped by user.",
+        role="assistant",
+    )
+    await state_manager.broadcast_message(stop_msg)
+    
+    return {
+        "status": "ok",
+        "message": "Game stopped",
     }
 
 

@@ -11,6 +11,7 @@ const startGameBtn = document.getElementById('start-game-btn');
 const numPlayersSelect = document.getElementById('num-players');
 const userAgentIdSelect = document.getElementById('user-agent-id');
 const languageSelect = document.getElementById('language');
+const backExitButton = document.getElementById('back-exit-button');
 const inputContainer = document.querySelector('.input-container');
 
 let messageCount = 0;
@@ -145,6 +146,35 @@ wsClient.onMessage('game_state', (state) => {
         messagesContainer.style.display = 'block';
         inputContainer.style.display = 'flex';
         gameStarted = true;
+        // Change button to Exit
+        updateBackExitButton(true);
+    }
+    // Handle game stopped - reset state and show setup
+    if (state.status === 'stopped') {
+        gameStarted = false;
+        gameSetup.style.display = 'block';
+        messagesContainer.style.display = 'none';
+        inputContainer.style.display = 'none';
+        hideInputRequest();
+        updateBackExitButton(false);
+        // Reset message count and clear messages
+        messageCount = 0;
+        messagesContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Game stopped. You can start a new game.</p>';
+        // Don't redirect - allow user to start new game or go back manually
+    }
+    // Handle game finished - allow starting new game
+    if (state.status === 'finished') {
+        // Game finished normally, can start new game
+        gameStarted = false;
+    }
+    // Handle waiting state - show setup
+    if (state.status === 'waiting') {
+        gameStarted = false;
+        gameSetup.style.display = 'block';
+        messagesContainer.style.display = 'none';
+        inputContainer.style.display = 'none';
+        hideInputRequest();
+        updateBackExitButton(false);
     }
 });
 
@@ -233,11 +263,47 @@ async function startGame() {
     }
 }
 
+function updateBackExitButton(isGameRunning) {
+    if (isGameRunning) {
+        backExitButton.textContent = 'Exit';
+        backExitButton.title = 'Exit Game';
+        backExitButton.href = '#';
+        backExitButton.onclick = async (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to exit the game?')) {
+                try {
+                    const response = await fetch('/api/stop-game', {
+                        method: 'POST',
+                    });
+                    if (response.ok) {
+                        // Wait for stopped state, then redirect
+                        // The redirect will happen in game_state handler
+                    } else {
+                        alert('Failed to stop game');
+                    }
+                } catch (error) {
+                    console.error('Error stopping game:', error);
+                    alert('Error stopping game');
+                }
+            }
+        };
+    } else {
+        backExitButton.textContent = '← Back to Home';
+        backExitButton.title = 'Back to Home';
+        backExitButton.href = '/';
+        backExitButton.onclick = null;
+    }
+}
+
 startGameBtn.addEventListener('click', startGame);
 
 // Connect when page loads
 wsClient.onConnect(() => {
     console.log('Connected to game server');
+    // When reconnected, reset game state
+    gameStarted = false;
+    messageCount = 0;
+    hideInputRequest();
 });
 
 wsClient.onDisconnect(() => {
@@ -247,4 +313,7 @@ wsClient.onDisconnect(() => {
 
 // Initialize connection
 wsClient.connect();
+
+// Initialize button to show "Back to Home" on page load
+updateBackExitButton(false);
 

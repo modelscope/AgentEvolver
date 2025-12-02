@@ -102,7 +102,15 @@ async def run_game_in_background(
             language=language,
             web_mode=mode,
             web_observe_agent=observe_agent,
+            state_manager=state_manager,
         )
+        
+        # Check if game was stopped (returns None when stopped)
+        if good_wins is None or state_manager.should_stop:
+            print("\nGame stopped by user")
+            state_manager.update_game_state(status="stopped")
+            await state_manager.broadcast_message(state_manager.format_game_state())
+            return None
         
         # Update final state
         state_manager.update_game_state(
@@ -163,6 +171,8 @@ def start_game_thread(
     
     thread = threading.Thread(target=run, daemon=True)
     thread.start()
+    # Save thread reference in state manager
+    state_manager.set_game_thread(thread)
     return thread
 
 

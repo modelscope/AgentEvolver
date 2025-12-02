@@ -37,6 +37,12 @@ class GameStateManager:
         
         # User agent ID (for participate mode)
         self.user_agent_id: Optional[str] = None
+        
+        # Flag to stop the game
+        self.should_stop: bool = False
+        
+        # Game thread reference (for stopping)
+        self.game_thread: Optional[Any] = None
     
     def set_mode(self, mode: str, user_agent_id: Optional[str] = None):
         """Set the game mode.
@@ -47,6 +53,31 @@ class GameStateManager:
         """
         self.mode = mode
         self.user_agent_id = user_agent_id
+    
+    def stop_game(self):
+        """Stop the current game."""
+        self.should_stop = True
+        self.update_game_state(status="stopped")
+    
+    def reset(self):
+        """Reset the game state manager."""
+        self.should_stop = False
+        self.game_thread = None
+        self.game_state = {
+            "phase": None,
+            "mission_id": None,
+            "round_id": None,
+            "leader": None,
+            "status": "waiting",
+        }
+    
+    def set_game_thread(self, thread: Any):
+        """Set the game thread reference.
+        
+        Args:
+            thread: The game thread object
+        """
+        self.game_thread = thread
     
     async def put_user_input(self, agent_id: str, content: str):
         """Put user input into the queue for the specified agent.
