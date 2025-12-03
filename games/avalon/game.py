@@ -24,6 +24,7 @@ class AvalonGame:
         language: str = "en",
         observe_agent: AgentBase | None = None,
         state_manager: Any = None,
+        preset_roles: list[tuple[int, str, bool]] | None = None,
     ):
         """Initialize Avalon game.
         
@@ -34,6 +35,8 @@ class AvalonGame:
             language: Language for prompts. "en" for English, "zh" or "cn" for Chinese.
             observe_agent: Optional observer agent to add to all hubs. Default is None.
             state_manager: Optional state manager for web mode to check stop flag.
+            preset_roles: Optional list of preset roles as tuples (role_id, role_name, is_good).
+                If provided, uses these roles instead of random assignment.
         """
         self.agents = agents
         self.config = config
@@ -58,9 +61,33 @@ class AvalonGame:
             from games.avalon.prompt import EnglishPrompts as Prompts
         self.Prompts = Prompts
         
-        # Initialize game environment
-        self.env = AvalonGameEnvironment(config)
-        self.roles = self.env.get_roles()
+        # Initialize game environment with preset roles if provided
+        if preset_roles is not None:
+            # Use preset roles - create environment with presets
+            # Extract role names (they should already be in correct format from get_roles())
+            role_names = [role_name for _, role_name, _ in preset_roles]
+            import numpy as np
+            quest_leader = np.random.randint(0, config.num_players - 1)
+            presets = {
+                'num_players': config.num_players,
+                'quest_leader': quest_leader,
+                'role_names': role_names,
+            }
+            self.env = AvalonGameEnvironment.from_presets(presets)
+            # Fix: from_presets uses cls variables, so we need to set instance variables
+            # Convert preset_roles to the format needed by env (role_ids array)
+            role_ids = [role_id for role_id, _, _ in preset_roles]
+            is_good_list = [is_good for _, _, is_good in preset_roles]
+            import numpy as np
+            self.env.roles = np.array(role_ids)
+            self.env.is_good = np.array(is_good_list)
+            self.env.quest_leader = quest_leader
+            # Use the preset roles directly
+            self.roles = preset_roles
+        else:
+            # Use default random role assignment
+            self.env = AvalonGameEnvironment(config)
+            self.roles = self.env.get_roles()
         
         # Initialize game log
         self.game_logger.create_game_log_dir(log_dir)
@@ -160,6 +187,7 @@ class AvalonGame:
         EVIL_SIDE = 0
         
         for i, (role_id, role_name, side) in enumerate(self.roles):
+            logger.info(f"Assigning role to agent {i}: {role_name}, {side}")
             agent = self.agents[i]
             localized_role_name = self.localizer.format_role_name(role_name)
             side_name = self.localizer.format_side_name(side)
@@ -369,7 +397,6 @@ async def avalon_game(
         web_mode: Web mode ("observe" or "participate"). If None, runs in normal mode.
         web_observe_agent: Observer agent for web observe mode. Only used when web_mode="observe".
         state_manager: Optional state manager for web mode to check stop flag.
-    
     Returns:
         True if good wins, False otherwise.
     """
