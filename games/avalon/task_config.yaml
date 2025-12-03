@@ -1,0 +1,33 @@
+# 游戏配置
+game:
+  name: avalon
+  num_players: 5
+  language: en  # en: English, cn: Chinese
+  log_dir: logs
+
+# 默认模型配置（用于未训练的角色）
+default_model:
+  name: qwen-plus
+  api_key: sk-224e008372e144e496e06038077f65fc  # Can be overridden by API_KEY env var
+  temperature: 0.7
+  stream: true
+
+# 角色训练配置
+roles:
+  # 需要训练的角色
+  train:
+    - merlin
+  
+  # 不需要训练的角色（使用默认模型）
+  no_train:
+    - assassin
+    - servant_0
+    - servant_1
+    - minion
+    
+  # 角色特定配置（可选，覆盖默认模型配置）
+  custom_configs: {}
+    # 示例：如果某个角色需要不同的配置
+    # assassin:
+    #   temperature: 0.9
+    #   name: gpt-4

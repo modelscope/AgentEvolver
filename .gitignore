@@ -17,6 +17,7 @@
 !**/outputs/README.md  # Keep important README files
 **/logs/
 **/log/
+**/results/
 python_log/
 experiments/
 
