@@ -37,11 +37,11 @@ conda run -n appworld pip install -r "$SCRIPT_DIR/requirements.txt"
 
 # 5. 初始化 appworld
 echo "📁 初始化 appworld..."
-conda run -n appworld appworld install
+conda run -n appworld python -c $'from appworld.install import install_package\ninstall_package()\n'
 
 # 6. 下载数据
 echo "📦 下载数据（失败则使用备用下载）..."
-if ! conda run -n appworld appworld download data; then
+if ! conda run -n appworld python -c $'import os\nfrom appworld import update_root\nfrom appworld.download import download_data\nroot = os.environ.get("APPWORLD_ROOT") or "."\nupdate_root(root)\ndownload_data()\n'; then
     echo "⚠️ 自动下载失败，尝试从备用地址获取数据..."
     wget -O "$APPWORLD_ROOT/appworld_data.zip" "https://dail-wlcb.oss-accelerate.aliyuncs.com/eric.czq/appworld_data.zip"
     mkdir -p /tmp/unziptemp
