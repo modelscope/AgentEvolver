@@ -2,6 +2,7 @@
 """AvalonWorkflow class for running Avalon game workflows."""
 import asyncio
 import os
+import copy
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple, Union
 from collections import defaultdict
@@ -270,3 +271,167 @@ class AvalonWorkflow(BaseAgentscopeWorkflow):
             List[Trajectory]: If there are multiple training agents.
         """
         return asyncio.run(self._execute_async())
+
+
+class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
+    """Workflow class for Avalon game training rollout.
+    
+    This workflow is designed for training scenarios where specific roles
+    use the training model (via llm_chat_fn) while other roles use
+    default models. Roles with trainable: true in config use self.model.
+    
+    Reference: Based on EvalAvalonWorkflow structure but adapted for training.
+    """
+    
+    def __init__(
+        self,
+        task: Task,
+        llm_chat_fn: Any,
+        model_name: str,
+        **kwargs
+    ):
+        """
+        Initialize the Avalon rollout workflow.
+        
+        Args:
+            task (Task): The task containing avalon configuration in metadata.
+            llm_chat_fn (Callable): The LLM chat function to use for agent creation.
+            model_name (str): The name of the model for training roles.
+            **kwargs: Additional keyword arguments.
+        """
+        super().__init__(task, llm_chat_fn, model_name, **kwargs)
+        self.config_dict = task.metadata.get('avalon_config', task.metadata)
+        self.role_manager: Optional[RoleManager] = None
+    
+    def _get_game_config(self) -> Dict[str, Any]:
+        """Get game configuration."""
+        return self.config_dict.get('game', {})
+    
+    def _get_model_config(self, indexed_role: str, base_role: str) -> Dict[str, Any]:
+        """
+        Get model configuration for a role.
+        Role-specific config overrides default_model config.
+        """
+        default_model = self.config_dict.get('default_model', {})
+        roles_config = self.config_dict.get('roles', {})
+        
+        # Start with default_model config
+        config = copy.deepcopy({**default_model})
+        
+        # Find role-specific config (try indexed_role first, then base_role)
+        role_config = next(
+            (v for k, v in roles_config.items() 
+             if k.lower() in [indexed_role.lower(), base_role.lower()]),
+            None
+        )
+        
+        # Override with role-specific config
+        if role_config:
+            config.update(role_config)
+            # Handle model_name -> name mapping
+            if 'model_name' in role_config:
+                config['model_name'] = role_config['model_name']
+        
+        return config
+    
+    def _is_training_role(self, indexed_role: str, base_role: str) -> bool:
+        """Check if a role is a training role based on trainable flag in config."""
+        model_config = self._get_model_config(indexed_role, base_role)
+        # Check if trainable is explicitly set to True
+        return model_config.get('trainable', False) is True
+    
+    def _create_agent(self, player_id: int, indexed_role: str, base_role: str):
+        """Create an agent for a player."""
+        from agentscope.model import OpenAIChatModel
+        from agentscope.formatter import OpenAIMultiAgentFormatter
+        from agentscope.memory import InMemoryMemory
+        from agentscope.tool import Toolkit
+        from games.avalon.agents.thinking_react_agent import ThinkingReActAgent
+        
+        # Use training model if role is training, otherwise create default model
+        if self._is_training_role(indexed_role, base_role):
+            model = self.model
+        else:
+            model_config = self._get_model_config(indexed_role, base_role)
+            
+            # Build model kwargs (aligned with eval_workflow.py)
+            model_kwargs = {
+                'model_name': model_config['model_name'],
+                'client_args': {'base_url': model_config['url']},
+            }
+            
+            # Add optional parameters
+            # Get api_key from environment variable first, then from config
+            api_key = os.environ.get('API_KEY') or model_config.get('api_key')
+            if api_key:
+                model_kwargs['api_key'] = api_key
+            if 'stream' in model_config:
+                model_kwargs['stream'] = model_config['stream']
+            
+            # Build generate_kwargs
+            generate_kwargs = {
+                k: model_config[k] for k in ['temperature', 'max_tokens']
+                if k in model_config
+            }
+            if generate_kwargs:
+                model_kwargs['generate_kwargs'] = generate_kwargs
+            
+            model = OpenAIChatModel(**model_kwargs)
+        
+        return ThinkingReActAgent(
+            name=f"Player{player_id}",
+            sys_prompt="",
+            model=model,
+            formatter=OpenAIMultiAgentFormatter(),
+            memory=InMemoryMemory(),
+            toolkit=Toolkit(),
+        )
+    
+    async def _execute_async(self) -> bool:
+        """Execute the game asynchronously."""
+        game_config = self._get_game_config()
+        
+        # Setup environment and roles
+        config = AvalonBasicConfig.from_num_players(game_config.get('num_players', 5))
+        env = AvalonGameEnvironment(config)
+        assigned_roles = env.get_roles()
+        self.role_manager = RoleManager(assigned_roles)
+        
+        # Create agents
+        self.agents = [
+            self._create_agent(i, self.role_manager.get_indexed_role(i), 
+                             self.role_manager.get_role_name(i))
+            for i in range(len(assigned_roles))
+        ]
+
+        # Run game
+        game = AvalonGame(
+            agents=self.agents,
+            config=config,
+            log_dir=game_config.get('log_dir', 'logs'),
+            language=game_config.get('language', 'en'),
+            preset_roles=assigned_roles,
+            timestamp=datetime.now().strftime('%Y%m%d_%H%M%S'),
+        )
+        
+        good_victory = await game.run() or False
+        return good_victory
+    
+    def execute(self) -> Trajectory:
+        """
+        Execute the Avalon rollout workflow.
+        
+        Returns:
+            Trajectory: The trajectory (to be implemented later).
+        """
+        result = asyncio.run(self._execute_async())
+        # TODO: Collect trajectory from model_call_history
+        # For now, return a placeholder Trajectory
+        return Trajectory(
+            data_id=self.task.task_id,
+            rollout_id=self.task.task_id,
+            steps=[],
+            is_terminated=True,
+            reward=None,
+            metadata={},
+        )

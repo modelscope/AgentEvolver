@@ -94,6 +94,7 @@ class ThinkingReActAgent(ReActAgent):
         """
                 
         # Convert Msg objects into the required format of the model API
+        # formatter.format returns list[dict[str, Any]] (messages format)
         prompt = await self.formatter.format(
             msgs=[
                 Msg("system", self.sys_prompt, "system"),
@@ -112,21 +113,12 @@ class ThinkingReActAgent(ReActAgent):
         # Record model call history (prompt and response)
         if msg is not None:
             # Extract text content from response
-            from games.avalon.utils import Parser 
+            from games.avalon.utils import Parser
             response_content = Parser.extract_text_from_content(msg.content)
             
-            # Convert prompt to string if it's not already
-            prompt_str = prompt
-            if not isinstance(prompt, str):
-                if isinstance(prompt, dict):
-                    # If prompt is a dict (e.g., from formatter), convert to string
-                    prompt_str = json.dumps(prompt, ensure_ascii=False, indent=2)
-                else:
-                    prompt_str = str(prompt)
-            
-            # Store in history
+            # Store in history with prompt as messages list (prompt is already in messages format)
             call_record = {
-                "prompt": prompt_str,
+                "prompt": prompt,  # prompt is already list[dict[str, Any]]
                 "response": response_content,
                 "response_msg": msg.to_dict() if hasattr(msg, 'to_dict') else {
                     "name": msg.name,
