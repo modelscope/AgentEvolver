@@ -130,12 +130,15 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
         from agentscope.model import OpenAIChatModel
         from agentscope.memory import InMemoryMemory
         from agentscope.tool import Toolkit
+        from agentscope.token import HuggingFaceTokenCounter
         from games.avalon.agents.thinking_react_agent import ThinkingReActAgent
         from games.avalon.agents.secure_multi_agent_formatter import SecureMultiAgentFormatter  # pyright: ignore[reportMissingImports]
         
         # Use training model if role is training, otherwise create default model
         if self._is_training_role(indexed_role, base_role):
             model = self.model
+            # For training model, use model path from config
+            model_name_for_tokenizer = self.config.actor_rollout_ref.model.path
         else:
             model_config = self._get_model_config(indexed_role, base_role)
             
@@ -166,12 +169,33 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
                 model_kwargs['generate_kwargs'] = generate_kwargs
             
             model = OpenAIChatModel(**model_kwargs)
+            model_name_for_tokenizer = model_config['model_name']
+
+        
+        # Calculate max_tokens for formatter (leave room for response)
+        max_model_len = self.config.actor_rollout_ref.rollout.max_model_len
+        response_length = self.config.actor_rollout_ref.rollout.response_length
+        max_tokens = max_model_len - response_length if max_model_len and response_length else None
+        
+        # Get preserved agent names from config (if available)
+        # Default to preserving "主持人" if not specified
+        preserved_agent_names = ["Moderator"]
+        
+        # Create formatter with truncation support
+        formatter = SecureMultiAgentFormatter(
+            token_counter=HuggingFaceTokenCounter(
+                                pretrained_model_name_or_path=model_name_for_tokenizer,
+                                use_mirror=True,
+                          ),
+            max_tokens=max_tokens,
+            preserved_agent_names=preserved_agent_names,
+        )
         
         return ThinkingReActAgent(
             name=f"Player{player_id}",
             sys_prompt="",
             model=model,
-            formatter=SecureMultiAgentFormatter(),
+            formatter=formatter,
             memory=InMemoryMemory(),
             toolkit=Toolkit(),
         )
