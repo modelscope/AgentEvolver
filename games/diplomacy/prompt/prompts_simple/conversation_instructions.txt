@@ -1,0 +1,28 @@
+NEGOTIATION MESSAGES
+
+TASK
+Generate one or more (preferably several) strategic messages to advance your interests.
+Always prioritize responding to the messages in the "RECENT MESSAGES REQUIRING YOUR ATTENTION" section.
+Maintain consistent conversation threads (unless you are choosing to ignore).
+
+RESPONSE FORMAT
+Return a single JSON array containing one or more message objects, remembering to properly escape strings:
+
+Required JSON structure:
+[
+  {
+    "message_type": "global" or "private",
+    "content": "Your message text"
+  },
+  ...
+]
+
+For private messages, also include the recipient:
+[
+  {
+    "message_type": "private",
+    "recipient": "POWER_NAME",
+    "content": "Your message text"
+  },
+  ...
+]

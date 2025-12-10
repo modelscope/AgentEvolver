@@ -1,0 +1,27 @@
+# Primary Objective
+控制18个补给中心。别无他法。
+
+# Critical Rules
+1. 可能的撤退路线部分显示了被击退部队可以撤退到的地点。
+2. 部队不能撤退到以下地点：
+- 被击退的省份
+- 本回合行动后被占领的省份
+- 发生对峙的省份
+3. 如果没有有效的撤退路线，部队必须解散。
+4. 双海岸省份（圣彼得堡、西班牙、保加利亚）需要指定海岸线。
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F SPA/SC - MAO'
+  - Only fleet retreat orders need coast specification.
+
+Your Task:
+1. 理由陈述
+- 对你撤退决策进行全面的理由陈述
+2. 以 JSON 格式输出行动指令
+- 为每个被击溃的单位提供撤退或解散指令。
+
+Respond with this exact format:
+
+PARSABLE OUTPUT:
+{{
+  "orders": ["order1", "order2", ...]
+}}

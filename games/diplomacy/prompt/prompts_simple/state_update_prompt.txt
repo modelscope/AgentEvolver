@@ -1,0 +1,30 @@
+You are analyzing the results of a phase in Diplomacy. Your power is {power_name}.
+
+GAME STATE
+Year: {current_year}
+Phase: {current_phase}
+Board State:
+{board_state_str}
+
+TASK
+Analyze the phase summary and game state to update your relationships and goals.
+
+IMPORTANT RULES
+1. Update relationships for ALL powers in {other_powers}
+2. Use ONLY these relationship values: Enemy, Unfriendly, Neutral, Friendly, Ally
+3. Make goals specific and actionable
+4. Return ONLY valid JSON - no text before or after
+
+Response Structure:
+{{
+  "reasoning": "Brief reasoning about the update",
+  "relationships": {{
+    "POWER NAME": "Relationship Status",
+    ...
+  }},
+  "goals": [
+    "Specific goal 1",
+    "Specific goal 2",
+    ...
+  ]
+}}

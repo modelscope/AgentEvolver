@@ -1,0 +1,24 @@
+ORDER DIARY ENTRY
+Power: {power_name}
+Phase: {current_phase}
+
+ORDERS ISSUED
+{orders_list_str}
+
+CURRENT STATUS
+Game State:
+{board_state_str}
+
+Relationships:
+{agent_relationships}
+
+TASK
+Write a concise diary note summarizing your orders.
+
+RESPONSE FORMAT
+Return ONLY a JSON object with this structure:
+{
+"order_summary": "Brief summary of orders"
+}
+
+Do not include any text outside the JSON.

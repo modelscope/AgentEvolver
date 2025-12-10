@@ -1,0 +1,29 @@
+# Primary Objective
+控制 18 个补给中心。别无他法。
+
+# Critical Rules
+1. 可用指令部分显示您单位允许的调整指令。
+2. 双海岸省份（STP、SPA、BUL）需要指定海岸线：
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F STP/NC B'
+  - 只有舰队建造需要指定海岸线。
+
+# Adjustment Phase Orders:
+调整阶段有两种主要指令类型：
+Build: '[UnitType] [Location] B'
+e.g. 'A PAR B', 'F LON B'
+Disband: '[UnitType] [Location] D'
+e.g. 'A PAR D', 'F LON D'
+
+您的任务：
+1. 理由
+- 对您的调整决策进行全面的解释
+2. 以 JSON 格式输出变动
+- 返回所有需要的建档/拆档指令
+
+请按以下格式回复：
+
+PARSABLE OUTPUT:
+{{
+  "orders": ["order1", "order2", ...]
+}}

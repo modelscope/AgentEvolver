@@ -1,0 +1,32 @@
+You are analyzing the results of a phase in Diplomacy for {power_name}.
+
+GAME STATE
+Year: {current_year}
+Phase: {current_phase}
+Board State:
+{board_state_str}
+
+PHASE SUMMARY ({current_phase}):
+{phase_summary}
+
+CURRENT STATUS
+
+Relationships with other powers ({other_powers}):
+{current_relationships}
+
+TASK
+Analyze the phase summary and game state to update your relationships and goals.
+
+IMPORTANT RULES
+1. Update relationships for ALL powers in {other_powers}
+2. Use ONLY these relationship values: Enemy, Unfriendly, Neutral, Friendly, Ally
+3. Make goals specific and actionable
+4. Base analysis on actual events, not assumptions
+
+Please respond in two parts:
+
+1. REASONING: First, explain your analysis of what happened this phase. Which powers acted as expected? Who surprised you? What new threats or opportunities have emerged? How do the results affect your strategic position?
+
+2. UPDATES: Then provide:
+   - Your updated assessment of relationships with ALL other powers
+   - Your updated goals (2-4 specific, actionable goals based on the current situation)

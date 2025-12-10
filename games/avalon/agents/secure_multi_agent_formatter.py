@@ -32,6 +32,7 @@ class SecureMultiAgentFormatter(OpenAIMultiAgentFormatter):
         promote_tool_result_images: bool = False,
         token_counter=None,
         max_tokens: int | None = None,
+        preserved_agent_names: list[str] | str | None = None,
     ) -> None:
         """Initialize the SecureMultiAgentFormatter.
         
@@ -40,6 +41,8 @@ class SecureMultiAgentFormatter(OpenAIMultiAgentFormatter):
             promote_tool_result_images: Whether to promote images from tool results.
             token_counter: Token counter instance.
             max_tokens: Maximum tokens allowed.
+            preserved_agent_names: Agent names whose messages should be preserved during truncation.
+                Can be a single string, a list of strings, or None (no preservation).
         """
         super().__init__(
             conversation_history_prompt=conversation_history_prompt,
@@ -47,6 +50,58 @@ class SecureMultiAgentFormatter(OpenAIMultiAgentFormatter):
             token_counter=token_counter,
             max_tokens=max_tokens,
         )
+        
+        # Normalize preserved_agent_names to a set for efficient lookup
+        if preserved_agent_names is None:
+            self.preserved_agent_names = set()
+        elif isinstance(preserved_agent_names, str):
+            self.preserved_agent_names = {preserved_agent_names}
+        else:
+            self.preserved_agent_names = set(preserved_agent_names)
+    
+    async def _count(self, msgs: list[dict[str, Any]]) -> int | None:
+        """
+        Count tokens in formatted messages, converting OpenAI format to string format
+        for HuggingFaceTokenCounter compatibility.
+        
+        Args:
+            msgs: List of formatted message dictionaries.
+            
+        Returns:
+            Token count or None if token_counter is not available.
+        """
+        if self.token_counter is None:
+            return None
+        
+        # Convert OpenAI format (content as list) to string format for HuggingFaceTokenCounter
+        reformatted_msgs = []
+        for msg in msgs:
+            reformatted_msg = {**msg}
+            content = msg.get("content", "")
+            
+            # If content is a list (OpenAI format), convert to string
+            if isinstance(content, list):
+                text_parts = []
+                for item in content:
+                    if isinstance(item, dict):
+                        if item.get("type") == "text" and "text" in item:
+                            text_parts.append(item["text"])
+                        # For other types (image, audio, etc.), we skip them for token counting
+                if text_parts:
+                    reformatted_msg["content"] = "\n".join(text_parts)
+                else:
+                    # If no text content, use empty string
+                    reformatted_msg["content"] = ""
+            # If content is already a string, use it as is
+            elif isinstance(content, str):
+                reformatted_msg["content"] = content
+            else:
+                # Fallback: convert to string
+                reformatted_msg["content"] = str(content) if content else ""
+            
+            reformatted_msgs.append(reformatted_msg)
+        
+        return await self.token_counter.count(reformatted_msgs)
     
     def _remove_agent_tags(self, text: str) -> str:
         """
@@ -65,7 +120,67 @@ class SecureMultiAgentFormatter(OpenAIMultiAgentFormatter):
         cleaned_text = re.sub(r'</agent:[^>]*>', '', cleaned_text)
         return cleaned_text.strip()
     
-    def _format_agent_message(
+    async def _truncate(self, msgs: list[Msg]) -> list[Msg]:
+        """
+        Truncate messages while preserving messages from specified agent names.
+        
+        This method removes the oldest message that is not from preserved agents,
+        while keeping all messages from preserved agents and the system message.
+        The parent class's format() method will call this repeatedly until
+        the token count is within limits.
+        
+        Args:
+            msgs: List of messages to truncate.
+            
+        Returns:
+            Truncated list of messages with preserved agent messages kept.
+        """
+        if not msgs:
+            return msgs
+        
+        # Separate messages into categories
+        system_msg = None
+        preserved_msgs = []  # Messages from preserved agents
+        other_msgs = []  # Other messages
+        
+        # Handle system message
+        start_index = 0
+        if len(msgs) > 0 and msgs[0].role == "system":
+            system_msg = msgs[0]
+            start_index = 1
+        
+        # Categorize remaining messages
+        for i in range(start_index, len(msgs)):
+            msg = msgs[i]
+            # Check if message is from a preserved agent
+            msg_name = getattr(msg, "name", None) or ""
+            if msg_name in self.preserved_agent_names:
+                preserved_msgs.append((i, msg))
+            else:
+                other_msgs.append((i, msg))
+        
+        # If no other messages to remove, return original
+        if not other_msgs:
+            return msgs
+        
+        # Remove the oldest non-preserved message
+        # Sort by index to maintain order, then remove the first (oldest)
+        other_msgs.sort(key=lambda x: x[0])
+        oldest_other_index = other_msgs[0][0]
+        
+        # Reconstruct message list, excluding the oldest non-preserved message
+        truncated_msgs = []
+        if system_msg is not None:
+            truncated_msgs.append(system_msg)
+        
+        # Add all messages except the one we're removing
+        for i in range(start_index, len(msgs)):
+            if i != oldest_other_index:
+                truncated_msgs.append(msgs[i])
+        
+        return truncated_msgs
+    
+    async def _format_agent_message(
         self,
         msgs: list[Msg],
         is_first: bool = True,

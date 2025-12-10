@@ -1,0 +1,39 @@
+NEGOTIATION SUMMARY REQUEST
+Power: {power_name}
+Phase: {current_phase}
+
+MESSAGES THIS ROUND
+{messages_this_round}
+{ignored_messages_context}
+
+CURRENT STATUS
+Goals:
+{agent_goals}
+
+Relationships:
+{agent_relationships}
+
+Game State:
+{board_state_str}
+
+TASK
+Analyze the negotiations, goals, relationships, and game state to:
+1. Summarize key outcomes and agreements
+2. State your specific intents for {current_phase}, including moves you have agreed to in negotiations and whether you intend to fulfil them.
+3. Update relationships as needed (Enemy, Unfriendly, Neutral, Friendly, Ally)
+4. Important: You will not see the full negotiation log in the order decision phase, so you must transmit key information about the negotiations to your future self via this summary.
+
+When powers ignore your messages, consider:
+- They may be intentionally avoiding commitment
+- They could be prioritizing other relationships
+- Your approach may need adjustment (more direct questions, different incentives)
+- Their silence might indicate hostility or indifference
+
+Please respond in two parts:
+
+1. REASONING: First, explain your analysis of the negotiations. What did each power communicate or fail to communicate? What do their messages (or silence) reveal about their intentions? How does this affect your strategic position?
+
+2. NEGOTIATION SUMMARY: Then provide:
+   - A summary of key outcomes from the negotiations
+   - Your strategic intent for upcoming orders (be specific about agreed moves and whether you'll honor them)
+   - Your current assessment of relationships with all powers (reflecting any changes from negotiations)

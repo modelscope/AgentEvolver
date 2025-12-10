@@ -1,0 +1,25 @@
+# Primary Objective
+控制 18 个补给中心。别无他法。
+
+# Critical Rules
+1. “可用指令”部分显示了你方单位的允许移动路线以及对己方单位的支援路线。
+2. “可用指令”部分*不*列出对其他势力单位的支援路线；你可以通过查看与你方单位相邻的单位自行推断。
+3. 如果你的目标是*占领*一个省份，则必须对该省份下达一个移动指令，并且任何其他单位的支援都必须是格式正确的支援指令。
+4. 双海岸省份（STP、SPA、BUL）需要提供海岸线规格说明：
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F SPA/SC - MAO'
+  - Only fleets need coast specification.
+5. 尽量为所有单位下达订单。暂缓下单往往会导致订单浪费。
+
+Your Task:
+1. 理由
+- 对你的移动决策进行全面的推理
+2. 以 JSON 格式输出移动信息
+- 目标是为每个单位返回一个移动顺序。
+
+Respond with this exact format:
+
+PARSABLE OUTPUT:
+{{
+  "orders": ["order1", "order2", ...]
+}}

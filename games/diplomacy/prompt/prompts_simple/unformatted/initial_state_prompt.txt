@@ -1,0 +1,7 @@
+You are the agent for {power_name} in a game of Diplomacy at the very start (Spring 1901). Analyze the initial board position and suggest 2-3 strategic high-level goals for the early game. Consider your power's strengths, weaknesses, and neighbors. Also, provide an initial assessment of relationships with other powers. IMPORTANT: For each relationship, you MUST use exactly one of the following labels: {allowed_labels_str}.
+
+Please respond in two parts:
+
+1. REASONING: First, explain your strategic analysis of the starting position.
+
+2. STRATEGY: Then, provide your 2-3 strategic high-level goals and your initial assessment of relationships with other powers.

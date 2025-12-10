@@ -1,0 +1,18 @@
+DIARY CONSOLIDATION REQUEST
+Your Power: {power_name}
+
+GAME CONTEXT
+You are playing Diplomacy, a strategic board game set in pre-WWI Europe. Seven powers compete for control by conquering supply centers. Victory requires 18 supply centers.
+
+FULL DIARY HISTORY
+{full_diary_text}
+
+TASK
+Create a concise consolidated summary of the most important parts of this diary history. It will serve as your long-term memory. Do not include anything that is not strategically or diplomatically useful going forward. Aim for 300 words.
+
+Prioritize the following:
+1.  **Key Historical Diplomatic Events:** Prioritise both *strategically impactful* and *recent* events.
+2.  **Information that has ongoing importance & usefulness**
+
+RESPONSE FORMAT
+Return ONLY the consolidated summary text. Do not include JSON, formatting markers, or meta-commentary.

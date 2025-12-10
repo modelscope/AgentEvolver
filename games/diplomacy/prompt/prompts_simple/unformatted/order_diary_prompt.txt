@@ -1,0 +1,25 @@
+ORDER DIARY ENTRY
+Power: {power_name}
+Phase: {current_phase}
+
+ORDERS ISSUED
+{orders_list_str}
+
+CURRENT STATUS
+Game State:
+{board_state_str}
+
+Goals:
+{agent_goals}
+
+Relationships:
+{agent_relationships}
+
+TASK
+Write a diary entry analyzing your orders for this turn.
+
+Please respond in two parts:
+
+1. REASONING: First, explain your strategic analysis of the current situation. What threats and opportunities do you see? How do your relationships with other powers influence your decisions? What are you trying to achieve this turn?
+
+2. ORDER SUMMARY: Then, provide a clear summary of the orders you submitted and explain why you chose these specific moves. How do they advance your strategic goals? What risks are you taking?

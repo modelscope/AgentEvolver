@@ -1,0 +1,27 @@
+---SITUATION---
+Your power is {power_name}. The {current_phase} phase. 
+
+Power: {power_name}
+Phase: {current_phase}
+
+# Your Power's Home Centers
+{home_centers}
+Note: You can only build units in your home centers if they are empty. If you lose control of a home center, you cannot build units there, so holding them is critical.
+
+# Player Status
+Current Goals:
+{agent_goals}
+
+# Order History
+{order_history}
+
+# Game Map
+Unit Locations:
+{all_unit_locations}
+
+Supply Centers Held:
+{all_supply_centers}
+
+Possible Orders For {current_phase}
+{possible_orders}
+End Possible Orders

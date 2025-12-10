@@ -1,0 +1,23 @@
+# Primary Objective
+Control 18 supply centers. Nothing else will do.
+
+# Critical Rules
+1. The possible orders section shows where your dislodged units can retreat.
+2. Units cannot retreat to:
+  - The province they were dislodged from
+  - A province occupied after this turn's moves
+  - A province where a standoff occurred
+3. If no valid retreat exists, the unit must disband.
+4. Dual-coast provinces (STP, SPA, BUL) require coast specification:
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F SPA/SC - MAO'
+  - Only fleet retreat orders need coast specification.
+
+Your Task:
+Analyze the retreat situation and decide on the best retreat or disband orders for your dislodged units.
+
+Please respond in two parts:
+
+1. REASONING: First, explain your retreat decisions. Which units are dislodged? Where can they retreat? Is it better to retreat or disband? Consider the strategic implications of each choice.
+
+2. RETREAT ORDERS: Then, provide a retreat or disband order for each dislodged unit.
