@@ -128,10 +128,10 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
     def _create_agent(self, player_id: int, indexed_role: str, base_role: str):
         """Create an agent for a player."""
         from agentscope.model import OpenAIChatModel
-        from agentscope.formatter import OpenAIMultiAgentFormatter
         from agentscope.memory import InMemoryMemory
         from agentscope.tool import Toolkit
         from games.avalon.agents.thinking_react_agent import ThinkingReActAgent
+        from games.avalon.agents.secure_multi_agent_formatter import SecureMultiAgentFormatter  # pyright: ignore[reportMissingImports]
         
         # Use training model if role is training, otherwise create default model
         if self._is_training_role(indexed_role, base_role):
@@ -171,7 +171,7 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
             name=f"Player{player_id}",
             sys_prompt="",
             model=model,
-            formatter=OpenAIMultiAgentFormatter(),
+            formatter=SecureMultiAgentFormatter(),
             memory=InMemoryMemory(),
             toolkit=Toolkit(),
         )
