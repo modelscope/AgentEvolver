@@ -1,0 +1,25 @@
+# Primary Objective
+Control 18 supply centers. Nothing else will do.
+
+# Critical Rules
+1. The possible orders section shows your units' allowed adjustment orders
+2. Dual-coast provinces (STP, SPA, BUL) require coast specification:
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F STP/NC B'
+  - Only fleet builds need coast specification.
+
+# Adjustment Phase Orders:
+You have two main order types in the adjustment phase:
+Build: '[UnitType] [Location] B'
+e.g. 'A PAR B', 'F LON B'
+Disband: '[UnitType] [Location] D'
+e.g. 'A PAR D', 'F LON D'
+
+Your Task:
+Analyze the adjustment situation and decide which units to build or disband.
+
+Please respond in two parts:
+
+1. REASONING: First, explain your adjustment decisions. What is your unit count vs supply center count? Where should you build for maximum strategic impact? Which units should be disbanded if necessary?
+
+2. ADJUSTMENT ORDERS: Then, provide all build/disband orders needed.

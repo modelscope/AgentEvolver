@@ -1,0 +1,18 @@
+# Primary Objective
+Control 18 supply centers. Nothing else will do.
+
+# Critical Rules
+1. The possible orders section shows your units' allowed moves & supports of your own units.
+2. The possible orders section does *not* list possible supports for other powers' units; you can work these out yourself by looking at the units that are adjacent to your own.
+3. If your goal is to *take* a province, give exactly one move order on that province and any additional support from other units must be properly formatted support orders.
+4. Dual-coast provinces (STP, SPA, BUL) require coast specification:
+  - Format: 'F [PROVINCE]/[COAST]' where [COAST] = NC (North), SC (South), EC (East), or WC (West)
+  - Example: 'F SPA/SC - MAO'
+  - Only fleets need coast specification.
+
+Your Task:
+Please respond in two parts:
+
+1. REASONING: First, provide comprehensive reasoning about your move decisions. What are your immediate objectives? Which supply centers are you targeting? How will you deal with threats? What coordinated moves are you planning? Consider all your units and their best uses.
+
+2. ORDERS: Then, list each order you want to submit, one per line. Be precise with unit types (A/F) and location codes. Aim to return an order for each of your units.

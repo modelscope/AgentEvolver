@@ -1,0 +1,30 @@
+EXAMPLE GAME STATE
+Power: FRANCE
+Phase: S1901M
+Your Units: ['A PAR','F BRE']
+Possible Orders:
+  PAR: ['A PAR H','A PAR - BUR','A PAR - GAS']
+  BRE: ['F BRE H','F BRE - MAO']
+
+PAST PHASE SUMMARIES
+- Your move A BUD -> SER bounced last time because Turkey also moved A SMY -> SER with support.
+- Your support F TRI S A BUD -> SER was wasted because F TRI was needed to block Ionian invasion.
+
+THINKING PROCESS
+1. Consider enemy units, centers, and likely moves
+2. Review your units, centers, and strategic position
+3. Analyze recent conversations and phase summaries
+4. Evaluate public/private goals and reality of positions
+5. Choose best strategic moves from possible orders
+
+Example thought process:
+- Germany might move to BUR with support - consider bounce or defend
+- Moving A PAR -> BUR is aggressive but strategic
+- F BRE -> MAO secures Atlantic expansion
+- Avoid contradictory or random supports
+
+RESPONSE FORMAT
+PARSABLE OUTPUT:
+{{
+  "orders": ["A PAR - BUR","F BRE - MAO"]
+}}

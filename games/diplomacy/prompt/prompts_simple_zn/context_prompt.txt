@@ -1,0 +1,38 @@
+---SITUATION---
+您的势力是 {power_name}。当前阶段：{current_phase}。
+
+势力：{power_name}
+
+阶段：{current_phase}
+
+# 您的势力基地
+
+{home_centers}
+
+注意：您只能在空的基地中建造单位。如果您失去对基地的控制权，则无法在那里建造单位，因此控制基地至关重要。
+
+# 玩家状态
+
+当前目标：
+
+{agent_goals}
+
+# 指令历史记录
+
+{order_history}
+
+# 游戏地图
+
+单位位置：
+
+{all_unit_locations}
+
+已控制的补给中心：
+
+{all_supply_centers}
+
+{current_phase} 阶段的可用指令
+
+{possible_orders}
+
+可用指令结束

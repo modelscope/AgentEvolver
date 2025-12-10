@@ -1,0 +1,15 @@
+NEGOTIATION MESSAGES
+
+TASK
+Generate one or more (preferably several) strategic messages to advance your interests.
+Always prioritize responding to the messages in the "RECENT MESSAGES REQUIRING YOUR ATTENTION" section.
+Maintain consistent conversation threads (unless you are choosing to ignore).
+
+Please respond in two parts:
+
+1. REASONING: First, explain your diplomatic strategy for this round. Who are you trying to influence and why? Which messages require responses? What deals are you proposing or accepting? Who might you be deliberately ignoring and why?
+
+2. MESSAGES: Then, list each message you want to send. For each message, clearly indicate:
+   - Whether it's a global message (visible to all) or private (to a specific power)
+   - If private, who the recipient is
+   - The content of your message

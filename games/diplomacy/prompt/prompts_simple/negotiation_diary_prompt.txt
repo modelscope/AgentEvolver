@@ -1,0 +1,46 @@
+NEGOTIATION SUMMARY REQUEST
+Power: {power_name}
+Phase: {current_phase}
+
+Goals (may need updating):
+{agent_goals}
+
+Relationships (may need updating):
+{agent_relationships}
+
+Game State:
+{board_state_str}
+
+Private Diary:
+{private_diary_summary}
+
+Messages This Round:
+{messages_this_round}
+
+
+
+TASK
+Analyze the negotiations, goals, relationships, and game state to:
+1. Summarize key outcomes and agreements concisely
+2. Concisely state your specific intents for {current_phase}, including moves you have agreed to in negotiations and whether you intend to fulfil them.
+3. Update relationships as needed (Enemy, Unfriendly, Neutral, Friendly, Ally)
+4. Include your latest overarching goals (including any updates)
+5. Important: You will not see the full negotiation log in the order decision phase, so you must transmit key information about the negotiations to your future self via this summary.
+
+RESPONSE FORMAT
+Return ONLY a JSON object with this structure:
+
+{{
+  "negotiation_summary": "Key outcomes from negotiations",
+  "intent": "Specific intent for upcoming orders this phase",
+  "updated_relationships": {{
+    "POWER_NAME": "Enemy|Unfriendly|Neutral|Friendly|Ally"
+  }},
+  "goals": [
+    "goal 1",
+    "goal 2",
+    ...
+  ]
+}}
+
+Reminder: If you need to quote something, only use single quotes in the actual messages so as not to interfere with the JSON structure.

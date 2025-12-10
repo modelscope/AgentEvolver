@@ -1,0 +1,30 @@
+EXAMPLE GAME STATE
+Power: FRANCE
+Phase: S1901M
+Your Units: ['A PAR','F BRE']
+Possible Orders:
+  PAR: ['A PAR H','A PAR - BUR','A PAR - GAS']
+  BRE: ['F BRE H','F BRE - MAO']
+
+PAST PHASE SUMMARIES
+- 您上次的 A BUD -> SER 行动被取消，因为土耳其也进行了 A SMY -> SER 的支援行动。
+- 您的支援 F TRI S A BUD -> SER 行动被浪费，因为 F TRI 需要用来阻止爱奥尼亚的入侵。
+
+THINKING PROCESS
+1. 考虑敌方部队、中心和可能的行动
+2. 回顾己方部队、中心和战略位置
+3. 分析近期对话和阶段总结
+4. 评估公开/私下目标和实际情况
+5. 从可能的指令中选择最佳战略行动
+
+Example thought process:
+- 德国可能在支援下向伯尔尼（BUR）移动 - 考虑反弹或防御
+- 从北约（PAR）向伯尔尼（BUR）移动具有侵略性，但战略意义重大
+- 从北约（BRE）向毛里求斯（MAO）移动可确保大西洋扩张
+- 避免相互矛盾或随意的支援
+
+RESPONSE FORMAT
+PARSABLE OUTPUT:
+{{
+  "orders": ["A PAR - BUR","F BRE - MAO"]
+}}

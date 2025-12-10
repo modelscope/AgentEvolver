@@ -1,0 +1,45 @@
+PHASE RESULT ANALYSIS
+Your Power: {power_name}
+Phase: {current_phase}
+
+RECENT DIARY ENTRIES
+{formatted_diary}
+
+BOARD STATE
+{board_state}
+
+PHASE SUMMARY
+{phase_summary}
+
+ALL POWERS' ORDERS THIS PHASE
+{all_orders_formatted}
+
+YOUR NEGOTIATIONS THIS PHASE
+{your_negotiations}
+
+YOUR RELATIONSHIPS BEFORE THIS PHASE
+{pre_phase_relationships}
+
+YOUR GOALS
+{agent_goals}
+
+TASK
+Analyze what actually happened this phase compared to negotiations and expectations.
+
+Consider:
+1. BETRAYALS: Who broke their promises? Did you break any promises?
+2. COLLABORATIONS: Which agreements were successfully executed?
+3. SURPRISES: What unexpected moves occurred?
+4. IMPACT: How did these events affect your strategic position?
+
+Write a concise diary entry (100-150 words) of the most important things you would like to remember, e.g.:
+- Key betrayals or successful collaborations
+- Assess impact on your position
+- Update your understanding of other powers' trustworthiness
+- Strategic lessons learned
+- Moves that failed, and ideas on how to avoid the error in the future
+
+Focus on concrete events and their implications for your future strategy.
+
+RESPONSE FORMAT
+Return ONLY a diary entry text. Do not include JSON or formatting markers.
