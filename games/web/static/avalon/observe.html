@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avalon Game - Observe Mode</title>
+    <link rel="stylesheet" href="/static/avalon/css/style.css?v=20251211_1">
+</head>
+<body>
+    <div id="connection-status" class="connection-status connecting">🟡 Connecting...</div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-controls">
+                <div class="header-label">Game: Avalon</div>
+                <div class="header-btn">Mode: Observer</div>
+                <a id="back-exit-button" class="header-btn" href="/" style="display:none">Exit</a>
+            </div>
+            <div id="status-bar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <span id="phase-display">Phase: -</span>
+                <span id="mission-display">Mission: -</span>
+                <span id="round-display">Round: -</span>
+                <span id="status-display">Status: Waiting</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="map-container" id="game-visual-container">
+                <!-- Game Setup Form (Overlay) -->
+                <div id="game-setup" class="game-setup" style="display: none;">
+                    <h3>Game Configuration</h3>
+                    <div class="setup-form">
+                        <label>
+                            Number of Players:
+                            <select id="num-players">
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </label>
+                        <label>
+                            Language:
+                            <select id="language">
+                                <option value="en">English</option>
+                                <option value="zh">Chinese</option>
+                            </select>
+                        </label>
+                        <button id="start-game-btn" class="start-button">Start Game</button>
+                    </div>
+                </div>
+
+                <!-- Game Visual -->
+                <div class="game-visual" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: black; overflow: hidden; border-radius: 8px;">
+                    <img src="/static/avalon/images/game_visual.gif" alt="Avalon Game Visual" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel logs-panel">
+                    <h3>Chat</h3>
+                    <div id="messages-container">
+                        <div style="text-align: center; color: #999; padding: 20px;">
+                            Waiting for messages...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/avalon/js/websocket.js"></script>
+    <script src="/static/avalon/js/observe.js"></script>
+</body>
+</html>

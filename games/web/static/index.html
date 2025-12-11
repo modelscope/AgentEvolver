@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .selection-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .selection-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .selection-box label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+        }
+        .selection-box select {
+            padding: 12px 24px;
+            border: 2px solid #dcdfe6;
+            border-radius: 8px;
+            font-size: 16px;
+            min-width: 150px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .selection-box select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Config form - hidden by default */
+        #config-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        #config-section.show {
+            display: block;
+        }
+        .config-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .config-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 140px;
+        }
+        .config-item label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .config-item select,
+        .config-item input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .power-models-section {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .power-models-section .title {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .power-models-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .power-model-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 120px;
+        }
+        .power-model-item label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .power-model-item select {
+            padding: 6px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .start-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto 0;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .start-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Avalon specific fields */
+        .avalon-fields { display: none; }
+        .avalon-fields.show { display: contents; }
+        
+        /* Diplomacy specific fields */
+        .diplomacy-fields { display: none; }
+        .diplomacy-fields.show { display: contents; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Games Hub</h1>
+        <p class="subtitle">Select a game and mode to begin</p>
+        
+        <div class="selection-row">
+            <div class="selection-box">
+                <label>Game</label>
+                <select id="game-select">
+                    <option value="">-- Select Game --</option>
+                    <option value="avalon">Avalon</option>
+                    <option value="diplomacy">Diplomacy</option>
+                </select>
+            </div>
+            <div class="selection-box">
+                <label>Mode</label>
+                <select id="mode-select" disabled>
+                    <option value="">-- Select Mode --</option>
+                    <option value="observe">Observe</option>
+                    <option value="participate">Participate</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="config-section">
+            <h3 class="config-title">Game Configuration</h3>
+            <div class="config-form">
+                <!-- Avalon fields -->
+                <div class="avalon-fields" id="avalon-fields">
+                    <div class="config-item">
+                        <label>Number of Players</label>
+                        <select id="avalon-num-players">
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="config-item avalon-participate-only" style="display:none;">
+                        <label>Your Player ID</label>
+                        <select id="avalon-user-agent-id">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label>Language</label>
+                        <select id="avalon-language">
+                            <option value="en">English</option>
+                            <option value="zh">Chinese</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Diplomacy fields -->
+                <div class="diplomacy-fields" id="diplomacy-fields">
+                    <div class="config-item diplomacy-participate-only" style="display:none;">
+                        <label>Human Power</label>
+                        <select id="diplomacy-human-power"></select>
+                    </div>
+                    <div class="config-item">
+                        <label>Max Phases</label>
+                        <input type="number" id="diplomacy-max-phases" min="1" value="20">
+                    </div>
+                    <div class="config-item">
+                        <label>Negotiation Rounds</label>
+                        <input type="number" id="diplomacy-negotiation-rounds" min="0" value="3">
+                    </div>
+                    <div class="config-item">
+                        <label>Language</label>
+                        <select id="diplomacy-language">
+                            <option value="en">English</option>
+                            <option value="zh">Chinese</option>
+                        </select>
+                    </div>
+                    <div class="power-models-section" id="power-models-section" style="display:none;">
+                        <div class="title">AI Models per Power</div>
+                        <div class="power-models-grid" id="power-models-grid"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="start-btn" id="start-btn">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        const gameSelect = document.getElementById('game-select');
+        const modeSelect = document.getElementById('mode-select');
+        const configSection = document.getElementById('config-section');
+        const avalonFields = document.getElementById('avalon-fields');
+        const diplomacyFields = document.getElementById('diplomacy-fields');
+        const startBtn = document.getElementById('start-btn');
+        
+        // Diplomacy options cache
+        let diplomacyOptions = null;
+        
+        // Update number of player IDs based on num players
+        document.getElementById('avalon-num-players').addEventListener('change', function() {
+            const numPlayers = parseInt(this.value);
+            const userAgentSelect = document.getElementById('avalon-user-agent-id');
+            userAgentSelect.innerHTML = '';
+            for (let i = 0; i < numPlayers; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                userAgentSelect.appendChild(option);
+            }
+        });
+        
+        // Game selection change
+        gameSelect.addEventListener('change', function() {
+            const game = this.value;
+            modeSelect.disabled = !game;
+            modeSelect.value = '';
+            configSection.classList.remove('show');
+            avalonFields.classList.remove('show');
+            diplomacyFields.classList.remove('show');
+            
+            if (game === 'diplomacy' && !diplomacyOptions) {
+                fetchDiplomacyOptions();
+            }
+        });
+        
+        // Mode selection change
+        modeSelect.addEventListener('change', function() {
+            const game = gameSelect.value;
+            const mode = this.value;
+            
+            if (!game || !mode) {
+                configSection.classList.remove('show');
+                return;
+            }
+            
+            configSection.classList.add('show');
+            
+            // Show appropriate fields
+            avalonFields.classList.toggle('show', game === 'avalon');
+            diplomacyFields.classList.toggle('show', game === 'diplomacy');
+            
+            // Show/hide participate-only fields
+            document.querySelectorAll('.avalon-participate-only').forEach(el => {
+                el.style.display = (game === 'avalon' && mode === 'participate') ? 'flex' : 'none';
+            });
+            document.querySelectorAll('.diplomacy-participate-only').forEach(el => {
+                el.style.display = (game === 'diplomacy' && mode === 'participate') ? 'flex' : 'none';
+            });
+            
+            // Show power models section for diplomacy
+            const powerModelsSection = document.getElementById('power-models-section');
+            if (powerModelsSection) {
+                powerModelsSection.style.display = (game === 'diplomacy') ? 'block' : 'none';
+            }
+        });
+        
+        // Fetch diplomacy options
+        async function fetchDiplomacyOptions() {
+            try {
+                const resp = await fetch('/api/options?game=diplomacy');
+                if (!resp.ok) throw new Error('Failed to fetch options');
+                diplomacyOptions = await resp.json();
+                
+                // Populate human power select
+                const hpSelect = document.getElementById('diplomacy-human-power');
+                hpSelect.innerHTML = '';
+                diplomacyOptions.powers.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    hpSelect.appendChild(opt);
+                });
+                
+                // Populate power models
+                const grid = document.getElementById('power-models-grid');
+                grid.innerHTML = '';
+                diplomacyOptions.powers.forEach(power => {
+                    const item = document.createElement('div');
+                    item.className = 'power-model-item';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = power;
+                    
+                    const select = document.createElement('select');
+                    select.id = `power-model-${power}`;
+                    diplomacyOptions.models.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m;
+                        opt.textContent = m;
+                        select.appendChild(opt);
+                    });
+                    select.value = diplomacyOptions.power_models[power] || diplomacyOptions.defaults.model_name;
+                    
+                    item.appendChild(label);
+                    item.appendChild(select);
+                    grid.appendChild(item);
+                });
+                
+                // Set defaults
+                document.getElementById('diplomacy-max-phases').value = diplomacyOptions.defaults.max_phases;
+                document.getElementById('diplomacy-negotiation-rounds').value = diplomacyOptions.defaults.negotiation_rounds;
+                document.getElementById('diplomacy-language').value = diplomacyOptions.defaults.language;
+                
+            } catch (e) {
+                console.error('Failed to fetch diplomacy options:', e);
+            }
+        }
+        
+        // Start game button
+        startBtn.addEventListener('click', async function() {
+            const game = gameSelect.value;
+            const mode = modeSelect.value;
+            
+            if (!game || !mode) {
+                alert('Please select a game and mode');
+                return;
+            }
+            
+            let payload = { game, mode };
+            
+            if (game === 'avalon') {
+                payload.num_players = parseInt(document.getElementById('avalon-num-players').value);
+                payload.language = document.getElementById('avalon-language').value;
+                if (mode === 'participate') {
+                    payload.user_agent_id = parseInt(document.getElementById('avalon-user-agent-id').value);
+                }
+            } else if (game === 'diplomacy') {
+                payload.max_phases = parseInt(document.getElementById('diplomacy-max-phases').value);
+                payload.negotiation_rounds = parseInt(document.getElementById('diplomacy-negotiation-rounds').value);
+                payload.language = document.getElementById('diplomacy-language').value;
+                if (mode === 'participate') {
+                    payload.human_power = document.getElementById('diplomacy-human-power').value;
+                }
+                // Collect power models
+                if (diplomacyOptions && diplomacyOptions.powers) {
+                    const power_models = {};
+                    diplomacyOptions.powers.forEach(power => {
+                        const sel = document.getElementById(`power-model-${power}`);
+                        if (sel) power_models[power] = sel.value;
+                    });
+                    payload.power_models = power_models;
+                }
+            }
+            
+            try {
+                startBtn.disabled = true;
+                startBtn.textContent = 'Starting...';
+                
+                // Store config in sessionStorage and redirect to game page
+                // The game page will start the game after WebSocket connection is established
+                sessionStorage.setItem('gameConfig', JSON.stringify(payload));
+                
+                // Redirect to the game page
+                window.location.href = `/${game}/${mode}`;
+                
+            } catch (e) {
+                alert('Failed to start game: ' + e.message);
+                startBtn.disabled = false;
+                startBtn.textContent = 'Start Game';
+            }
+        });
+    </script>
+</body>
+</html>

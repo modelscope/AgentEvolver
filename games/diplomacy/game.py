@@ -143,11 +143,11 @@ class DiplomacyGame:
             context_str = self._get_context_str(power_name)
             await agent.observe(Msg(name="Moderator", content=context_str, role="assistant"))
 
-    async def _render_map(self, phase_name: str, save: bool = True):
+    async def _render_map(self, phase_name: str, save: bool = False):
         """Render the map and update state manager."""
         try:
             output_dir = os.path.join(os.path.dirname(__file__), 'images')
-            if not os.path.exists(output_dir):
+            if not os.path.exists(output_dir) and save:
                 os.makedirs(output_dir)
             
             renderer = Renderer(self.game)
@@ -171,6 +171,7 @@ class DiplomacyGame:
                     map_svg=svg_content,
                     sc_counts=sc_counts,
                 )
+                await self.state_manager.broadcast_message(self.state_manager.format_game_state())  #add gpt broadcast map update
 
             
             return svg_content

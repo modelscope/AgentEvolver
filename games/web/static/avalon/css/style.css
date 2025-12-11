@@ -1,0 +1,341 @@
+/* Combined Style for Avalon (Aligned with Diplomacy) */
+
+/* --- Layout (From Diplomacy) --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0; /* Reset padding */
+}
+
+.header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.header-label {
+    background-color: #ecf0f1;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.header-btn {
+    background-color: #34495e;
+    color: white;
+    border: 1px solid #7f8c8d;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.header-btn:hover {
+    background-color: #4a6278;
+}
+
+#status-bar {
+    font-size: 1.1rem;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+.map-container {
+    flex: 2;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    padding: 1rem;
+    position: relative;
+}
+
+.sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.panel {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.logs-panel {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- Messages --- */
+#messages-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 5px;
+}
+
+.message {
+    padding: 8px 10px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #ccc;
+    animation: fadeIn 0.3s ease;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+/*以此避免最后一个元素多出不必要的边距（可选）*/
+.message:last-child {
+    margin-bottom: 0;
+}
+
+.message.moderator {
+    background-color: #e3f2fd;
+    border-left-color: #2196f3;
+}
+
+.message.agent {
+    background-color: #fff3e0;
+    border-left-color: #ff9800;
+}
+
+.message.user {
+    background-color: #e8f5e9;
+    border-left-color: #4caf50;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.message-sender {
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.message-time {
+    font-size: 0.9em;
+    color: #999;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.message-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.4;
+    font-size: 0.95em;
+    overflow-wrap: break-word;
+}
+
+/* Connection Status */
+.connection-status {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 0 0 10px 10px;
+    z-index: 2000;
+    font-size: 0.9em;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.connection-status.connected {
+    background: #4caf50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s ease-in-out 1s;
+}
+
+.connection-status.disconnected {
+    background: #f44336;
+}
+
+.connection-status.connecting {
+    background: #ff9800;
+}
+
+/* Game Setup Form (Overlay) */
+.game-setup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 100;
+    text-align: center;
+}
+
+.setup-form label {
+    display: block;
+    margin: 10px 0;
+}
+
+.setup-form select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.start-button {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+
+.start-button:hover {
+    background: #34495e;
+}
+
+.start-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input area */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    min-height: 40px;
+}
+
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+}
+
+.btn-primary:hover {
+    background-color: #34495e;
+    border-color: #34495e;
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    border-color: #ccc;
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Scrollbar styling */
+#messages-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#messages-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#messages-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#messages-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

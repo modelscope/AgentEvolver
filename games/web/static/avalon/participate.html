@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avalon Game - Participate Mode</title>
+    <link rel="stylesheet" href="/static/avalon/css/style.css?v=20251211_1">
+</head>
+<body>
+    <div id="connection-status" class="connection-status connecting">🟡 Connecting...</div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-controls">
+                <div class="header-label">Game: Avalon</div>
+                <div class="header-btn">Mode: Participant</div>
+                <a id="back-exit-button" class="header-btn" href="/" style="display:none">Exit</a>
+            </div>
+            <div id="status-bar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <span id="phase-display">Phase: -</span>
+                <span id="mission-display">Mission: -</span>
+                <span id="round-display">Round: -</span>
+                <span id="status-display">Status: Waiting</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="map-container" id="game-visual-container">
+                <!-- Game Setup Form (Overlay) -->
+                <div id="game-setup" class="game-setup" style="display: none;">
+                    <h3>Game Configuration</h3>
+                    <div class="setup-form">
+                        <label>
+                            Number of Players:
+                            <select id="num-players">
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </label>
+                        <label>
+                            Your Player ID:
+                            <select id="user-agent-id">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </label>
+                        <label>
+                            Language:
+                            <select id="language">
+                                <option value="en">English</option>
+                                <option value="zh">Chinese</option>
+                            </select>
+                        </label>
+                        <button id="start-game-btn" class="start-button">Start Game</button>
+                    </div>
+                </div>
+
+                <!-- Game Visual -->
+                <div class="game-visual" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: black; overflow: hidden; border-radius: 8px;">
+                    <img src="/static/avalon/images/game_visual.gif" alt="Avalon Game Visual" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel logs-panel">
+                    <h3>Chat</h3>
+                    <div id="messages-container">
+                        <div style="text-align: center; color: #999; padding: 20px;">
+                            Waiting for messages...
+                        </div>
+                    </div>
+                    
+                    <!-- Input Area -->
+                    <div class="input-container" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+                        <div id="user-input-request" style="display: none; background-color: #fff3cd; color: #856404; padding: 8px; margin-bottom: 8px; border: 1px solid #ffeeba; border-radius: 4px; font-size: 0.9em;">
+                            <strong>Action Required:</strong> <span id="input-prompt">Please enter your move...</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <textarea id="user-input" class="form-control" placeholder="Type your message..." rows="3" style="resize: none; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;" disabled></textarea>
+                            <button id="send-button" class="btn btn-primary" style="width: 100%; padding: 8px 15px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer;" disabled>Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/avalon/js/websocket.js"></script>
+    <script src="/static/avalon/js/participate.js"></script>
+</body>
+</html>

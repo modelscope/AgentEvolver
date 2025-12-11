@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomacy - Participate Mode</title>
+    <link rel="stylesheet" href="/static/diplomacy/css/style.css?v=20251211_1">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-controls" style="display: flex; gap: 10px;">
+                <div class="header-label" style="background-color: #ecf0f1; padding: 5px 10px; border-radius: 4px; font-weight: bold; color: #2c3e50;">Game: Diplomacy</div>
+                <div class="header-btn" style="background-color: #34495e; color: white; padding: 5px 10px; border-radius: 4px;">Mode: Participant</div>
+                <a id="back-exit-button" class="header-btn" href="/" style="background-color: #34495e; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none;">← Back</a>
+            </div>
+            <div id="status-bar">
+                <span id="phase">Phase: Initializing</span> | 
+                <span id="round">Round: 0</span> | 
+                <span id="status">Status: Waiting</span>
+                <span style="margin-left: 20px;">
+                    View: 
+                    <select id="phase-select">
+                        <option value="latest">Latest</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="map-container" id="map-container">
+                <!-- SVG Map will be injected here -->
+                <div id="map-placeholder" style="color: #999; font-style: italic;">Waiting for game to start...</div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel logs-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                        <h3 style="margin: 0; border: none; padding: 0;">Chat</h3>
+                        <select id="log-filter" style="padding: 2px 5px;">
+                            <option value="all">All Messages</option>
+                            <option value="negotiation">Negotiation</option>
+                            <option value="orders">Orders</option>
+                            <option value="system">System</option>
+                        </select>
+                    </div>
+                    <div id="logs-container">
+                        <div style="text-align: center; color: #999; padding: 20px;">Waiting for messages...</div>
+                    </div>
+                    <div id="user-input-area" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ccc;">
+                        <div id="input-prompt" style="display: none; background-color: #fff3cd; color: #856404; padding: 8px; margin-bottom: 8px; border: 1px solid #ffeeba; border-radius: 4px; font-size: 0.9em; white-space: pre-wrap;"></div>
+                        <textarea id="user-input" placeholder="Enter your orders or messages..." rows="3" style="width: 100%; box-sizing: border-box;"></textarea>
+                        <button id="submit-input" style="width: 100%; margin-top: 5px; padding: 5px;">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/diplomacy/js/main.js?v=20251211_1"></script>
+</body>
+</html>

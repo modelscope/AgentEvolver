@@ -10,7 +10,7 @@ from loguru import logger
 
 from games.avalon.engine import AvalonGameEnvironment, AvalonBasicConfig
 from games.avalon.utils import Parser, GameLogger, LanguageFormatter
-from games.avalon.agents.echo_agent import EchoAgent
+from games.agents.echo_agent import EchoAgent
 
 
 class AvalonGame:
@@ -140,6 +140,16 @@ class AvalonGame:
             leader = self.env.get_quest_leader()
             mission_id = self.env.turn
             round_id = self.env.round
+
+            # Update and broadcast game state for web frontend
+            if self.state_manager:
+                self.state_manager.update_game_state(
+                    phase=phase,
+                    mission_id=mission_id,
+                    round_id=round_id,
+                    leader=leader,
+                )
+                await self.state_manager.broadcast_message(self.state_manager.format_game_state())
 
             async with MsgHub(participants=self._get_hub_participants(), enable_auto_broadcast=False, name="all_players") as all_players_hub:
                 # Check again inside the hub context
