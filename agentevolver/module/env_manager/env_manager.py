@@ -400,7 +400,7 @@ class ParallelEnvManager(object):
         """
         extras = {
             "add_exp": cmt.metadata.get("add_exp", None),  # ⭐ Retrieves the 'add_exp' value from metadata
-            "task_train_expmode": cmt.metadata.get("task_train_exp_mode", None),  # ⭐ Retrieves the 'task_train_exp_mode' value from metadata
+            "task_train_expmode": cmt.metadata.get("task_train_mode", None),  # ⭐ Retrieves the 'task_train_mode' value from metadata
             "experience_list": cmt.metadata.get("experience_list", [])  # ⭐ Retrieves the 'experience' list from metadata
         }
         return extras
