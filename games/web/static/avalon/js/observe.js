@@ -49,7 +49,8 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.portraits) {
     } catch (e) {}
 }
 
-// 从早期初始化读取 numPlayers
+// 从早期初始化读取 numPlayers 和 agent_configs
+let agentConfigs = {};
 if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
     const config = window.__EARLY_INIT__.config;
     if (config.num_players) {
@@ -57,6 +58,19 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
             ? config.num_players
             : parseInt(config.num_players, 10);
     }
+    if (config.agent_configs) {
+        agentConfigs = config.agent_configs;
+    }
+} else {
+    try {
+        const gameConfigStr = sessionStorage.getItem('gameConfig');
+        if (gameConfigStr) {
+            const gameConfig = JSON.parse(gameConfigStr);
+            if (gameConfig.agent_configs) {
+                agentConfigs = gameConfig.agent_configs;
+            }
+        }
+    } catch (e) {}
 }
 
 // Portrait helper - 使用选择的头像映射
@@ -77,6 +91,31 @@ function getPortraitSrc(playerId) {
     const id = (validId % 15) + 1;
     console.log(`Player ${validId} using default portrait ${id}`);
     return `/static/portraits/portrait_${id}.png`;
+}
+
+// 获取模型名字
+function getModelName(playerId) {
+    const validId = (typeof playerId === 'number' && !isNaN(playerId)) ? playerId : 0;
+    
+    // 根据 playerId 找到对应的 portraitId
+    let portraitId = null;
+    if (selectedPortraits && selectedPortraits.length > validId) {
+        portraitId = selectedPortraits[validId];
+    } else {
+        // 使用默认映射
+        portraitId = (validId % 15) + 1;
+    }
+    
+    // 从 agent_configs 中获取模型名字（键可能是字符串或数字）
+    if (portraitId && agentConfigs) {
+        const config = agentConfigs[portraitId] || agentConfigs[String(portraitId)];
+        if (config && config.base_model) {
+            return config.base_model;
+        }
+    }
+    
+    // 如果没有配置，返回默认值
+    return 'Unknown';
 }
 
 // Polar positions for table seating
@@ -103,11 +142,12 @@ function setupTablePlayers(count) {
         const seat = document.createElement('div');
         seat.className = 'seat';
         seat.dataset.playerId = String(i);
+        const modelName = getModelName(i);
         seat.innerHTML = `
             <div class="seat-label"></div>
             <span class="id-tag">P${i}</span>
             <img src="${getPortraitSrc(i)}" alt="Player ${i}">
-            <span class="name-tag">Player ${i}</span>
+            <span class="name-tag">${modelName}</span>
             <div class="speech-bubble">💬</div>
         `;
         seat.style.left = `${cx + positions[i].x - 34}px`;

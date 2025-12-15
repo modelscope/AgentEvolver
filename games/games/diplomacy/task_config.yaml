@@ -1,5 +1,4 @@
 # Diplomacy evaluation task configuration
-
 game:
   name: diplomacy
   power_names:
@@ -38,41 +37,4 @@ default_model:
   act_by_user: false
 
 # Diplomacy evaluation task configuration
-
-game:
-  name: diplomacy
-  power_names:
-    - AUSTRIA
-    - ENGLAND
-    - FRANCE
-    - GERMANY
-    - ITALY
-    - RUSSIA
-    - TURKEY
-  map_name: standard
-  max_phases: 20
-  negotiation_rounds: 3
-  seed: 42
-  language: zn
-  log_dir: logs
-
-# Power-specific configuration
-# If a power is configured in models, it overrides default_model.
-models:
-  # Example: route a power to local vLLM
-  # ENGLAND:
-  #   url: http://localhost:8000/v1
-  #   model_name: local_model
-  default:
-    model_name: qwen-plus
-
-# Default model configuration used for all powers (unless overridden above)
-default_model:
-  url: https://dashscope.aliyuncs.com/compatible-mode/v1
-  model_name: qwen-plus
-  temperature: 0.7
-  max_tokens: 2048
-  stream: true
-  trainable: false
-  act_by_user: false
 

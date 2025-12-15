@@ -62,6 +62,7 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.portraits) {
 }
 
 // 从早期初始化或 sessionStorage 读取 gameConfig
+let agentConfigs = {};
 if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
     const config = window.__EARLY_INIT__.config;
     if (config.user_agent_id !== undefined) {
@@ -73,6 +74,9 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
         numPlayers = typeof config.num_players === 'number'
             ? config.num_players
             : parseInt(config.num_players, 10);
+    }
+    if (config.agent_configs) {
+        agentConfigs = config.agent_configs;
     }
 } else {
     try {
@@ -88,6 +92,9 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
                 numPlayers = typeof gameConfig.num_players === 'number'
                     ? gameConfig.num_players
                     : parseInt(gameConfig.num_players, 10);
+            }
+            if (gameConfig.agent_configs) {
+                agentConfigs = gameConfig.agent_configs;
             }
         }
     } catch (e) {}
@@ -132,6 +139,54 @@ function getPortraitSrc(playerId) {
     return `/static/portraits/portrait_${id}.png`;
 }
 
+// 获取模型名字
+function getModelName(playerId) {
+    const validId = (typeof playerId === 'number' && !isNaN(playerId)) 
+        ? playerId 
+        : (typeof playerId === 'string' ? parseInt(playerId, 10) : 0);
+    
+    // 确保 currentAgentId 也是数字类型进行比较
+    const humanId = (currentAgentId !== null && currentAgentId !== undefined) 
+        ? (typeof currentAgentId === 'number' ? currentAgentId : parseInt(currentAgentId, 10))
+        : null;
+    
+    // Participate 模式：人类玩家显示 "You"
+    if (humanId !== null && !isNaN(humanId) && !isNaN(validId) && validId === humanId) {
+        return 'You';
+    }
+    
+    // 根据 playerId 找到对应的 portraitId
+    let portraitId = null;
+    if (selectedPortraits && selectedPortraits.length > 0) {
+        let idx = validId;
+        // 如果当前玩家在人类玩家之后，索引需要减1
+        if (humanId !== null && !isNaN(humanId) && validId > humanId) {
+            idx = validId - 1;
+        }
+        
+        // 确保索引在有效范围内
+        if (idx >= 0 && idx < selectedPortraits.length) {
+            portraitId = selectedPortraits[idx];
+        }
+    }
+    
+    // 如果没有找到，使用默认映射
+    if (!portraitId) {
+        portraitId = (validId % 15) + 1;
+    }
+    
+    // 从 agent_configs 中获取模型名字（键可能是字符串或数字）
+    if (portraitId && agentConfigs) {
+        const config = agentConfigs[portraitId] || agentConfigs[String(portraitId)];
+        if (config && config.base_model) {
+            return config.base_model;
+        }
+    }
+    
+    // 如果没有配置，返回默认值
+    return 'Unknown';
+}
+
 // Polar positions for table seating
 function polarPositions(count, radiusX, radiusY) {
     return Array.from({ length: count }).map((_, i) => {
@@ -163,11 +218,12 @@ function setupTablePlayers(count) {
             : null;
         const isHuman = (humanId !== null && !isNaN(humanId) && i === humanId);
         const portraitSrc = getPortraitSrc(i);
+        const modelName = getModelName(i);
         
         seat.innerHTML = `
             <span class="id-tag">P${i}</span>
             <img src="${portraitSrc}" alt="Player ${i}">
-            <span class="name-tag">${isHuman ? 'You' : `Player ${i}`}</span>
+            <span class="name-tag">${modelName}</span>
             <div class="speech-bubble">💬</div>
         `;
         seat.style.left = `${cx + positions[i].x - 34}px`;
