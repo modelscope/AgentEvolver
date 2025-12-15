@@ -70,11 +70,6 @@ We provide a minimal requirements for non-training usage:
     export OPENAI_BASE_URL=your_api_url
     export OPENAI_API_KEY=your_api_key
 
-<<<<<<< HEAD
-    export OPENAI_API_KEY=your_api_key
-    export MODEL_NAME=your_default_model
-=======
->>>>>>> origin/dev/game_train
 
 ---
 
