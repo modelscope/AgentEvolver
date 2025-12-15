@@ -23,11 +23,11 @@ We currently support two games, Avalon and Diplomacy, both of which are strategy
 <div align="center">
   <figure style="display: inline-block; margin: 0 1em; vertical-align: top;">
     <img src="../docs/img/games/avalon_demo_extracted.gif" alt="Avalon Demo" width="45%" style="display: block;" />
-    <figcaption style="text-align: center; margin-top: 0.5em; font-size: 0.9em; color: #666;">Avalon Game</figcaption>
+    <figcaption style="text-align: center; color: #666;">Avalon</figcaption>
   </figure>
   <figure style="display: inline-block; margin: 0 1em; vertical-align: top;">
     <img src="../docs/img/games/diplomacy_demo_extracted.gif" alt="Diplomacy Demo" width="45%" style="display: block;" />
-    <figcaption style="text-align: center; margin-top: 0.5em; font-size: 0.9em; color: #666;">Diplomacy Game</figcaption>
+    <figcaption style="text-align: center; color: #666;">Diplomacy</figcaption>
   </figure>
 </div>
 

@@ -293,8 +293,8 @@ async def get_options(game: str | None = None):
                         default_model = dict(default_model)
                         # resolve ${API_KEY} from env
                         api_key = default_model.get("api_key", "")
-                        if api_key and "${API_KEY}" in api_key:
-                            api_key = os.getenv("API_KEY", "")
+                        if api_key and "${OPENAI_API_KEY}" in api_key:
+                            api_key = os.getenv("OPENAI_API_KEY", "")
                         default_model["api_key"] = api_key
                         if default_model.get("url") and not default_model.get("api_base"):
                             default_model["api_base"] = default_model["url"]
@@ -322,7 +322,7 @@ async def get_options(game: str | None = None):
         # 标准化配置格式
         if default_model.get("url") and not default_model.get("api_base"):
             default_model["api_base"] = default_model["url"]
-        default_model.setdefault("api_key", os.getenv("API_KEY", ""))
+        default_model.setdefault("api_key", os.getenv("OPENAI_API_KEY", ""))
         all_models = set()
         power_models = {}
         if cfg.models:
@@ -375,7 +375,7 @@ async def get_options(game: str | None = None):
 
         if default_model.get("url") and not default_model.get("api_base"):
             default_model["api_base"] = default_model["url"]
-        default_model.setdefault("api_key", os.getenv("API_KEY", ""))
+        default_model.setdefault("api_key", os.getenv("OPENAI_API_KEY", ""))
 
         return {
             "defaults": {

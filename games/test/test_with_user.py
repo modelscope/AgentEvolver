@@ -53,13 +53,9 @@ async def main(
     
     # Model configuration
     model_name = os.getenv("MODEL_NAME", "qwen-plus")
-<<<<<<< HEAD
-    api_key = os.getenv("OPENAI_API_KEY", "")
-=======
     api_key = os.getenv("API_KEY", "")
     if not api_key:
         raise ValueError("OPENAI_API_KEY is not set")
->>>>>>> origin/dev/game_train
     
     # Create agents
     agents = []

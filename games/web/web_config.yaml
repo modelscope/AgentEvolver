@@ -5,11 +5,7 @@
 default_model:
   model_name: qwen-plus
   api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
-<<<<<<< HEAD
-  api_key:   # 从环境变量读取，或在此直接填写
-=======
   api_key: ${OPENAI_API_KEY} 
->>>>>>> origin/dev/game_train
   temperature: 0.7
   max_tokens: 2048
 

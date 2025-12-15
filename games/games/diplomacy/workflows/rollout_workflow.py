@@ -73,7 +73,7 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
         default_model = self.config_dict.get('default_model', {})
         config = {
             'name': default_model.get('name', 'qwen-plus'),
-            'api_key': default_model.get('api_key', os.getenv('API_KEY', '')),
+            'api_key': default_model.get('api_key', os.getenv('OPENAI_API_KEY', '')),
             'stream': default_model.get('stream', True),
         }
         # Apply custom configs if any
@@ -105,7 +105,7 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
             model_config = self._get_model_config(power_name)
             model = DashScopeChatModel(
                 model_name=model_config.get('model_name', model_config.get('name', 'qwen-plus')),
-                api_key=model_config.get('api_key', os.getenv('API_KEY', '')),
+                api_key=model_config.get('api_key', os.getenv('OPENAI_API_KEY', '')),
                 stream=model_config.get('stream', True),
             )
 
