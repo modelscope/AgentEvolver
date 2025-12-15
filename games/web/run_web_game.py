@@ -155,7 +155,7 @@ async def run_diplomacy(
     agentscope.init()
 
     model_name_default = os.getenv("MODEL_NAME", "qwen-plus")
-    api_key_default = os.getenv("API_KEY", "sk-224e008372e144e496e06038077f65fc")
+    api_key_default = os.getenv("API_KEY", "")
 
     agents = []
     observe_agent = None
