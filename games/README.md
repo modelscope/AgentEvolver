@@ -18,14 +18,17 @@ A web-based interface allows you to:
 
 **Supported Games**
 
-- **Avalon** – Hidden roles, logical inference, and deception  
-- **Diplomacy** – Negotiation, alliances, and long-term strategy  
-
-### Gameplay Animations
+We currently support two games, Avalon and Diplomacy, both of which are strategy games involving long-term reasoning.
 
 <div align="center">
-  <img src="../docs/img/games/avalon_demo_extracted.gif" alt="Avalon Demo" width="45%" />
-  <img src="../docs/img/games/diplomacy_demo_extracted.gif" alt="Diplomacy Demo" width="45%" />
+  <figure style="display: inline-block; margin: 0 1em;">
+    <img src="../docs/img/games/avalon_demo_extracted.gif" alt="Avalon Demo" width="45%" />
+    <figcaption>Avalon – Hidden roles, logical inference, and deception  </figcaption>
+  </figure>
+  <figure style="display: inline-block; margin: 0 1em;">
+    <img src="../docs/img/games/diplomacy_demo_extracted.gif" alt="Diplomacy Demo" width="45%" />
+    <figcaption>Diplomacy – Negotiation, alliances, and long-term strategy</figcaption>
+  </figure>
 </div>
 
 ---
