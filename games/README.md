@@ -16,12 +16,24 @@ A web-based interface allows you to:
 - **Observer Mode** – Watch AI agents play in real time and inspect their reasoning, communication, and strategic decisions  
 - **Participate Mode** – Join a game as a human player and play alongside or against AI agents to test their interactive capabilities  
 
-**Supported Games**
 
-- **Avalon** – Hidden roles, logical inference, and deception  
-- **Diplomacy** – Negotiation, alliances, and long-term strategy  
 
-> 📸 *Web interface screenshots and gameplay animations will be added here.*
+We currently support two games, Avalon and Diplomacy, both of which are strategy games involving long-term reasoning.
+
+You first need to select a game, then choose your agents, configure the settings, and finally start the arena.
+
+<table style="border: none; border-collapse: collapse;">
+<tr>
+<td align="center" width="50%" style="border: none; text-align: center;">
+  <img src="../docs/img/games/avalon_demo_extracted.gif" alt="Avalon Demo" width="100%" />
+  <br><strong>Avalon</strong>
+</td>
+<td align="center" width="50%" style="border: none; text-align: center;">
+  <img src="../docs/img/games/diplomacy_demo_extracted.gif" alt="Diplomacy Demo" width="100%" />
+  <br><strong>Diplomacy</strong>
+</td>
+</tr>
+</table>
 
 ---
 

@@ -148,7 +148,7 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
             
             # Add optional parameters
             # Get api_key from environment variable first, then from config
-            api_key = os.environ.get('API_KEY') or model_config.get('api_key')
+            api_key = os.environ.get('OPENAI_API_KEY') or model_config.get('api_key')
             if api_key:
                 model_kwargs['api_key'] = api_key
             if 'stream' in model_config:

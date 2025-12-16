@@ -26,6 +26,10 @@
       --grid: rgba(255,255,255,0.05);
       --shadow: 0 6px 0 #0a0f19;
       --shadow2: 0 10px 0 #0b1628;
+      /* 布局尺寸变量 - 可调整 */
+      --portraits-strip-width: 220px;  /* 人物框宽度 - 更紧凑 */
+      --game-card-min-width: 180px;    /* 游戏卡片最小宽度 - 更紧凑 */
+      --portrait-card-padding: 6px;    /* 人物卡片内边距 - 更紧凑 */
     }
     * { box-sizing: border-box; }
     body {
@@ -69,19 +73,46 @@
       box-shadow: var(--shadow);
     }
 
-    /* portraits strip */
+    /* portraits strip - 右侧双栏布局 */
     #portraits-strip {
+      display: flex;
+      flex-direction: column;
+      min-width: var(--portraits-strip-width);
+      max-width: var(--portraits-strip-width);
+      height: 580px; /* 与 #scene 高度对齐 */
+    }
+    .portraits-header {
+      padding: 8px 10px 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+    }
+    .portraits-title {
+      font-size: 10px;
+      color: var(--accent2);
+    }
+    #portraits-grid {
+      padding: 8px;
       display: grid;
-      grid-template-columns: repeat(15, minmax(0, 1fr));
-      gap: 10px;
-      padding: 12px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      overflow-y: auto;
+      flex: 1; /* 占据剩余空间 */
+    }
+    #portraits-grid::-webkit-scrollbar { width: 5px; }
+    #portraits-grid::-webkit-scrollbar-track { background: transparent; }
+    #portraits-grid::-webkit-scrollbar-thumb { background: rgba(81,246,165,0.25); border-radius: 3px; }
+    #random-select-btn {
+      font-size: 7px;
+      padding: 4px 8px;
     }
     .portrait-card {
+      position: relative;
       border: 2px solid var(--border);
       background: var(--panel2);
-      border-radius: 10px;
-      padding: 8px;
+      border-radius: 8px;
+      padding: var(--portrait-card-padding);
       cursor: pointer;
       transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       user-select: none;
@@ -96,12 +127,31 @@
       background: #0b1626;
       border: 1px solid rgba(255,255,255,0.06);
     }
-    .portrait-name { margin-top: 6px; font-size: 9px; text-align: center; color: #d6e6ff; }
+    .portrait-name { margin-top: 4px; font-size: 8px; text-align: center; color: #d6e6ff; }
+    .portrait-model {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 2px solid #1a2d44;
+      background: rgba(13, 24, 41, 0.95);
+      box-shadow: 0 3px 0 rgba(11,22,40,0.55);
+      font-size: 7px;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 90%;
+      z-index: 100;
+      pointer-events: none;
+    }
 
     .layout {
       display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 14px;
+      grid-template-columns: 1fr var(--portraits-strip-width);
+      gap: 10px;
       align-items: start;
     }
     
@@ -150,10 +200,14 @@
       top: 120px;
       bottom: 100px;
       pointer-events: none;
-      display: flex;
+      display: none; /* 默认隐藏，选择game后显示 */
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 15;
+    }
+    #table-preview.has-game {
+      display: flex; /* 选择game后显示 */
     }
     #table-stage {
       position: relative;
@@ -184,6 +238,115 @@
       border-radius: 14px;
       border: 2px dashed rgba(255,255,255,0.08);
     }
+    /* 围桌中心角色统计显示 */
+    .table-role-stats {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(13, 24, 41, 0.95);
+      border: 2px solid #1a2d44;
+      border-radius: 10px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 0 rgba(11,22,40,0.6);
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 180px;
+    }
+    .table-role-stats.show {
+      display: flex;
+    }
+    .table-role-stats .role-stat-item {
+      font-size: 7px;
+      color: #cfe0ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .table-role-stats .role-stat-item .role-name {
+      color: var(--accent2);
+      flex-shrink: 0;
+    }
+    .table-role-stats .role-stat-item .role-count {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    /* 围桌下方的控制按钮 */
+    .table-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      pointer-events: auto;
+      z-index: 15;
+    }
+    /* 步骤提示hover效果 */
+    .step-hint {
+      cursor: pointer;
+      transition: color 0.2s ease;
+      color: var(--muted);
+    }
+    .step-hint:hover {
+      color: var(--accent);
+    }
+    .step-separator {
+      color: var(--muted);
+      margin: 0 4px;
+    }
+    /* 步骤提示闪烁动画 - 页面加载时提醒用户 */
+    .step-hint.initial-blink {
+      animation: stepBlink 2s ease-in-out 3;
+    }
+    @keyframes stepBlink {
+      0%, 100% {
+        color: var(--muted);
+        text-shadow: none;
+      }
+      50% {
+        color: var(--accent);
+        text-shadow: 0 0 8px rgba(81, 246, 165, 0.6);
+      }
+    }
+    /* 高亮效果 */
+    #games.highlight,
+    #portraits-strip.highlight,
+    #scene.highlight,
+    #start-btn.highlight {
+      box-shadow: 0 0 20px rgba(81, 246, 165, 0.6), 0 0 40px rgba(81, 246, 165, 0.4) !important;
+      border-color: var(--accent) !important;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    /* 更明显的 start 按钮样式 */
+    .btn-start {
+      font-size: 12px !important;
+      padding: 12px 24px !important;
+      background: linear-gradient(180deg, #51f6a5, #3dd88a) !important;
+      color: #0a0f19 !important;
+      border: 3px solid #51f6a5 !important;
+      box-shadow: 0 8px 0 #0b1628, 0 0 20px rgba(81, 246, 165, 0.4) !important;
+      font-weight: bold !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1px !important;
+    }
+    .btn-start:hover {
+      transform: translateY(-3px) !important;
+      box-shadow: 0 10px 0 #0b1628, 0 0 30px rgba(81, 246, 165, 0.6) !important;
+      background: linear-gradient(180deg, #5fffb5, #4de89a) !important;
+    }
+    .btn-start:active {
+      transform: translateY(4px) !important;
+      box-shadow: 0 6px 0 #0b1628, 0 0 15px rgba(81, 246, 165, 0.3) !important;
+    }
+    .btn-start:disabled {
+      background: linear-gradient(180deg, #3a3a3a, #2a2a2a) !important;
+      border-color: #20314a !important;
+      color: #6b8299 !important;
+      box-shadow: 0 6px 0 #0b1628 !important;
+      opacity: 0.6 !important;
+    }
     #table-players { 
       position: absolute; 
       inset: 0; 
@@ -194,13 +357,17 @@
       width: 70px;
       height: 70px;
       border-radius: 10px;
-      overflow: hidden;
+      overflow: visible; /* 改为visible，让标签和模型信息可以显示在外面 */
       border: 2px solid var(--border);
       background: var(--panel2);
       box-shadow: 0 8px 0 rgba(10,15,28,0.7);
       transition: left 420ms ease, top 420ms ease, transform 420ms ease, opacity 220ms ease;
       opacity: 0.96;
       pointer-events: auto; /* 确保可以点击和拖拽 */
+    }
+    .seat img {
+      border-radius: 10px;
+      overflow: hidden; /* 只让图片部分裁剪 */
     }
     .seat.enter { transform: scale(0.85); opacity: 0.0; }
     .seat.leave { opacity: 0.0; transform: scale(0.8); }
@@ -209,16 +376,19 @@
       height: 100%;
       object-fit: cover;
       image-rendering: pixelated;
+      border-radius: 10px;
+      display: block;
     }
 
-    /* 圆桌角色特写底部"身份/角色"预览 */
+    /* 圆桌角色特写底部"身份/角色"预览 - 改为下拉框，移到头像下方 */
     .seat .seat-label {
       position: absolute;
       left: 50%;
-      bottom: 8px;
+      bottom: -20px; /* 移到头像下方 */
       transform: translateX(-50%);
-      max-width: 90%;
-      padding: 3px 6px;
+      min-width: 80px; /* 最小宽度，确保能显示完整内容 */
+      max-width: 200px; /* 增加最大宽度 */
+      padding: 0;
       border-radius: 7px;
       border: 2px solid #1a2d44;
       background: rgba(13, 24, 41, 0.92);
@@ -226,14 +396,56 @@
       font-size: 7px;
       color: #cfe0ff;
       line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      pointer-events: none;
+      pointer-events: auto;
       opacity: 0;
       transition: opacity 160ms ease;
+      z-index: 1000; /* 最顶层 */
     }
     .seat.has-label .seat-label { opacity: 1; }
+    .seat .seat-label select {
+      width: 100%;
+      padding: 3px 6px;
+      border: none;
+      background: transparent;
+      color: #cfe0ff;
+      font-family: "Press Start 2P", "Helvetica Neue", Arial, sans-serif;
+      font-size: 7px;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(207,224,255,0.8) 50%),
+        linear-gradient(135deg, rgba(207,224,255,0.8) 50%, transparent 50%);
+      background-position:
+        calc(100% - 8px) 50%,
+        calc(100% - 4px) 50%;
+      background-size: 3px 3px, 3px 3px;
+      background-repeat: no-repeat;
+    }
+    .seat .seat-label select:hover {
+      background-color: rgba(13, 24, 41, 0.95);
+    }
+    /* 圆桌预览中的模型标签 */
+    .seat .seat-model {
+      position: absolute;
+      top: -20px; /* 移到头像上方 */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 2px solid #1a2d44;
+      background: rgba(13, 24, 41, 0.95);
+      box-shadow: 0 3px 0 rgba(11,22,40,0.55);
+      font-size: 7px;
+      color: var(--accent);
+      white-space: nowrap;
+      min-width: 60px; /* 最小宽度，确保能显示完整内容 */
+      max-width: 200px; /* 增加最大宽度，显示全称 */
+      z-index: 1000; /* 最顶层 */
+      pointer-events: none;
+    }
 
     /* HUD覆盖层 - 占据整个场景 */
     #hud {
@@ -279,6 +491,13 @@
       position: relative;
       display: inline-block;
       pointer-events: auto;
+    }
+    /* Mode筛选器在右上角 */
+    .mode-top-right {
+      position: absolute;
+      top: 14px; /* 与hud-top的padding对齐 */
+      right: 14px; /* 与hud-top的padding对齐 */
+      z-index: 20;
     }
     .mode-toggle.open .pill { border-color: var(--accent2); }
     .mode-menu {
@@ -444,41 +663,66 @@
     .power-models .pm-title { font-size: 8px; color: #a0b8d8; margin-bottom: 6px; }
     .pm-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 
-    /* 右侧游戏列表 */
+    /* 游戏列表 - 移到上方横向布局 */
     #games {
       display: flex;
       flex-direction: column;
-      gap: 12px;
     }
+    .games-header {
+      padding: 8px 10px 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+    }
+    .games-title {
+      font-size: 10px;
+      color: var(--accent2);
+    }
+    .games-content {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      padding: 8px;
+    }
+    /* 游戏卡片样式 - 位置：约561-575行 */
     .game-card {
       position: relative;
-      padding: 12px;
-      border-radius: 12px;
+      /* 调整宽度：修改下面的 flex 值
+       * 当前：flex: 0 0 calc(50% - 4px) 表示宽度为50%减去间距
+       * 例如改为：flex: 0 0 200px 表示固定宽度200px
+       * 或者：flex: 0 0 30% 表示宽度为30%
+       * 或者：flex: 1 表示平均分配剩余空间
+       */
+      flex: 0 0 20%;
+      min-width: var(--game-card-min-width); /* 最小宽度，可在:root中调整 --game-card-min-width */
+      padding: 8px;
+      border-radius: 10px;
       background: var(--panel2);
       border: 2px solid var(--border);
       cursor: pointer;
       transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-      min-height: 100px;
+      min-height: 80px;
       overflow: visible;
       box-shadow: var(--shadow);
     }
-    .game-card:hover { transform: translateX(-4px); border-color: var(--accent); box-shadow: var(--shadow2); }
+    .game-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow2); }
     .game-card.active { border-color: var(--accent2); box-shadow: var(--shadow2); }
-    .game-card .label { font-size: 11px; color: var(--accent2); margin-bottom: 6px; }
-    .game-card .hint { font-size: 9px; color: #adc5e6; line-height: 1.5; }
+    .game-card .label { font-size: 10px; color: var(--accent2); margin-bottom: 4px; }
+    .game-card .hint { font-size: 8px; color: #adc5e6; line-height: 1.4; }
     .game-icon {
       position: absolute;
-      right: 10px;
-      bottom: 10px;
-      width: 64px;
-      height: 64px;
-      border-radius: 10px;
+      right: 8px;
+      bottom: 8px;
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
       border: 2px solid #102132;
       background: linear-gradient(145deg, rgba(255,221,87,0.15), rgba(81,246,165,0.10));
-      box-shadow: 0 6px 0 #0b1628;
+      box-shadow: 0 4px 0 #0b1628;
       display: grid;
       place-items: center;
-      font-size: 18px;
+      font-size: 16px;
       color: rgba(255,255,255,0.85);
     }
 
@@ -486,41 +730,68 @@
       .layout { grid-template-columns: 1fr; }
       #games { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
       #scene { height: 480px; }
+      #portraits-strip { 
+        max-width: 100%; 
+        min-width: 100%;
+        height: 480px; /* 与响应式下的scene高度对齐 */
+      }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <header>
-      <div>
-        <div class="title">Agent Arena</div>
-        <div class="subtitle">Build Agent Team · Select Game · Fill Game Config</div>
-      </div>
+        <div>
+          <div class="title">Agent Arena</div>
+          <div class="subtitle">
+            <span class="step-hint" data-target="games">Select Game</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="agents">Select Agent</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="scene">Fill Config</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="start-btn">Start Arena</span>
+          </div>
+        </div>
       <div class="subtitle"><a id="open-config" href="/static/character_config.html" style="color: var(--accent2); text-decoration: none;">Agent Config</a></div>
     </header>
 
-    <div id="portraits-strip" class="panel"></div>
+    <div id="games" class="panel" style="margin-bottom: 10px;">
+      <div class="games-header">
+        <div class="games-title">Games</div>
+      </div>
+      <div class="games-content">
+        <div class="game-card" data-game="avalon">
+          <div class="label">Avalon</div>
+          <div class="hint">Campus deduction </br> Task Decision </br> Round table</div>
+          <div class="game-icon">🗡</div>
+        </div>
+        <div class="game-card" data-game="diplomacy">
+          <div class="label">Diplomacy</div>
+          <div class="hint">Negotiation </br> Alliance betrayal </br> European chessboard</div>
+          <div class="game-icon">♟</div>
+        </div>
+      </div>
+    </div>
 
     <div class="layout">
       <div id="scene">
+        <!-- Mode筛选器 - 右上角 -->
+        <div class="mode-toggle mode-top-right">
+          <div class="pill pill-mode"><strong>Mode</strong><span id="mode-label">Observer</span></div>
+          <div class="mode-menu">
+            <button class="mode-opt active" type="button" data-mode="observe">Observer</button>
+            <button class="mode-opt" type="button" data-mode="participate">Participate</button>
+          </div>
+        </div>
         <!-- HUD覆盖层 -->
         <div id="hud">
           <div class="hud-top">
-            <div class="pill" style="min-width: 40px;"><strong>Team</strong><span id="counter">0 players</span></div>
-            <div class="pill pill-game"><strong>Game</strong><span id="game-label">Not selected</span></div>
+            <div class="pill" style="min-width: 80px;"><strong>Team</strong><span id="counter">0/0</span></div>
             <div class="pill" id="selection-hint-pill" style="display: none; min-width: 120px; border-color: var(--accent2);">
               <span id="selection-hint">Hint</span>
             </div>
             
-            <div class="mode-toggle">
-              <div class="pill pill-mode"><strong>Mode</strong><span id="mode-label">Observer</span></div>
-              <div class="mode-menu">
-                <button class="mode-opt active" type="button" data-mode="observe">Observer</button>
-                <button class="mode-opt" type="button" data-mode="participate">Participate</button>
-              </div>
-            </div>
-
-            <button class="btn" id="start-btn">start</button>
 
             <div class="hud-config-inline">
               <div class="config-extra" id="avalon-fields">
@@ -587,8 +858,14 @@
         <!-- 围桌预览 -->
         <div id="table-preview">
           <div id="table-stage">
-            <div class="table"></div>
+            <div class="table">
+              <div class="table-role-stats" id="table-role-stats"></div>
+            </div>
             <div id="table-players"></div>
+          </div>
+          <!-- 围桌下方的控制按钮 -->
+          <div class="table-controls">
+            <button class="btn btn-start" id="start-btn">start</button>
           </div>
         </div>
         
@@ -596,17 +873,12 @@
         <div id="ground"></div>
       </div>
 
-      <div id="games">
-        <div class="game-card" data-game="avalon">
-          <div class="label">Avalon</div>
-          <div class="hint">Campus deduction </br> Task Decision </br> Round table</div>
-          <div class="game-icon">🗡</div>
+      <div id="portraits-strip" class="panel">
+        <div class="portraits-header">
+          <div class="portraits-title">Agents</div>
+          <button class="btn" id="random-select-btn">random</button>
         </div>
-        <div class="game-card" data-game="diplomacy">
-          <div class="label">Diplomacy</div>
-          <div class="hint">Negotiation </br> Alliance betrayal </br> European chessboard</div>
-          <div class="game-icon">♟</div>
-        </div>
+        <div id="portraits-grid"></div>
       </div>
     </div>
   </div>

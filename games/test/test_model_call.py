@@ -19,7 +19,7 @@ async def test_model_call():
         'client_args': {
             'base_url': 'https://dashscope.aliyuncs.com/compatible-mode/v1',
         },
-        'api_key': os.environ.get('DASHSCOPE_API_KEY', ''),
+        'api_key': os.environ.get('OPENAI_API_KEY', ''),
         'generate_kwargs': {
             'temperature': 0.7,
             'max_tokens': 2048,

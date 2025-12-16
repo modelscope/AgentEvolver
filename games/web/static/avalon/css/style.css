@@ -184,8 +184,8 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 220px;
-  height: 140px;
+  width: 320px; /* 从220px增大到320px */
+  height: 200px; /* 从140px增大到200px */
   background: linear-gradient(145deg, #3d2817, #2a1c10);
   border: 4px solid #1a1208;
   border-radius: 16px;
@@ -251,7 +251,19 @@ body {
 }
 
 .seat .id-tag {
-  display: none;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  font-size: 7px;
+  color: #0a0f19;
+  background: var(--accent2); /* 黄色 */
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  border: 2px solid #0a0f19;
+  box-shadow: 0 2px 0 rgba(10, 15, 25, 0.5);
+  z-index: 300;
+  font-weight: bold;
 }
 
 .seat .name-tag {
@@ -260,12 +272,15 @@ body {
   left: 50%;
   transform: translateX(-50%);
   font-size: 7px;
-  color: var(--accent2);
+  color: var(--accent);
   background: rgba(11, 22, 38, 0.9);
   padding: 3px 6px;
   border-radius: 4px;
   white-space: nowrap;
   border: 1px solid var(--border);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .seat.speaking {

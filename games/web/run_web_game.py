@@ -80,7 +80,7 @@ async def run_avalon(
             if frontend_cfg and frontend_cfg.get("base_model"):
                 model_name = frontend_cfg.get("base_model", os.getenv("MODEL_NAME", "qwen-plus"))
                 api_base = frontend_cfg.get("api_base", "")
-                api_key = frontend_cfg.get("api_key", os.getenv("API_KEY", ""))
+                api_key = frontend_cfg.get("api_key", os.getenv("OPENAI_API_KEY", ""))
             else:
                 portrait_cfg = portraits.get(str(portrait_id), {}) if isinstance(portraits, dict) else {}
                 merged_cfg = dict(default_model)
@@ -88,11 +88,11 @@ async def run_avalon(
                     merged_cfg.update(portrait_cfg)
                 
                 api_key_raw = merged_cfg.get("api_key", "")
-                if "${API_KEY}" in str(api_key_raw):
-                    api_key_raw = os.getenv("API_KEY", "")
+                if "${OPENAI_API_KEY}" in str(api_key_raw):
+                    api_key_raw = os.getenv("OPENAI_API_KEY", "")
                 
                 model_name = merged_cfg.get("model_name", os.getenv("MODEL_NAME", "qwen-plus"))
-                api_key = api_key_raw or os.getenv("API_KEY", "")
+                api_key = api_key_raw or os.getenv("OPENAI_API_KEY", "")
                 api_base = merged_cfg.get("api_base", "")
             
             # 根据 api_base 决定使用哪个模型类
@@ -155,7 +155,7 @@ async def run_diplomacy(
     agentscope.init()
 
     model_name_default = os.getenv("MODEL_NAME", "qwen-plus")
-    api_key_default = os.getenv("API_KEY", "")
+    api_key_default = os.getenv("OPENAI_API_KEY", "")
 
     agents = []
     observe_agent = None

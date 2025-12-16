@@ -49,7 +49,8 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.portraits) {
     } catch (e) {}
 }
 
-// 从早期初始化读取 numPlayers
+// 从早期初始化读取 numPlayers 和 agent_configs
+let agentConfigs = {};
 if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
     const config = window.__EARLY_INIT__.config;
     if (config.num_players) {
@@ -57,6 +58,19 @@ if (window.__EARLY_INIT__ && window.__EARLY_INIT__.config) {
             ? config.num_players
             : parseInt(config.num_players, 10);
     }
+    if (config.agent_configs) {
+        agentConfigs = config.agent_configs;
+    }
+} else {
+    try {
+        const gameConfigStr = sessionStorage.getItem('gameConfig');
+        if (gameConfigStr) {
+            const gameConfig = JSON.parse(gameConfigStr);
+            if (gameConfig.agent_configs) {
+                agentConfigs = gameConfig.agent_configs;
+            }
+        }
+    } catch (e) {}
 }
 
 // Portrait helper - 使用选择的头像映射
@@ -79,6 +93,31 @@ function getPortraitSrc(playerId) {
     return `/static/portraits/portrait_${id}.png`;
 }
 
+// 获取模型名字
+function getModelName(playerId) {
+    const validId = (typeof playerId === 'number' && !isNaN(playerId)) ? playerId : 0;
+    
+    // 根据 playerId 找到对应的 portraitId
+    let portraitId = null;
+    if (selectedPortraits && selectedPortraits.length > validId) {
+        portraitId = selectedPortraits[validId];
+    } else {
+        // 使用默认映射
+        portraitId = (validId % 15) + 1;
+    }
+    
+    // 从 agent_configs 中获取模型名字（键可能是字符串或数字）
+    if (portraitId && agentConfigs) {
+        const config = agentConfigs[portraitId] || agentConfigs[String(portraitId)];
+        if (config && config.base_model) {
+            return config.base_model;
+        }
+    }
+    
+    // 如果没有配置，返回默认值
+    return 'Unknown';
+}
+
 // Polar positions for table seating
 function polarPositions(count, radiusX, radiusY) {
     return Array.from({ length: count }).map((_, i) => {
@@ -95,19 +134,21 @@ function setupTablePlayers(count) {
     const rect = tablePlayers.getBoundingClientRect();
     const cx = rect.width / 2;
     const cy = rect.height / 2;
-    const radiusX = Math.min(210, Math.max(110, rect.width * 0.34));
-    const radiusY = Math.min(120, Math.max(70, rect.height * 0.30));
+    // 增大分布半径，让人物分布更分散
+    const radiusX = Math.min(300, Math.max(160, rect.width * 0.45)); // 从0.34增大到0.45，最大值从210增大到300
+    const radiusY = Math.min(180, Math.max(100, rect.height * 0.40)); // 从0.30增大到0.40，最大值从120增大到180
     const positions = polarPositions(count, radiusX, radiusY);
     
     for (let i = 0; i < count; i++) {
         const seat = document.createElement('div');
         seat.className = 'seat';
         seat.dataset.playerId = String(i);
+        const modelName = getModelName(i);
         seat.innerHTML = `
             <div class="seat-label"></div>
             <span class="id-tag">P${i}</span>
             <img src="${getPortraitSrc(i)}" alt="Player ${i}">
-            <span class="name-tag">Player ${i}</span>
+            <span class="name-tag">${modelName}</span>
             <div class="speech-bubble">💬</div>
         `;
         seat.style.left = `${cx + positions[i].x - 34}px`;

@@ -347,7 +347,7 @@ WebSocket
 default_model:
   model_name: qwen-plus
   api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
-  api_key: ${API_KEY}  # 从环境变量读取
+  api_key: ${OPENAI_API_KEY}  # 从环境变量读取
 
 portraits:
   1:
