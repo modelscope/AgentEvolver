@@ -73,7 +73,7 @@ We provide a minimal requirements for non-training usage:
 
 ---
 
-### Launch the Web Interface (Recommended)
+### Launch the Web Interface
 
 Start the server:
 
@@ -120,30 +120,29 @@ Example command:
     xxxx 
 
 
-## ⚙️ Configuration Overview
+## ⚙️ Configuration
 
-All games and evaluations are controlled via **YAML configuration files**, allowing you to adjust behavior without modifying code.
+Games and evaluations are controlled via **YAML configuration files**. Configuration structure:
 
-Example structure:
+- **Game settings** (`game`) – Game-specific parameters (e.g., `num_players`, `language`)
+- **Model configuration** – Priority order:
+  1. **Role-specific settings** (`roles` section) – Each role uses its own configuration if specified
+  2. **Default model settings** (`default_model`) – Used as fallback when a role's configuration is missing
+
+Example:
 
     game:
       name: avalon
       num_players: 5
       language: en
-
+    
     default_model:
       model_name: qwen-plus
       temperature: 0.7
-
+    
     roles:
       assassin:
-        model_name: custom-model
-
-With configuration files you can:
-
-- Assign different models to different roles  
-- Adjust model parameters and game settings  
-- Reproduce experiments consistently  
+        model_name: custom-model  # assassin uses custom-model, others use qwen-plus  
 
 ---
 
