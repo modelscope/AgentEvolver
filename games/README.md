@@ -1,10 +1,16 @@
+<p align="center">
+ <img src="../docs/img/games/game_logo.jpg" alt="AgentEvolver Logo" width="90%">
+</p>
+
+
 # 🎮 AgentEvolver Game Arena
 
 **A unified arena for interaction, evaluation, and training of AI agents in social reasoning games.**
 
+
 AgentEvolver Game Arena extends **AgentEvolver** into multi-agent social game environments. By focusing on board games with **multi-round, long-horizon interaction and clear reward rules**, and rich strategic spaces involving **hidden information, negotiation and deception**, it provides a controlled setting for developing **social and strategic capabilities** beyond task execution and tool use.
 
----
+
 
 ## ✨ What Can You Do?
 
@@ -114,7 +120,11 @@ After completion, a summary similar to the following will be displayed:
 
 ### Train an LLM Agent
 
-**Prerequisites:** Before training, install the required packages using `install.sh` from the project root.
+**Prerequisites:** Before training, install the required packages using `install.sh` from the project root, and additionally install game-specific dependencies:
+```bash
+bash install.sh
+pip install -r games/requirements_game.txt
+```
 
 Training consists of two main steps:
 
@@ -174,11 +184,33 @@ Example:
       assassin:
         model_name: custom-model  # assassin uses custom-model, others use qwen-plus  
 
----
+
 
 
 ## 🧠 Build Your Own Agents
-Now, try anything you want. Build your own agents. And one day, let’s see them meet — and compete — in the arena.
+
+The AgentEvolver Game Arena is designed to be extensible and customizable. You can:
+
+- **Develop custom agents** - Implement your own agent logic, strategies, and reasoning capabilities
+- **Design memory systems** - Build memory architectures that help agents remember game history, player behaviors, and strategic patterns
+- **Train models** - Use the provided training pipeline to fine-tune models for specific roles, strategies, or game scenarios
+
+Now, try anything you want. Build your own agents, memories, or models. And one day, let's see them meet — and compete — in the arena.
+
+
+
+
+## 🙏 Acknowledgments
+
+We would like to thank the following projects and communities:
+
+- **[AgentScope](https://github.com/modelscope/agentscope)** - For providing the multi-agent framework and infrastructure that powers our agent interactions and evaluations.
+
+- **[Avalon-LLM](https://github.com/jonathanmli/Avalon-LLM)** - For providing the Avalon game engine and state transition logic that form the foundation of our Avalon game implementation.
+
+- **[Diplomacy](https://github.com/diplomacy/diplomacy)** - For providing the Diplomacy game engine and state transition logic, as well as visualization and map-rendering capabilities that form the foundation of our game environment and evaluation setup.
+
+- **[AI_Diplomacy](https://github.com/GoodStartLabs/AI_Diplomacy)** - For providing detailed, well-designed, and practical English prompts that greatly supported the development of our Diplomacy agents and training pipeline.
 
 ---
 
