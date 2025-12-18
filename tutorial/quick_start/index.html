@@ -577,6 +577,49 @@ reme<span class="w"> </span><span class="se">\</span>
 bash<span class="w"> </span>examples/run_overall.sh
 </code></pre></div>
 
+<hr />
+<h2 id="part-c-multi-node-training">Part C: Multi-Node Training</h2>
+<blockquote>
+<p>Please read Part A and Part B first.</p>
+</blockquote>
+<p>To run AgentEvolver and train agents on multiple nodes, we need some extra setup.</p>
+<h3 id="step-0-prepare-the-training">Step 0. Prepare the Training</h3>
+<p>Follow the instructions in <a href="../configuration/">Configuration</a> to prepare the training environment on <strong>all</strong> nodes.</p>
+<h3 id="step-1-start-the-ray-cluster">Step 1. Start the Ray cluster</h3>
+<p>In Part A and Part B, we leave the Ray cluster to be started by AgentEvolver. To enable multi-node training, we need to start the Ray cluster manually.</p>
+<p>Start Ray on <em>all</em> nodes:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># all ray node must be in the same conda environment</span>
+conda<span class="w"> </span>activate<span class="w"> </span>agentevolver
+
+<span class="c1"># node 1 as head</span>
+ray<span class="w"> </span>start<span class="w"> </span>--head
+
+<span class="c1"># other nodes as followers</span>
+ray<span class="w"> </span>start<span class="w"> </span>--address<span class="o">=</span><span class="s1">&#39;&lt;head addr&gt;&#39;</span>
+</code></pre></div>
+
+<h3 id="step-2-start-env-service-appworld-for-example">Step 2. Start Env-Service (AppWorld for example)</h3>
+<p>Start envservice on <em>one</em> node:</p>
+<div class="codehilite"><pre><span></span><code>conda<span class="w"> </span>activate<span class="w"> </span>appworld
+<span class="nb">cd</span><span class="w"> </span>env_service
+bash<span class="w"> </span>launch_script/appworld.sh
+</code></pre></div>
+
+<p>Once you see the successful startup logs, you're good to go. The address of this node will be used in the next step.</p>
+<p>If ReMe-Service is needed, start it on <em>one</em> node.</p>
+<h3 id="step-3-start-agentevolver">Step 3. Start AgentEvolver</h3>
+<p>Create a launch script based on <a href="https://github.com/modelscope/AgentEvolver/blob/main/examples/run_basic.sh">run_basic.sh</a> or <a href="https://github.com/modelscope/AgentEvolver/blob/main/examples/run_overall.sh">run_overall.sh</a>:</p>
+<ul>
+<li>Update <code>env_url</code> to the address of the envservice node</li>
+<li>Adjust other training parameters as needed</li>
+</ul>
+<p>Then start training from <em>one</em> node:</p>
+<div class="codehilite"><pre><span></span><code>conda<span class="w"> </span>activate<span class="w"> </span>agentevolver
+bash<span class="w"> </span>run_basic.sh
+</code></pre></div>
+
+<p>AgentEvolver will automatically use the Ray cluster and spread the training tasks to all nodes.</p>
+
     </div>
 </article>
                                 <div class="mx-auto flex flex-wrap h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
@@ -769,6 +812,40 @@ bash<span class="w"> </span>examples/run_overall.sh
             class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
             data-active="false" data-depth="3">
             Step 3: Start AgentEvolver Training
+        </a>
+        
+        
+
+        
+        <a href="#part-c-multi-node-training"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Part C: Multi-Node Training
+        </a>
+        
+        
+        <a href="#step-0-prepare-the-training"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 0. Prepare the Training
+        </a>
+        
+        <a href="#step-1-start-the-ray-cluster"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 1. Start the Ray cluster
+        </a>
+        
+        <a href="#step-2-start-env-service-appworld-for-example"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 2. Start Env-Service (AppWorld for example)
+        </a>
+        
+        <a href="#step-3-start-agentevolver"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Step 3. Start AgentEvolver
         </a>
         
         
