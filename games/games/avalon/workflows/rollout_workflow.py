@@ -10,6 +10,7 @@ from collections import defaultdict
 from loguru import logger
 
 from agentevolver.utils.agentscope_utils import BaseAgentscopeWorkflow
+from games.utils import cleanup_agent_llm_clients
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory, Reward
 from games.games.avalon.game import AvalonGame
@@ -283,6 +284,10 @@ class AvalonRolloutWorkflow(BaseAgentscopeWorkflow):
         )
         
         good_victory = await game.run() or False
+        
+        # Clean up httpx client resources in agent LLM clients
+        await cleanup_agent_llm_clients(self.agents)
+        
         return good_victory, self.training_indices
     
     def execute(self) -> Trajectory:

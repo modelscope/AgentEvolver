@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from agentevolver.utils.agentscope_utils import BaseAgentscopeWorkflow
+from games.utils import cleanup_agent_llm_clients
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory
 from agentscope.model import OpenAIChatModel
@@ -208,6 +209,8 @@ class EvalDiplomacyWorkflow:
                 'score': len(power.centers),
             })
 
+        # Clean up httpx client resources in agent LLM clients
+        await cleanup_agent_llm_clients(self.agents)
         
         return results
 

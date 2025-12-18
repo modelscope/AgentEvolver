@@ -1,5 +1,5 @@
 <p align="center">
- <img src="../docs/img/games/game_logo.jpg" alt="AgentEvolver Logo" width="90%">
+ <img src="../docs/img/games/game_logo.jpeg" alt="AgentEvolver Logo" width="90%">
 </p>
 
 

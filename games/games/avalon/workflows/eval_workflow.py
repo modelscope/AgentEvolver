@@ -12,6 +12,7 @@ from collections import defaultdict
 from openai import OpenAI
 
 from agentevolver.utils.agentscope_utils import BaseAgentscopeWorkflow
+from games.utils import cleanup_agent_llm_clients
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory
 from games.games.avalon.game import AvalonGame
@@ -234,6 +235,9 @@ class EvalAvalonWorkflow:
         )
         
         good_victory = await game.run()
+        
+        # Clean up httpx client resources in agent LLM clients
+        await cleanup_agent_llm_clients(self.agents)
         
         # Build result dictionary
         if good_victory is None:

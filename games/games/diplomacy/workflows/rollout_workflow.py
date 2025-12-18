@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from loguru import logger
 
 from agentevolver.utils.agentscope_utils import BaseAgentscopeWorkflow
+from games.utils import cleanup_agent_llm_clients
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory, Reward
 from games.games.diplomacy.game import DiplomacyGame
@@ -303,6 +304,9 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
             game_id=game_id,
         )
         game = await diplomacy_game.run()
+
+        # Clean up httpx client resources in agent LLM clients
+        await cleanup_agent_llm_clients(self.agents)
 
         return game, self.training_indices
 
