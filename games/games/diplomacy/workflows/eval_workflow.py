@@ -14,6 +14,7 @@ from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory
 from agentscope.model import OpenAIChatModel
 from agentscope.memory import InMemoryMemory
+from games.agents.memory import SlidingWindowMemory
 from agentscope.tool import Toolkit
 
 from games.games.diplomacy.game import DiplomacyGame
@@ -148,7 +149,7 @@ class EvalDiplomacyWorkflow:
             sys_prompt="",
             model=model,
             formatter=formatter,
-            memory=InMemoryMemory(),
+            memory=SlidingWindowMemory(),
             toolkit=Toolkit(),
         )
 

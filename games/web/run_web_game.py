@@ -7,7 +7,7 @@ import sys
 import threading
 from pathlib import Path
 from typing import Dict, Any
-
+from games.utils import load_config
 # Add repo root for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
@@ -22,6 +22,7 @@ from games.web.web_agent import WebUserAgent, ObserveAgent
 
 # Avalon imports
 from games.agents.thinking_react_agent import ThinkingReActAgent
+from games.utils import load_agent_class
 from games.games.avalon.game import avalon_game
 from games.games.avalon.engine import AvalonBasicConfig
 
@@ -42,20 +43,11 @@ async def run_avalon(
 ):
     """运行 Avalon 游戏"""
     config = AvalonBasicConfig.from_num_players(num_players)
-
-    # 读取 web_config.yaml 中每个 portrait 的模型配置
-    import yaml
-    web_config_path = os.path.join(os.path.dirname(__file__), "web_config.yaml")
-    web_config = {}
-    try:
-        if os.path.exists(web_config_path):
-            with open(web_config_path, "r", encoding="utf-8") as f:
-                web_config = yaml.safe_load(f) or {}
-    except Exception:
-        pass
     
-    default_model = web_config.get("default_model", {})
-    portraits = web_config.get("portraits", {})
+    yaml_path = os.environ.get("AVALON_CONFIG_YAML", "games/games/avalon/configs/task_config.yaml")
+    task_cfg = load_config(yaml_path)
+    default_model = task_cfg.get("default_model", {})
+    roles_config = task_cfg.get("roles", {})
     
     if not selected_portrait_ids:
         selected_portrait_ids = list(range(1, num_players + 1))
@@ -64,36 +56,58 @@ async def run_avalon(
     observe_agent = None
     if mode == "observe":
         observe_agent = ObserveAgent(name="Observer", state_manager=state_manager)
+    
+    ai_portrait_index = 0 #ai玩家索引
 
     for i in range(num_players):
         if mode == "participate" and i == user_agent_id:
             agent = WebUserAgent(name=f"Player{i}", state_manager=state_manager)
         else:
-            # 优先使用前端传递的 agent 配置，否则从 web_config.yaml 读取
-            portrait_id = selected_portrait_ids[i] if i < len(selected_portrait_ids) else (i + 1)
+            if mode == "participate":
+                if ai_portrait_index < len(selected_portrait_ids):
+                    portrait_id = selected_portrait_ids[ai_portrait_index]
+                    ai_portrait_index += 1
+                else:
+                    portrait_id = i + 1
+            else:
+                portrait_id = selected_portrait_ids[i] if i < len(selected_portrait_ids) else (i + 1)
+            # 优先级：agent_configs > roles_config[role_name] > default_model > 环境变量
             
-            # 先尝试使用前端传递的配置
+            # 1. 优先使用前端传递的 agent 配置
             frontend_cfg = None
             if agent_configs and portrait_id in agent_configs:
                 frontend_cfg = agent_configs[portrait_id]
             
+            # 获取 agent_class（优先级：frontend_cfg > roles_config > default_model）
+            agent_class_path = None
             if frontend_cfg and frontend_cfg.get("base_model"):
                 model_name = frontend_cfg.get("base_model", os.getenv("MODEL_NAME", "qwen-plus"))
-                api_base = frontend_cfg.get("api_base", "")
-                api_key = frontend_cfg.get("api_key", os.getenv("OPENAI_API_KEY", ""))
+                api_base = frontend_cfg.get("api_base") or os.getenv("OPENAI_API_BASE", "")
+                api_key = frontend_cfg.get("api_key") or os.getenv("OPENAI_API_KEY", "")
+                agent_class_path = frontend_cfg.get("agent_class", "")
             else:
-                portrait_cfg = portraits.get(str(portrait_id), {}) if isinstance(portraits, dict) else {}
-                merged_cfg = dict(default_model)
-                if isinstance(portrait_cfg, dict):
-                    merged_cfg.update(portrait_cfg)
+                # 2. 从 task_config.yaml 的 roles 中查找（如果有 preset_roles）
+                role_name = None
+                if preset_roles:
+                    # 从 preset_roles 中找到玩家 i 对应的角色名称
+                    for role_id, name, _ in preset_roles:
+                        if role_id == i:
+                            role_name = name
+                            break
                 
-                api_key_raw = merged_cfg.get("api_key", "")
-                if "${OPENAI_API_KEY}" in str(api_key_raw):
-                    api_key_raw = os.getenv("OPENAI_API_KEY", "")
+                # 从 roles_config 中查找角色配置，如果没有则使用 default_model
+                model_cfg = roles_config.get(role_name) if role_name and isinstance(roles_config, dict) and role_name in roles_config else {}
+                
+                # 合并 default_model 和 model_cfg（model_cfg 优先）
+                merged_cfg = dict(default_model)
+                if isinstance(model_cfg, dict):
+                    merged_cfg.update(model_cfg)
                 
                 model_name = merged_cfg.get("model_name", os.getenv("MODEL_NAME", "qwen-plus"))
-                api_key = api_key_raw or os.getenv("OPENAI_API_KEY", "")
-                api_base = merged_cfg.get("api_base", "")
+                api_key = merged_cfg.get("api_key") or os.getenv("OPENAI_API_KEY", "")
+                api_base = merged_cfg.get("api_base") or merged_cfg.get("url") or os.getenv("OPENAI_API_BASE", "")
+                agent_class_path = merged_cfg.get("agent_class", "")
+
             
             model_kwargs = {
                 'model_name': model_name,
@@ -104,7 +118,9 @@ async def run_avalon(
                 model_kwargs['client_args'] = {'base_url': api_base}
             model = OpenAIChatModel(**model_kwargs)
 
-            agent = ThinkingReActAgent(
+            # 使用 load_agent_class 加载 agent class
+            AgentClass = load_agent_class(agent_class_path if agent_class_path else None)
+            agent = AgentClass(
                 name=f"Player{i}",
                 sys_prompt="",
                 model=model,
@@ -157,8 +173,11 @@ async def run_diplomacy(
     """Run Diplomacy game."""
     agentscope.init()
 
-    model_name_default = os.getenv("MODEL_NAME", "qwen-plus")
-    api_key_default = os.getenv("OPENAI_API_KEY", "")
+    # 从 task_config.yaml 读取默认模型配置作为保底
+    yaml_path = os.environ.get("DIPLOMACY_CONFIG_YAML", "games/games/diplomacy/configs/task_config.yaml")
+    task_cfg = load_config(yaml_path)
+    default_model = task_cfg.get("default_model", {})
+    roles_config = task_cfg.get("roles", {})
 
     agents = []
     observe_agent = None
@@ -170,7 +189,7 @@ async def run_diplomacy(
             agent = WebUserAgent(name=power, state_manager=state_manager)
             state_manager.user_agent_id = agent.id
         else:
-            # 优先使用前端传递的 agent 配置
+            # 优先级：agent_configs > roles_config[power] > roles_config["default"] > default_model > 环境变量
             portrait_id = None
             frontend_cfg = None
             if selected_portrait_ids and power_idx < len(selected_portrait_ids):
@@ -182,26 +201,41 @@ async def run_diplomacy(
                 else:
                     portrait_id = None  # 将占位符转换为 None 以便调试输出
             
+            # 获取 agent_class（优先级：frontend_cfg > roles_config > default_model）
+            agent_class_path = None
             if frontend_cfg and frontend_cfg.get("base_model"):
-                model_name = frontend_cfg.get("base_model", model_name_default)
-                api_base = frontend_cfg.get("api_base", "")
-                api_key = frontend_cfg.get("api_key", api_key_default)
+                # 1. 优先使用前端传递的 agent 配置
+                model_name = frontend_cfg.get("base_model", os.getenv("MODEL_NAME", "qwen-plus"))
+                api_base = frontend_cfg.get("api_base") or os.getenv("OPENAI_API_BASE", "")
+                api_key = frontend_cfg.get("api_key") or os.getenv("OPENAI_API_KEY", "")
+                agent_class_path = frontend_cfg.get("agent_class", "")
             else:
-                model_cfg = (config.models or {}).get(power, (config.models or {}).get("default", {}))
-                model_name = model_cfg.get("model_name", model_name_default)
-                api_key = model_cfg.get("api_key", api_key_default)
-                api_base = model_cfg.get("api_base", "")
+                # 2. 从 task_config.yaml 的 roles 中查找
+                model_cfg = roles_config.get(power) or roles_config.get("default", {})
+                
+                # 合并 default_model 和 model_cfg（model_cfg 优先）
+                merged_cfg = dict(default_model)
+                if isinstance(model_cfg, dict):
+                    merged_cfg.update(model_cfg)
+                
+                model_name = merged_cfg.get("model_name", os.getenv("MODEL_NAME", "qwen-plus"))
+                api_key = merged_cfg.get("api_key") or os.getenv("OPENAI_API_KEY", "")
+                api_base = merged_cfg.get("api_base") or merged_cfg.get("url") or os.getenv("OPENAI_API_BASE", "")
+                agent_class_path = merged_cfg.get("agent_class", "")
             
-            # 根据 api_base 和 model_name 决定使用哪个模型类
-            if api_base and "openai" in api_base.lower():
-                from agentscope.model import OpenAIChatModel
-                model = OpenAIChatModel(model_name=model_name, api_key=api_key, api_base=api_base, stream=False)
-            elif "gpt" in model_name.lower():
-                from agentscope.model import OpenAIChatModel
-                model = OpenAIChatModel(model_name=model_name, api_key=api_key, stream=False)
-            else:
-                model = DashScopeChatModel(model_name=model_name, api_key=api_key, stream=False)
-            agent = ThinkingReActAgent(
+
+            model_kwargs = {
+                'model_name': model_name,
+                'api_key': api_key,
+                'stream': False,
+            }
+            if api_base:
+                model_kwargs['client_args'] = {'base_url': api_base}
+            model = OpenAIChatModel(**model_kwargs)
+            
+            # 使用 load_agent_class 加载 agent class
+            AgentClass = load_agent_class(agent_class_path if agent_class_path else None)
+            agent = AgentClass(
                 name=power,
                 sys_prompt="",
                 model=model,
@@ -211,7 +245,6 @@ async def run_diplomacy(
             )
             agent.power_name = power
             agent.set_console_output_enabled(True)
-            os.environ["DEBUG"] = "true"
         agents.append(agent)
 
     state_manager.set_mode(mode, config.human_power if mode == "participate" else None, game="diplomacy")
@@ -311,10 +344,6 @@ def start_game_thread(
                 cfg.human_power = human_power
                 if power_names:
                     cfg.power_names = list(power_names)
-                if power_models:
-                    cfg.models = cfg.models or {}
-                    for k, v in power_models.items():
-                        cfg.models[k] = {"model_name": v}
                 
                 # 创建任务并保存引用，以便可以取消
                 task = loop.create_task(run_diplomacy(

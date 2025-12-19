@@ -1,5 +1,11 @@
 # Web 界面专属配置：15个 portrait 角色的模型绑定
 # 当点击 index 页面的角色加入队伍时，会用这里对应的模型配置
+# 
+# 此配置文件使用 Hydra 格式，可以通过 games.utils.load_config() 加载
+
+# Hydra defaults: 使用 _self_ 表示这是一个独立的配置文件，不继承其他配置
+defaults:
+  - _self_
 
 # Agent class 配置（可选）
 # 如果未指定，默认使用 ThinkingReActAgent
@@ -13,10 +19,9 @@
 default_model:
   model_name: qwen-plus
   api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
-  api_key: ${OPENAI_API_KEY} 
   temperature: 0.7
   max_tokens: 2048
-  # agent_class: ThinkingReActAgent  # 也可以在 default_model 中配置
+  agent_class: ThinkingReActAgent  # Agent class，可以在前端配置页面修改
 
 # 每个 portrait 角色的配置（1-15）
 # 如果某个角色未配置，会使用 default_model
@@ -79,4 +84,3 @@ portraits:
 #     api_base: https://api.openai.com/v1
 #     api_key: sk-...
 #     agent_class: YourCustomAgent  # 使用自定义 agent class
-

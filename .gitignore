@@ -11,6 +11,8 @@
 **/*.tar.gz
 **/wandb
 **/__pycache__/
+# NFS temporary files
+**/.nfs*
 
 # Outputs and logs (more specific rules)
 **/outputs/

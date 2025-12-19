@@ -27,7 +27,6 @@ const gameSetup = document.getElementById('game-setup');
 const startGameBtn = document.getElementById('start-game-btn');
 const numPlayersSelect = document.getElementById('num-players');
 const languageSelect = document.getElementById('language');
-const backExitButton = document.getElementById('back-exit-button');
 const tablePlayers = document.getElementById('table-players');
 
 let messageCount = 0;
@@ -304,34 +303,31 @@ wsClient.onMessage('game_state', (state) => {
         gameSetup.style.display = 'none';
         messagesContainer.style.display = 'flex';
         gameStarted = true;
-        updateBackExitButton('running');
     }
     if (state.status === 'stopped') {
         gameStarted = false;
         sessionStorage.removeItem('gameRunning');
         gameSetup.style.display = 'block';
         messagesContainer.style.display = 'none';
-        updateBackExitButton('stopped');
         messageCount = 0;
         messagesContainer.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px; font-size: 9px;">Game stopped. You can start a new game.</p>';
     }
     if (state.status === 'finished') {
         gameStarted = false;
         sessionStorage.removeItem('gameRunning');
-        updateBackExitButton('finished');
     }
     if (state.status === 'waiting') {
         gameStarted = false;
         sessionStorage.removeItem('gameRunning');
         gameSetup.style.display = 'block';
         messagesContainer.style.display = 'none';
-        updateBackExitButton('waiting');
     }
 });
 
 wsClient.onMessage('mode_info', (info) => {
     console.log('Mode info:', info);
-    if (info.mode !== 'observe') {
+    // 只在 mode 不为 null 且不等于期望值时才警告
+    if (info.mode !== null && info.mode !== undefined && info.mode !== 'observe') {
         console.warn('Expected observe mode, got:', info.mode);
     }
 });
@@ -384,33 +380,6 @@ async function startGame() {
         alert(`Error: ${error.message}`);
         startGameBtn.disabled = false;
         startGameBtn.textContent = 'Start Observing';
-    }
-}
-
-function updateBackExitButton(gameStatus) {
-    let status = typeof gameStatus === 'boolean' ? (gameStatus ? 'running' : 'waiting') : gameStatus;
-    
-    const goHome = () => { window.location.href = '/'; };
-    if (status === 'running') {
-        backExitButton.textContent = '← Exit';
-        backExitButton.title = 'Exit Game';
-        backExitButton.href = '#';
-        backExitButton.style.display = 'inline-block';
-        backExitButton.onclick = async (e) => {
-            e.preventDefault();
-            try {
-                await fetch('/api/stop-game', { method: 'POST' });
-            } catch (error) {
-                console.error('Error stopping game:', error);
-            }
-            goHome();
-        };
-    } else {
-        backExitButton.textContent = '← Back';
-        backExitButton.title = 'Back to Home';
-        backExitButton.href = '/';
-        backExitButton.style.display = 'inline-block';
-        backExitButton.onclick = (e) => { e.preventDefault(); goHome(); };
     }
 }
 
@@ -474,8 +443,6 @@ if (document.readyState === 'loading') {
     // DOM 已经加载完成，立即执行
     initializeObserve();
 }
-
-updateBackExitButton(false);
 
 window.addEventListener('resize', () => {
     setupTablePlayers(numPlayers);

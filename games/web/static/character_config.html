@@ -83,7 +83,7 @@
     .portrait img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .fields {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
       align-items: start;
     }
@@ -146,7 +146,7 @@
         <div class="subtitle">Bind base model and API info for each Agent (saved to local browser localStorage)</div>
       </div>
       <div class="subtitle">
-        <a href="./index.html" style="color: var(--accent2); text-decoration: none;">Back to Agent Arena</a>
+        <a href="./index.html" id="back-link" style="color: var(--accent2); text-decoration: none;">Back to Agent Arena</a>
       </div>
     </header>
 
@@ -159,8 +159,7 @@
       <div class="toolbar">
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn" id="save">Save</button>
-          <button class="btn secondary" id="export">Export JSON</button>
-          <button class="btn secondary" id="import">Import JSON</button>
+
           <button class="btn danger" id="reset">Reset All</button>
         </div>
         <div class="note" id="status">Not saved</div>
@@ -182,7 +181,7 @@
     const API_OPTIONS_KEY_PREFIX = "apiOptions.v1.";
 
     // 用后端 task_config.yaml 的 default_model 预填（不覆盖用户已有值；只有展示层面预填，保存时才落盘）
-    let DEFAULT_PREFILL = { base_model: "", api_base: "", api_key: "" };
+    let DEFAULT_PREFILL = { base_model: "", api_base: "", api_key: "", agent_class: "" };
 
     function loadCachedOptions(game) {
       try {
@@ -212,6 +211,7 @@
           base_model: dm.model_name || "",
           api_base: dm.api_base || dm.url || "",
           api_key: dm.api_key || "",
+          agent_class: dm.agent_class || "",
         };
       };
 
@@ -253,10 +253,11 @@
       for (let id = 1; id <= TOTAL; id++) {
         const row = document.createElement("div");
         row.className = "row";
-        const current = cfg[id] || {};
-        const base_model = current.base_model || DEFAULT_PREFILL.base_model || "";
-        const api_base = current.api_base || DEFAULT_PREFILL.api_base || "";
-        const api_key = current.api_key || DEFAULT_PREFILL.api_key || "";
+      const current = cfg[id] || {};
+      const base_model = current.base_model || DEFAULT_PREFILL.base_model || "";
+      const api_base = current.api_base || DEFAULT_PREFILL.api_base || "";
+      const api_key = current.api_key || DEFAULT_PREFILL.api_key || "";
+      const agent_class = current.agent_class || DEFAULT_PREFILL.agent_class || "";
 
         row.innerHTML = `
           <div class="portrait">
@@ -278,6 +279,10 @@
             <div class="field">
               <label>api_key</label>
               <input data-k="api_key" data-id="${id}" placeholder="sk-..." value="${escapeAttr(api_key)}">
+            </div>
+            <div class="field">
+              <label>agent_class</label>
+              <input data-k="agent_class" data-id="${id}" placeholder="e.g. ThinkingReActAgent" value="${escapeAttr(agent_class)}">
             </div>
           </div>
         `;
@@ -301,10 +306,16 @@
         cfg[id] = cfg[id] || {};
         cfg[id][k] = (el.value || "").trim();
       });
+      // 确保所有有配置的对象都包含 agent_class 字段（即使为空字符串）
+      Object.keys(cfg).forEach(id => {
+        if (!cfg[id].agent_class) {
+          cfg[id].agent_class = "";
+        }
+      });
       // 去掉全空对象
       Object.keys(cfg).forEach(id => {
         const v = cfg[id];
-        if (!v.name && !v.base_model && !v.api_base && !v.api_key) delete cfg[id];
+        if (!v.name && !v.base_model && !v.api_base && !v.api_key && !v.agent_class) delete cfg[id];
       });
       return cfg;
     }
@@ -322,8 +333,8 @@
       // 触发 storage 事件（通过设置临时值，然后立即删除）
       // 注意：storage 事件只在其他窗口/标签页触发，但设置时间戳可以让其他页面通过 focus 事件检测到
       
-      statusEl.innerHTML = '<span class="ok">已保存</span>';
-      setTimeout(() => (statusEl.textContent = "已保存"), 400);
+      statusEl.innerHTML = '<span class="ok">Save Success</span>';
+      setTimeout(() => (statusEl.textContent = "Save Success"), 400);
     });
 
     document.getElementById("reset").addEventListener("click", () => {
@@ -333,35 +344,15 @@
       statusEl.innerHTML = '<span class="warn">Cleared</span>';
     });
 
-    document.getElementById("export").addEventListener("click", async () => {
-      const cfg = collect();
-      const txt = JSON.stringify(cfg, null, 2);
-      try {
-        await navigator.clipboard.writeText(txt);
-        statusEl.innerHTML = '<span class="ok">Copied JSON to clipboard</span>';
-      } catch {
-        // fallback: open prompt
-        prompt("Copy the following JSON:", txt);
-      }
-    });
-
-    document.getElementById("import").addEventListener("click", () => {
-      const raw = prompt("Paste the JSON to import (will overwrite local configs):");
-      if (!raw) return;
-      try {
-        const cfg = JSON.parse(raw);
-        saveConfig(cfg || {});
-        render();
-        statusEl.innerHTML = '<span class="ok">Imported</span>';
-      } catch (e) {
-        alert("JSON parse failed: " + e.message);
-      }
-    });
-
     (async () => {
       await loadDefaultPrefill();
       render();
     })();
+
+    // 当从 character_config 返回 index 时，设置标记以避免强制刷新配置
+    document.getElementById('back-link').addEventListener('click', function() {
+      sessionStorage.setItem('fromCharacterConfig', 'true');
+    });
   </script>
 </body>
 </html>

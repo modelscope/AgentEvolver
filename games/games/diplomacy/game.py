@@ -7,11 +7,12 @@ import asyncio
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-
+from loguru import logger
 from diplomacy import Game
 from diplomacy.engine.renderer import Renderer
 from agentscope.message import Msg
 from agentscope.agent import AgentBase
+from agentscope.memory import InMemoryMemory
 
 # 引入重构后的工具函数
 from .utils import Colors, add_legend_to_svg, save_game_logs, order_to_natural_language, load_prompts, parse_negotiation_messages
@@ -78,6 +79,11 @@ class DiplomacyGame:
         # 如果config中没有指定，则使用game.powers.keys()的默认顺序
         power_names = self.config.power_names if self.config.power_names else list(self.game.powers.keys())
         for i, power_name in enumerate(power_names):
+            if hasattr(self.agents[i], 'model') and self.agents[i].model is not None:
+                logger.info(f"Assigning role to agent {i} {self.agents[i].model.model_name}: {power_name}")
+            else:
+                logger.info(f"Assigning role to agent {i} Human: {power_name}")
+
             if i < len(self.agents):
                 self.agents[i].power_name = power_name 
                 self.power_agent_map[power_name] = self.agents[i]
@@ -281,22 +287,10 @@ class DiplomacyGame:
                 )
                 
                 msg = Msg(name="Moderator", content=negotiation_prompt, role="assistant")
-                for attempt in range(3):
-                    try:
-                        response_msg = await agent(msg)
-                        break
-                    except Exception as e:
-                        self._debug_print(f"{Colors.FAIL}{power_name} 谈判阶段发生错误 (尝试 {attempt+1}/3): {type(e).__name__}: {e}{Colors.ENDC}")
-                        import traceback
-                        traceback.print_exc()
-                        if attempt < 2:  # 不是最后一次尝试
-                            await asyncio.sleep(1 * (2 ** attempt))
-                        else:
-                            return []  # 返回空列表而不是抛出异常
-                
+                response_msg = await agent(msg)
                 response_text = response_msg.get_text_content()
 
-                parsed_msgs = parse_negotiation_messages(raw=response_text, power_name=power_name)
+                parsed_msgs = parse_negotiation_messages(raw=response_text, power_name=power_name, power_names=list(self.game.powers.keys()))
 
                 # ---- Emit agent_messages (keep your original resolution logic) ----
                 for msg_data in parsed_msgs:
@@ -326,9 +320,11 @@ class DiplomacyGame:
                     continue
                 tasks.append(process_agent_negotiation(power_name, self.power_agent_map[power_name]))
             
-            results = await asyncio.gather(*tasks, return_exceptions=False)
+            results = await asyncio.gather(*tasks, return_exceptions=True)
             
             for res in results:
+                if isinstance(res, Exception):
+                    continue
                 for sender, recipient, content in res:
                     round_messages.append((sender, recipient, content))
                     round_negotiation_log["messages"].append({"sender": sender, "recipient": recipient, "content": content})
@@ -402,20 +398,8 @@ class DiplomacyGame:
             )
 
             msg = Msg(name="Moderator", content=order_prompt, role="user")
-            for attempt in range(3):
-                try:
-                    response_msg = await agent(msg)
-                    break
-                except Exception as e:
-                    self._debug_print(f"{Colors.FAIL}{power_name} 指令阶段发生错误 (尝试 {attempt+1}/3): {type(e).__name__}: {e}{Colors.ENDC}")
-                    import traceback
-                    traceback.print_exc()
-                    if attempt < 2:  # 不是最后一次尝试
-                        await asyncio.sleep(1 * (2 ** attempt))
-                    else:
-                        return []  # 返回空列表而不是抛出异常
-            response_text = str(response_msg.content)
-            phase_log["order_logs"][power_name] = response_text
+            response_msg = await agent(msg)
+            response_text = response_msg.get_text_content()
 
             # Parse orders
             json_orders = []
@@ -449,9 +433,15 @@ class DiplomacyGame:
             else:
                 random_fallback_powers.append(power_name)
         
-        results = await asyncio.gather(*tasks, return_exceptions=False)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        for power_name, submitted_orders, translated_orders in results:
+        for result in results:
+            if isinstance(result, Exception):
+                continue
+            if not isinstance(result, tuple) or len(result) != 3:
+                continue  # 跳过格式不正确的结果
+            
+            power_name, submitted_orders, translated_orders = result
             if submitted_orders:
                 self.game.set_orders(power_name, submitted_orders)
                 phase_log["orders"][power_name] = submitted_orders

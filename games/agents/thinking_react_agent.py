@@ -108,7 +108,7 @@ class ThinkingReActAgent(ReActAgent):
                 *await self._reasoning_hint_msgs.get_memory(),
             ],
         )
-        
+            
         # Call parent reasoning to get the response
         # Parent's _reasoning will:
         # 1. Generate the complete response (potentially with thinking)

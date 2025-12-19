@@ -565,6 +565,12 @@ function connect() {
       return;
     }
 
+    if (message.type === "mode_info") {
+      // 处理模式信息，允许 game 和 mode 为 null（游戏未启动时）
+      // 不进行任何操作，仅静默接收，避免打印警告
+      return;
+    }
+
     if (isMessageLike(message)) {
       const human_power = getField(latestState, "human_power", "");
       const isParticipate = !!human_power;

@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from games.web.game_state_manager import GameStateManager
 from games.web.run_web_game import start_game_thread
-
+from games.utils import load_config
 # 全局游戏状态管理器
 state_manager = GameStateManager()
 
@@ -155,12 +155,12 @@ class StartGameRequest(BaseModel):
     game: str = "avalon"
     mode: str = "observe"
     language: str = "en"
+    agent_configs: Dict[int, Dict[str, str]] | None = None  # 前端传递的 agent 配置 {portrait_id: {base_model, api_base, api_key}}
     # Avalon 参数
     num_players: int = 5
     user_agent_id: int = 0
     preset_roles: list[dict] | None = None  # 前端预览后下发的固定角色分配
     selected_portrait_ids: list[int] | None = None  # 前端选择的 portrait ids [1-15]
-    agent_configs: Dict[int, Dict[str, str]] | None = None  # 前端传递的 agent 配置 {portrait_id: {base_model, api_base, api_key}}
     # Diplomacy 参数
     human_power: Optional[str] = None
     max_phases: int = 20
@@ -288,109 +288,57 @@ async def get_options(game: str | None = None):
 
     # 无 game 参数：返回 web_config.yaml
     if not game:
-        web_config_path = os.path.join(os.path.dirname(__file__), "web_config.yaml")
+        web_config_path = Path(__file__).parent / "web_config.yaml"
         result = {"portraits": {}, "default_model": {}}
-        try:
-            if os.path.exists(web_config_path):
-                with open(web_config_path, "r", encoding="utf-8") as f:
-                    web_cfg = yaml.safe_load(f) or {}
-                if isinstance(web_cfg, dict):
-                    result["portraits"] = web_cfg.get("portraits", {})
-                    default_model = web_cfg.get("default_model", {})
-                    if isinstance(default_model, dict):
-                        default_model = dict(default_model)
-                        # resolve ${OPENAI_API_KEY} from env
-                        api_key = default_model.get("api_key", "")
-                        if api_key and "${OPENAI_API_KEY}" in api_key:
-                            api_key = os.getenv("OPENAI_API_KEY", "")
-                        default_model["api_key"] = api_key
-                        if default_model.get("url") and not default_model.get("api_base"):
-                            default_model["api_base"] = default_model["url"]
-                        result["default_model"] = default_model
-        except Exception as e:
-            pass
+        if web_config_path.exists():
+            web_cfg = load_config(web_config_path)
+            
+            if isinstance(web_cfg, dict):
+                result["portraits"] = web_cfg['portraits']
+                default_model = web_cfg.get("default_model", {})
+                
+                default_model = dict(default_model)
+                api_key = default_model.get("api_key", "")
+                api_base = default_model.get("api_base", "")
+                if not api_key:
+                    default_model["api_key"] = os.getenv("OPENAI_API_KEY", "")
+                if not api_base:
+                    default_model["api_base"] = os.getenv("OPENAI_API_BASE", "")
+                # agent_class 字段直接传递，不需要环境变量替换
+                
+                result["default_model"] = default_model
         return result
 
+    # 有 game 参数：返回 task_config.yaml
     if game == "diplomacy":
-        from games.games.diplomacy.engine import DiplomacyConfig
-        cfg = DiplomacyConfig.default()
+        # 读取 Diplomacy 配置
+        yaml_path = os.environ.get("DIPLOMACY_CONFIG_YAML", "games/games/diplomacy/configs/default_config.yaml")
+        diplomacy_cfg = load_config(yaml_path)['game']
+        lang = _to_ui_lang(diplomacy_cfg['language'])
 
-        # 读取默认模型配置
-        yaml_path = os.environ.get("DIPLOMACY_CONFIG_YAML", "games/diplomacy/task_config.yaml")
-        default_model: dict = {}
-        try:
-            if os.path.exists(yaml_path):
-                with open(yaml_path, "r", encoding="utf-8") as f:
-                    yml = yaml.safe_load(f) or {}
-                if isinstance(yml, dict) and isinstance(yml.get("default_model"), dict):
-                    default_model = dict(yml["default_model"])
-        except Exception:
-            pass
-
-        # 标准化配置格式
-        if default_model.get("url") and not default_model.get("api_base"):
-            default_model["api_base"] = default_model["url"]
-        default_model.setdefault("api_key", os.getenv("OPENAI_API_KEY", ""))
-        all_models = set()
-        power_models = {}
-        if cfg.roles:
-            for power in cfg.power_names:
-                m = cfg.roles.get(power) or cfg.roles.get("default") or {}
-                model_name = m.get("model_name", "qwen-plus")
-                power_models[power] = model_name
-                all_models.add(model_name)
-            for v in cfg.roles.values():
-                if isinstance(v, dict) and v.get("model_name"):
-                    all_models.add(v["model_name"])
-        else:
-            for power in cfg.power_names:
-                power_models[power] = "qwen-plus"
-            all_models = {"qwen-turbo", "qwen-plus", "qwen-max"}
-
-        lang = _to_ui_lang(cfg.language)
         return {
-            "powers": cfg.power_names,
-            "models": sorted(all_models),
-            "power_models": power_models,
+            "powers": diplomacy_cfg['power_names'],
             "defaults": {
                 "mode": "observe",
-                "human_power": (cfg.power_names[0] if cfg.power_names else "ENGLAND"),
-                "model_name": (cfg.roles.get("default", {}).get("model_name", "qwen-plus") if cfg.roles else "qwen-plus"),
-                "max_phases": cfg.max_phases,
-                "map_name": cfg.map_name,
-                "negotiation_rounds": cfg.negotiation_rounds,
+                "human_power": (diplomacy_cfg['power_names'][0] if diplomacy_cfg['power_names'] else "ENGLAND"),
+                "max_phases": diplomacy_cfg['max_phases'],
+                "map_name": diplomacy_cfg['map_name'],
+                "negotiation_rounds": diplomacy_cfg['negotiation_rounds'],
                 "language": lang,
             },
-            "default_model": default_model,
         }
 
     if game == "avalon":
-        # 返回 Avalon 默认配置（预览/随机由前端处理）
-        yaml_path = os.environ.get("AVALON_CONFIG_YAML", "games/avalon/task_config.yaml")
-        default_model: dict = {}
-        game_defaults: dict = {}
-        try:
-            if os.path.exists(yaml_path):
-                with open(yaml_path, "r", encoding="utf-8") as f:
-                    yml = yaml.safe_load(f) or {}
-                if isinstance(yml, dict):
-                    if isinstance(yml.get("default_model"), dict):
-                        default_model = dict(yml["default_model"])
-                    if isinstance(yml.get("game"), dict):
-                        game_defaults = dict(yml["game"])
-        except Exception:
-            pass
-
-        if default_model.get("url") and not default_model.get("api_base"):
-            default_model["api_base"] = default_model["url"]
-        default_model.setdefault("api_key", os.getenv("OPENAI_API_KEY", ""))
+        # 返回 Avalon 默认配置
+        yaml_path = os.environ.get("AVALON_CONFIG_YAML", "games/games/avalon/configs/default_config.yaml")
+        avalon_cfg = load_config(yaml_path)['game']
+        lang = _to_ui_lang(avalon_cfg.language)
 
         return {
             "defaults": {
-                "num_players": int(game_defaults.get("num_players", 5) or 5),
-                "language": _to_ui_lang(str(game_defaults.get("language", "en"))),
+                "num_players": int(avalon_cfg.get("num_players", 5) or 5),
+                "language": _to_ui_lang(str(avalon_cfg.get("language", "en"))),
             },
-            "default_model": default_model,
         }
 
     raise HTTPException(status_code=404, detail="options only for avalon/diplomacy")

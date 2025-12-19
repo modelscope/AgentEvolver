@@ -394,7 +394,7 @@ function requiredCountForPreview() {
   return 0;
 }
 
-// Avalon(5人) 前端复刻 roles assign：与后端 engine.py 的思想一致（不保证与后端完全一致，因后端仍随机）
+// Avalon(5人) 前端复刻 roles assign
 function avalonAssignRolesFor5() {
   // 固定 5 人：2 evil(Assassin+Minion) + 3 good(Merlin+Percival+Servant)
   // role 名称直接用于 UI 展示
@@ -1158,35 +1158,6 @@ async function fetchDiplomacyOptions(forceRefresh = false) {
       });
     }
     
-    // 填充 power models
-    if (DOM.powerModelsGrid && state.diplomacyOptions.powers) {
-      DOM.powerModelsGrid.innerHTML = "";
-      state.diplomacyOptions.powers.forEach(power => {
-        const item = document.createElement("div");
-        item.className = "config-item";
-        
-        const label = document.createElement("label");
-        label.textContent = power;
-        
-        const select = document.createElement("select");
-        select.id = `power-model-${power}`;
-        if (state.diplomacyOptions.models) {
-          state.diplomacyOptions.models.forEach(m => {
-            const opt = document.createElement("option");
-            opt.value = m;
-            opt.textContent = m;
-            select.appendChild(opt);
-          });
-        }
-        select.value = (state.diplomacyOptions.power_models && state.diplomacyOptions.power_models[power]) || 
-                       (state.diplomacyOptions.defaults && state.diplomacyOptions.defaults.model_name);
-        
-        item.appendChild(label);
-        item.appendChild(select);
-        DOM.powerModelsGrid.appendChild(item);
-      });
-    }
-    
     // 设置默认值
     if (state.diplomacyOptions.defaults) {
       const maxPhasesEl = document.getElementById("diplomacy-max-phases");
@@ -1235,11 +1206,12 @@ function buildPayload(game, mode) {
     const agent_configs = {};
     payload.selected_portrait_ids.forEach(portraitId => {
       const config = agentConfigs[portraitId];
-      if (config && (config.base_model || config.api_base || config.api_key)) {
+      if (config && (config.base_model || config.api_base || config.api_key || config.agent_class)) {
         agent_configs[portraitId] = {
           base_model: config.base_model || "",
           api_base: config.api_base || "",
           api_key: config.api_key || "",
+          agent_class: config.agent_class || "",
         };
       }
     });
@@ -1267,15 +1239,6 @@ function buildPayload(game, mode) {
     } else if (state.diplomacyOptions && state.diplomacyOptions.powers && state.diplomacyOptions.powers.length === 7) {
       // participate 模式下可能没有预览，使用默认顺序
       payload.power_names = state.diplomacyOptions.powers.slice();
-    }
-    
-    if (state.diplomacyOptions && state.diplomacyOptions.powers) {
-      const power_models = {};
-      state.diplomacyOptions.powers.forEach(power => {
-        const sel = document.getElementById(`power-model-${power}`);
-        if (sel) power_models[power] = sel.value;
-      });
-      payload.power_models = power_models;
     }
     
     // 读取并传递 agent 配置（从 localStorage）
@@ -1318,11 +1281,12 @@ function buildPayload(game, mode) {
           const portraitId = fullPortraitIds[index];
           if (portraitId !== -1 && portraitId !== null && portraitId !== undefined) {
             const config = agentConfigs[portraitId];
-            if (config && (config.base_model || config.api_base || config.api_key)) {
+            if (config && (config.base_model || config.api_base || config.api_key || config.agent_class)) {
               agent_configs[portraitId] = {
                 base_model: config.base_model || "",
                 api_base: config.api_base || "",
                 api_key: config.api_key || "",
+                agent_class: config.agent_class || "",
               };
             }
           }

@@ -7,12 +7,14 @@ default_model:
   stream: false
   trainable: false
   act_by_user: false
+  agent_class: ThinkingReActAgent
   # agent_class: ThinkingReActAgent  # Optional: specify agent class in default_model or per-role
   # If not specified, defaults to ThinkingReActAgent
   # You can specify:
   #   - Short form: "ThinkingReActAgent" (imports from games.agents)
   #   - Full path: "games.agents.thinking_react_agent.ThinkingReActAgent"
   #   - Custom class: "your_module.YourAgentClass"
+  language: en
 
 # Default game configuration
 game:
@@ -26,7 +28,7 @@ game:
     - RUSSIA
     - TURKEY
   map_name: standard
-  max_phases: 20
+  max_phases: 12
   negotiation_rounds: 3
   seed: 42
   language: zh  # zh: Chinese, en: English

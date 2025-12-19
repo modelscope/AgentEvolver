@@ -34,7 +34,6 @@ const startGameBtn = document.getElementById('start-game-btn');
 const numPlayersSelect = document.getElementById('num-players');
 const userAgentIdSelect = document.getElementById('user-agent-id');
 const languageSelect = document.getElementById('language');
-const backExitButton = document.getElementById('back-exit-button');
 const inputContainer = document.querySelector('.input-container');
 const tablePlayers = document.getElementById('table-players');
 
@@ -452,7 +451,6 @@ wsClient.onMessage('game_state', (state) => {
         messagesContainer.style.display = 'flex';
         inputContainer.style.display = 'flex';
         gameStarted = true;
-        updateBackExitButton('running');
     }
     // Handle game stopped
     if (state.status === 'stopped') {
@@ -462,7 +460,6 @@ wsClient.onMessage('game_state', (state) => {
         messagesContainer.style.display = 'none';
         inputContainer.style.display = 'none';
         hideInputRequest();
-        updateBackExitButton('stopped');
         messageCount = 0;
         messagesContainer.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px; font-size: 9px;">Game stopped. You can start a new game.</p>';
     }
@@ -470,7 +467,6 @@ wsClient.onMessage('game_state', (state) => {
     if (state.status === 'finished') {
         gameStarted = false;
         sessionStorage.removeItem('gameRunning');  // 清除游戏运行标记
-        updateBackExitButton('finished');
     }
     // Handle waiting state
     if (state.status === 'waiting') {
@@ -480,7 +476,6 @@ wsClient.onMessage('game_state', (state) => {
         messagesContainer.style.display = 'none';
         inputContainer.style.display = 'none';
         hideInputRequest();
-        updateBackExitButton('waiting');
     }
 });
 
@@ -490,7 +485,8 @@ wsClient.onMessage('user_input_request', (request) => {
 
 wsClient.onMessage('mode_info', (info) => {
     console.log('Mode info:', info);
-    if (info.mode !== 'participate') {
+    // 只在 mode 不为 null 且不等于期望值时才警告
+    if (info.mode !== null && info.mode !== undefined && info.mode !== 'participate') {
         console.warn('Expected participate mode, got:', info.mode);
     }
     // 只有当 currentAgentId 还没有设置时，才从 mode_info 更新
@@ -571,33 +567,6 @@ async function startGame() {
     }
 }
 
-function updateBackExitButton(gameStatus) {
-    let status = typeof gameStatus === 'boolean' ? (gameStatus ? 'running' : 'waiting') : gameStatus;
-    
-    const goHome = () => { window.location.href = '/'; };
-    if (status === 'running') {
-        backExitButton.textContent = '← Exit';
-        backExitButton.title = 'Exit Game';
-        backExitButton.href = '#';
-        backExitButton.style.display = 'inline-block';
-        backExitButton.onclick = async (e) => {
-            e.preventDefault();
-            try {
-                await fetch('/api/stop-game', { method: 'POST' });
-            } catch (error) {
-                console.error('Error stopping game:', error);
-            }
-            goHome();
-        };
-    } else {
-        backExitButton.textContent = '← Back';
-        backExitButton.title = 'Back to Home';
-        backExitButton.href = '/';
-        backExitButton.style.display = 'inline-block';
-        backExitButton.onclick = (e) => { e.preventDefault(); goHome(); };
-    }
-}
-
 startGameBtn.addEventListener('click', startGame);
 
 // Connect when page loads
@@ -662,9 +631,6 @@ if (document.readyState === 'loading') {
     // DOM 已经加载完成，立即执行
     initializeTable();
 }
-
-// Initialize button
-updateBackExitButton(false);
 
 // Handle window resize
 window.addEventListener('resize', () => {
