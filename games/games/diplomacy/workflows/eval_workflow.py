@@ -13,6 +13,7 @@ from games.utils import (
     cleanup_agent_llm_clients,
     create_agent_from_config,
     create_model_from_config,
+    deep_merge,
 )
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory
@@ -59,38 +60,58 @@ class EvalDiplomacyWorkflow:
         self.config_dict = config_dict
         self.power_manager: Optional[PowerManager] = None
 
-    def _get_model_config(self, power_name: str) -> Dict[str, Any]:
+    def _get_role_config(self, power_name: str) -> Dict[str, Any]:
         """
-        Get model configuration for a power.
-        Power-specific config overrides default_model config.
+        Get complete role configuration for a power (including model, agent, trainable, act_by_user, etc.).
+        Power-specific config overrides default_role config.
         """
-        default_model = self.config_dict.get('default_model', {})
-        models_config = self.config_dict.get('roles', {})
+        default_role = self.config_dict.get('default_role', {})
+        roles_config = self.config_dict.get('roles', {})
 
-        # Start with default_model config
-        config = copy.deepcopy({**default_model})
+        if not isinstance(default_role, dict):
+            default_role = {}
+        if not isinstance(roles_config, dict):
+            roles_config = {}
+
+        # Start with default_role config
+        role_config = copy.deepcopy(default_role)
 
         # Find power-specific config
         power_key = power_name.upper()
-        if power_key in models_config:
-            config.update(models_config[power_key])
-        elif 'default' in models_config:
-            config.update(models_config['default'])
+        if power_key in roles_config:
+            specific_role_config = roles_config[power_key]
+        else:
+            specific_role_config = None
 
-        return config
+        # Override with power-specific config if present
+        if specific_role_config and isinstance(specific_role_config, dict):
+            # Deep merge: recursively merge nested dicts
+            role_config = deep_merge(role_config, specific_role_config)
+
+        return role_config
+    
+    def _get_model_config(self, power_name: str) -> Dict[str, Any]:
+        """Get model configuration for a power."""
+        role_config = self._get_role_config(power_name)
+        return role_config.get('model', {})
+    
+    def _get_agent_config(self, power_name: str) -> Dict[str, Any]:
+        """Get agent configuration for a power."""
+        role_config = self._get_role_config(power_name)
+        return role_config.get('agent', {})
 
     def _create_agent(self, player_id: int, power_name: str):
         """Create an agent for a power using create_agent_from_config."""
         model_config = self._get_model_config(power_name)
-        
+        agent_config = self._get_agent_config(power_name)
+
         # Create model using factory function
         model = create_model_from_config(model_config)
         
-        # Get agent_config from model_config (should be in default_model or role-specific)
-        agent_config = model_config.get('agent_config')
-        if agent_config is None:
+        # Validate agent_config
+        if not agent_config:
             raise ValueError(
-                f"agent_config is required. Please specify it in default_model or role-specific config for {power_name}."
+                f"agent config is required. Please specify it in default_role.agent or role-specific config for {power_name}."
             )
         
         return create_agent_from_config(

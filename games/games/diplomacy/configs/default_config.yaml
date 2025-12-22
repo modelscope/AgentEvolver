@@ -1,15 +1,16 @@
-default_model:
-  url:  # Will be read from OPENAI_BASE_URL environment variable
-  api_key:  # Will be read from OPENAI_API_KEY environment variable
-  model_name: qwen-plus
-  temperature: 0.7
-  max_tokens: 2048
-  stream: false
+# Default role configuration
+default_role:
   trainable: false
   act_by_user: false
-  language: en
-  # Default agent_config for all roles
-  agent_config:
+  model:
+    url:  # Will be read from OPENAI_BASE_URL environment variable
+    api_key:  # Will be read from OPENAI_API_KEY environment variable
+    model_name: qwen-plus
+    temperature: 0.7
+    max_tokens: 2048
+    stream: false
+    language: en
+  agent:
     type: ThinkingReActAgent
     kwargs:
       memory:
@@ -38,19 +39,19 @@ game:
 # 
 # Configuration Priority:
 #   1. Power-specific settings in 'roles' section (if specified)
-#   2. 'default' in 'roles' section (if specified)
-#   3. Default settings in 'default_model' section
+#   2. Default settings in 'default_role' section
 #
-# Agent Configuration (agent_config):
-#   Use agent_config to specify agent type and all components (memory, formatter, etc.)
-#   See games/games/avalon/configs/default_config.yaml for detailed agent_config documentation.
+# Role Configuration Structure:
+#   Each role can have 'model' and 'agent' sub-sections.
+#   See games/games/avalon/configs/default_config.yaml for detailed documentation.
 #
 #   Examples:
 #     # Example 1: Power with custom agent
 #     ENGLAND:
-#       url: http://localhost:8000/v1  # VLLM server URL
-#       model_name: local_model
-#       agent_config:
+#       model:
+#         url: http://localhost:8000/v1  # VLLM server URL
+#         model_name: local_model
+#       agent:
 #         type: YourCustomAgent
 #         kwargs:
 #           sys_prompt: ""
@@ -58,26 +59,23 @@ game:
 #             type: SlidingWindowMemory
 #             kwargs: {}
 #
-#     # Example 2: Power with default agent_config (inherits from default_model)
+#     # Example 2: Power with default agent (inherits from default_role)
 #     FRANCE:
-#       model_name: qwen-max
-#       # agent_config will use default_model.agent_config if not specified
+#       model:
+#         model_name: qwen-max
 
 roles:
   # Example 1: Power with local VLLM server
   # ENGLAND:
-  #   url: http://localhost:8000/v1  # VLLM server URL (start with: python games/evaluation/start_vllm.py --model-path /path/to/model)
-  #   model_name: local_model  # Model name served by VLLM (must match --model-name in start_vllm.py)
-  #   # temperature: 0.7  # Optional, uses default_model configuration
-  #   # max_tokens: 2048  # Optional
-  #   agent_config:
+  #   model:
+  #     url: http://localhost:8000/v1  # VLLM server URL (start with: python games/evaluation/start_vllm.py --model-path /path/to/model)
+  #     model_name: local_model  # Model name served by VLLM (must match --model-name in start_vllm.py)
+  #   agent:
   #     type: YourCustomAgent
   #     kwargs:
   #       sys_prompt: ""
   
-  # Example 2: Power with custom model (uses default agent_config)
+  # Example 2: Power with custom model (uses default agent)
   # FRANCE:
-  #   model_name: qwen-max
-  
-  default:
-    model_name: qwen-plus
+  #   model:
+  #     model_name: qwen-max

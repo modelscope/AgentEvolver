@@ -1,20 +1,20 @@
 # Default configuration for Avalon game
 # This file contains default settings that can be inherited by other config files
 
-# Default model configuration
+# Default role configuration
 # Used for roles not configured in roles, or as default values for optional parameters in roles
-default_model:
-  url:  # Will be read from OPENAI_BASE_URL environment variable
-  api_key:  # Will be read from OPENAI_API_KEY environment variable
-  model_name: qwen-plus
-  # model_name: qwen3-30b-a3b-instruct-2507
-  temperature: 0.7
-  max_tokens: 2048
-  stream: false
+default_role:
   trainable: false
   act_by_user: false
-  # Default agent_config for all roles
-  agent_config:
+  model:
+    url:  # Will be read from OPENAI_BASE_URL environment variable
+    api_key:  # Will be read from OPENAI_API_KEY environment variable
+    model_name: qwen-plus
+    # model_name: qwen3-30b-a3b-instruct-2507
+    temperature: 0.7
+    max_tokens: 2048
+    stream: false
+  agent:
     type: ThinkingReActAgent
     kwargs: {}
 
@@ -29,38 +29,45 @@ game:
 # 
 # Configuration Priority:
 #   1. Role-specific settings in 'roles' section (if specified)
-#   2. Default settings in 'default_model' section
+#   2. Default settings in 'default_role' section
 #
-# Agent Configuration (agent_config):
-#   Use agent_config to specify agent type and all components (memory, formatter, etc.)
-#   This makes it easy to customize agents by only modifying config files.
+# Role Configuration Structure:
+#   Each role can have 'model' and 'agent' sub-sections:
+#     model: Model configuration (see create_model_from_config)
+#     agent: Agent configuration with type and kwargs
 #
-#   Structure:
-#     agent_config:
-#       type: AgentClass  # Required. Can be:
-#                         #   - Short form: "ThinkingReActAgent" (from games.agents)
-#                         #   - Full path: "games.agents.thinking_react_agent.ThinkingReActAgent"
-#                         #   - Custom: "your_module.YourAgentClass"
-#       kwargs:           # Agent constructor arguments
-#         sys_prompt: ""  # System prompt (optional, defaults to "")
-#         memory:         # Memory configuration (optional, defaults to InMemoryMemory)
-#           type: InMemoryMemory
-#           kwargs: {}
-#         formatter:      # Formatter configuration (optional, defaults to SecureMultiAgentFormatter)
-#           type: SecureMultiAgentFormatter
-#           kwargs:
-#             max_tokens: 1000
-#             preserved_agent_names: ["Moderator"]
-#         toolkit:        # Toolkit configuration (optional, defaults to Toolkit)
-#           type: Toolkit
-#           kwargs: {}
-#         # Note: 'name' should NOT be in kwargs, it will be set automatically based on player_id
+#   Agent Configuration (agent):
+#     Use agent to specify agent type and all components (memory, formatter, etc.)
+#     This makes it easy to customize agents by only modifying config files.
+#
+#     Structure:
+#       agent:
+#         type: AgentClass  # Required. Can be:
+#                           #   - Short form: "ThinkingReActAgent" (from games.agents)
+#                           #   - Full path: "games.agents.thinking_react_agent.ThinkingReActAgent"
+#                           #   - Custom: "your_module.YourAgentClass"
+#         kwargs:           # Agent constructor arguments
+#           sys_prompt: ""  # System prompt (optional, defaults to "")
+#           memory:         # Memory configuration (optional, defaults to InMemoryMemory)
+#             type: InMemoryMemory
+#             kwargs: {}
+#           formatter:      # Formatter configuration (optional, defaults to SecureMultiAgentFormatter)
+#             type: SecureMultiAgentFormatter
+#             kwargs:
+#               max_tokens: 1000
+#               preserved_agent_names: ["Moderator"]
+#           toolkit:        # Toolkit configuration (optional, defaults to Toolkit)
+#             type: Toolkit
+#             kwargs: {}
+#           # Note: 'name' should NOT be in kwargs, it will be set automatically based on player_id
 #
 #   Examples:
-#     # Example 1: Full agent_config with custom memory and formatter
+#     # Example 1: Role with custom model and agent
 #     merlin:
-#       model_name: qwen2.5-32b-instruct
-#       agent_config:
+#       model:
+#         model_name: qwen2.5-32b-instruct
+#         temperature: 0.7
+#       agent:
 #         type: ThinkingReActAgent
 #         kwargs:
 #           sys_prompt: "You are Merlin, a good character..."
@@ -73,50 +80,56 @@ game:
 #               max_tokens: 1000
 #               preserved_agent_names: ["Moderator"]
 #
-#     # Example 2: Custom agent with custom memory
+#     # Example 2: Role with custom agent, default model
+#     servant_0:
+#       agent:
+#         type: ThinkingReActAgent
+#         kwargs:
+#           sys_prompt: "You are a servant..."
+#
+#     # Example 3: Role with local VLLM server
 #     servant_1:
-#       url: http://localhost:8000/v1  # VLLM server URL
-#       model_name: local_model
-#       agent_config:
-#         type: YourCustomAgent  # Your custom agent class
+#       model:
+#         url: http://localhost:8000/v1  # VLLM server URL
+#         model_name: local_model
+#       agent:
+#         type: YourCustomAgent
 #         kwargs:
 #           sys_prompt: ""
 #           memory:
 #             type: SlidingWindowMemory  # Custom memory
 #             kwargs: {}
 #
-#     # Example 3: Minimal config (uses defaults for memory, formatter, toolkit)
+#     # Example 4: Role with minimal config (inherits all defaults)
 #     minion:
-#       model_name: qwen-max
-#       agent_config:
-#         type: ThinkingReActAgent
-#         kwargs:
-#           sys_prompt: ""
+#       model:
+#         model_name: qwen-max
 
 roles:
-  # Example 1: Role with custom model (uses default agent_config)
+  # Example 1: Role with custom model (uses default agent)
   # merlin:
-  #   model_name: qwen2.5-32b-instruct
-  #   # temperature: 0.7  # Optional, uses default_model configuration
-  #   # max_tokens: 2048  # Optional
+  #   model:
+  #     model_name: qwen2.5-32b-instruct
+  #     # temperature: 0.7  # Optional, uses default_role.model configuration
   
-  # Example 2: Role with custom agent_config
+  # Example 2: Role with custom agent, default model
   # servant_0:
-  #   model_name: qwen2.5-32b-instruct
-  #   agent_config:
+  #   agent:
   #     type: ThinkingReActAgent
   #     kwargs:
   #       sys_prompt: "You are a servant..."
   
   # Example 3: Role with local VLLM server
   # servant_1:
-  #   url: http://localhost:8000/v1  # VLLM server URL (start with: python games/evaluation/start_vllm.py --model-path /path/to/model)
-  #   model_name: local_model  # Model name served by VLLM (must match --model-name in start_vllm.py)
-  #   agent_config:
+  #   model:
+  #     url: http://localhost:8000/v1  # VLLM server URL (start with: python games/evaluation/start_vllm.py --model-path /path/to/model)
+  #     model_name: local_model  # Model name served by VLLM (must match --model-name in start_vllm.py)
+  #   agent:
   #     type: YourCustomAgent
   #     kwargs:
   #       sys_prompt: ""
   
   # Example 4: Role with minimal config (inherits all defaults)
   # minion:
-  #   model_name: qwen-max
+  #   model:
+  #     model_name: qwen-max

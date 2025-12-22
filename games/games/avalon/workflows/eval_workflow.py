@@ -15,6 +15,7 @@ from games.utils import (
     cleanup_agent_llm_clients,
     create_agent_from_config,
     create_model_from_config,
+    deep_merge,
 )
 from agentevolver.schema.task import Task
 from agentevolver.schema.trajectory import Trajectory
@@ -60,53 +61,61 @@ class EvalAvalonWorkflow:
         self.config_dict = config_dict
         self.role_manager: Optional[RoleManager] = None
     
-    def _get_model_config(self, indexed_role: str, base_role: str) -> Dict[str, Any]:
+    def _get_role_config(self, indexed_role: str, base_role: str) -> Dict[str, Any]:
         """
-        Get model configuration for a role.
-        Role-specific config overrides default_model config.
+        Get complete role configuration (including model, agent, trainable, act_by_user, etc.).
+        Role-specific config overrides default_role config.
         """
         if self.config_dict is None:
             raise ValueError("config_dict is None. Please check your configuration file.")
         
-        default_model = self.config_dict.get('default_model', {})
+        default_role = self.config_dict.get('default_role', {})
         roles_config = self.config_dict.get('roles', {})
         
-        if not isinstance(default_model, dict):
-            default_model = {}
+        if not isinstance(default_role, dict):
+            default_role = {}
         if not isinstance(roles_config, dict):
             roles_config = {}
         
-        # Start with default_model config
-        config = copy.deepcopy({**default_model})
+        # Start with default_role config
+        role_config = copy.deepcopy(default_role)
         
         # Find role-specific config (try indexed_role first, then base_role)
-        role_config = next(
+        specific_role_config = next(
             (v for k, v in roles_config.items() 
              if k.lower() in [indexed_role.lower(), base_role.lower()]),
             None
         )
         
-        # Override with role-specific config
-        if role_config:
-            config.update(role_config)
-            # Handle model_name -> name mapping
-            if 'model_name' in role_config:
-                config['model_name'] = role_config['model_name']
+        # Override with role-specific config if present
+        if specific_role_config and isinstance(specific_role_config, dict):
+            # Deep merge: recursively merge nested dicts
+            role_config = deep_merge(role_config, specific_role_config)
         
-        return config
+        return role_config
+    
+    def _get_model_config(self, indexed_role: str, base_role: str) -> Dict[str, Any]:
+        """Get model configuration for a role."""
+        role_config = self._get_role_config(indexed_role, base_role)
+        return role_config.get('model', {})
+    
+    def _get_agent_config(self, indexed_role: str, base_role: str) -> Dict[str, Any]:
+        """Get agent configuration for a role."""
+        role_config = self._get_role_config(indexed_role, base_role)
+        return role_config.get('agent', {})
     
     def _create_agent(self, player_id: int, indexed_role: str, base_role: str):
         """Create an agent for a player using create_agent_from_config."""
         model_config = self._get_model_config(indexed_role, base_role)
+        agent_config = self._get_agent_config(indexed_role, base_role)
         
         # Create model using factory function
         model = create_model_from_config(model_config)
         
-        # Get agent_config from model_config (should be in default_model or role-specific)
-        agent_config = model_config.get('agent_config')
-        if agent_config is None:
+        # Validate agent_config
+        if not agent_config:
             raise ValueError(
-                f"agent_config is required. Please specify it in default_model or role-specific config for {indexed_role}."
+                f"agent config is required. Please specify it in default_role.agent or role-specific config for {indexed_role}."
             )
         
         return create_agent_from_config(

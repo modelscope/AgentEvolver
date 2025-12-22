@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Common utility functions shared by all games."""
 import asyncio
+import copy
 import importlib
 from pathlib import Path
 from typing import Any, Dict, List, Type
@@ -104,6 +105,37 @@ async def cleanup_agent_llm_clients(agents: List[Any]) -> None:
             )
 
 
+def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Deep merge two dictionaries recursively.
+    
+    Values from override will override values in base, but nested dicts will be merged
+    recursively instead of being replaced entirely.
+    
+    Args:
+        base: Base dictionary to merge into
+        override: Dictionary with values to override/merge into base
+        
+    Returns:
+        A new dictionary with merged values
+        
+    Example:
+        >>> base = {'model': {'name': 'qwen', 'temp': 0.7}, 'trainable': False}
+        >>> override = {'model': {'name': 'qwen-max'}}
+        >>> deep_merge(base, override)
+        {'model': {'name': 'qwen-max', 'temp': 0.7}, 'trainable': False}
+    """
+    result = copy.deepcopy(base)
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            # Recursively merge nested dictionaries
+            result[key] = deep_merge(result[key], value)
+        else:
+            # Direct assignment for non-dict values or when base doesn't have this key
+            result[key] = copy.deepcopy(value)
+    return result
+
+
 def load_agent_class(agent_class_path: str | None = None) -> Type[Any]:
     """
     Dynamically load an agent class from a module path string.
@@ -174,6 +206,7 @@ __all__ = [
     "load_config",
     "cleanup_agent_llm_clients",
     "load_agent_class",
+    "deep_merge",
     "create_agent_from_config",
     "create_model_from_config",
     "create_memory_from_config",
