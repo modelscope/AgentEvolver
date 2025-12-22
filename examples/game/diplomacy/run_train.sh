@@ -1,15 +1,5 @@
-#!/bin/bash
 # ---- Start Training for Diplomacy Game ----
-# This script trains the Diplomacy game using DiplomacyWorkflow
-# Training tasks are loaded from games/games/diplomacy/train_tasks.parquet
-# export RAY_DEBUG_POST_MORTEM=1
-# source /mnt/data/yunpeng.zyp/miniconda3/etc/profile.d/conda.sh
-# conda activate verl
-
-. /root/miniconda3/etc/profile.d/conda.sh;
-conda activate beyondagent
-
-cd /mnt/data/maixinji/astune/tutorial/debug/BeyondAgent
+# conda activate agentevolver
 
 PROJECT_DIR="$(pwd)"
 CONFIG_PATH="$PROJECT_DIR/examples/game/diplomacy"
@@ -17,16 +7,6 @@ TRAIN_TASKS_FILE="$PROJECT_DIR/games/games/diplomacy/train_tasks.parquet"
 VAL_TASKS_FILE="$PROJECT_DIR/games/games/diplomacy/train_tasks.parquet"
 current_time=$(date "+%Y%m%d_%H%M%S")
 log_file="log_diplomacy_train_${current_time}.log"
-
-echo "Starting Diplomacy game training..."
-echo "Train tasks file: $TRAIN_TASKS_FILE"
-echo "Log file: $log_file"
-echo ""
-
-export OPENAI_API_KEY=""
-export API_KEY=""
-export DASHSCOPE_API_KEY=""
-export SWANLAB_API_KEY=""
 
 python3 -m agentevolver.main_ppo \
     --config-path="$CONFIG_PATH" \
@@ -55,7 +35,7 @@ python3 -m agentevolver.main_ppo \
     data.val_type="val" \
     algorithm.adv_estimator=grpo \
     algorithm.use_kl_in_reward=False \
-    actor_rollout_ref.model.path=/mnt/data/maixinji/Pretrain_models/Qwen3-8B \
+    actor_rollout_ref.model.path=Qwen/Qwen3-8B \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.rollout.use_qwen3=False \
@@ -69,7 +49,7 @@ python3 -m agentevolver.main_ppo \
     actor_rollout_ref.rollout.name=vllm \
     actor_rollout_ref.rollout.mode=async \
     actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
-    actor_rollout_ref.rollout.n=32 \
+    actor_rollout_ref.rollout.n=64 \
     actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=25580 \
     actor_rollout_ref.rollout.max_env_worker=32 \
     actor_rollout_ref.rollout.context_template="linear" \
@@ -99,6 +79,3 @@ python3 -m agentevolver.main_ppo \
     task_manager.mixture.shuffle=True \
     attribution_driven_credit_assignment.enable=False \
     2>&1 | tee "$log_file"
-
-echo ""
-echo "Training completed. Log saved to: $log_file"

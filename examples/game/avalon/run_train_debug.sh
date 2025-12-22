@@ -1,16 +1,5 @@
-#!/bin/bash
 # ---- Start Training for Avalon Game ----
-# This script trains the Avalon game using AvalonRolloutWorkflow
-# Training tasks are loaded from games/avalon/train_tasks.jsonl
-# export RAY_DEBUG_POST_MORTEM=1
-
-# source /mnt/data/yunpeng.zyp/miniconda3/etc/profile.d/conda.sh
-# conda activate verl
-
-. /mnt/data/zouanni.zan/miniconda3/etc/profile.d/conda.sh;
-conda activate agentevolver
-
-cd /mnt/data/zouanni.zan/codes_dev/BeyondAgent
+# conda activate agentevolver
 
 PROJECT_DIR="$(pwd)"
 CONFIG_PATH="$PROJECT_DIR/config"
@@ -18,15 +7,6 @@ TRAIN_TASKS_FILE="$PROJECT_DIR/games/avalon/train_tasks.parquet"
 VAL_TASKS_FILE="$PROJECT_DIR/games/avalon/train_tasks.parquet"
 current_time=$(date "+%Y%m%d_%H%M%S")
 log_file="log_avalon_train_${current_time}.log"
-
-echo "Starting Avalon game training..."
-echo "Train tasks file: $TRAIN_TASKS_FILE"
-echo "Log file: $log_file"
-echo ""
-
-export API_KEY=""
-export DASHSCOPE_API_KEY=""
-export SWANLAB_API_KEY=""
 
 python3 -m agentevolver.main_ppo \
     --config-path="$PROJECT_DIR/examples/game/avalon" \
@@ -55,7 +35,7 @@ python3 -m agentevolver.main_ppo \
     data.val_type="val" \
     algorithm.adv_estimator=grpo \
     algorithm.use_kl_in_reward=False \
-    actor_rollout_ref.model.path=/mnt/data_aisys_cpfs/xielipeng.xlp/models/Qwen3-4B \
+    actor_rollout_ref.model.path=Qwen/Qwen3-4B \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.rollout.use_qwen3=False \
@@ -99,7 +79,4 @@ python3 -m agentevolver.main_ppo \
     task_manager.mixture.shuffle=True \
     attribution_driven_credit_assignment.enable=False \
     2>&1 | tee "$log_file"
-
-echo ""
-echo "Training completed. Log saved to: $log_file"
 
