@@ -277,9 +277,9 @@ python -m agentevolver.main_ppo \
 Games and evaluations are controlled via **YAML configuration files**. Configuration structure:
 
 - **Game settings** (`game`) – Game-specific parameters (e.g., `num_players`, `language`)
-- **Model configuration** – Priority order:
+- **Role configuration** – Priority order:
   1. **Role-specific settings** (`roles` section) – Each role uses its own configuration if specified
-  2. **Default model settings** (`default_model`) – Used as fallback when a role's configuration is missing
+  2. **Default role settings** (`default_role`) – Used as fallback when a role's configuration is missing
 
 Example:
 
@@ -288,10 +288,14 @@ Example:
       num_players: 5
       language: en
     
-    default_model:
-      model_name: qwen-plus
-      temperature: 0.7
-      agent_config:
+    default_role:
+      trainable: false
+      act_by_user: false
+      model:
+        model_name: qwen-plus
+        temperature: 0.7
+        max_tokens: 2048
+      agent:
         type: ThinkingReActAgent
         kwargs:
           sys_prompt: ""
@@ -301,7 +305,8 @@ Example:
     
     roles:
       assassin:
-        model_name: custom-model  # assassin uses custom-model, others use qwen-plus  
+        model:
+          model_name: custom-model  # assassin uses custom-model, others use qwen-plus  
 
 
 
