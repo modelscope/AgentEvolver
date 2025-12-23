@@ -322,8 +322,9 @@ def start_game_thread(
                 preset_roles_tuples: list[tuple[int, str, bool]] | None = None
                 if preset_roles:
                     try:
+                        from games.games.avalon.engine import AvalonBasicConfig
                         preset_roles_tuples = [
-                            (int(x.get("role_id")), str(x.get("role_name")), bool(x.get("is_good")))
+                            (AvalonBasicConfig.ROLES_REVERSE.get(str(x.get("role_name")), 0), str(x.get("role_name")), bool(x.get("is_good")))
                             for x in preset_roles
                             if isinstance(x, dict)
                         ]
@@ -331,7 +332,6 @@ def start_game_thread(
                         pass
                 
                 portrait_ids = selected_portrait_ids if selected_portrait_ids else list(range(1, num_players + 1))
-                
                 task = loop.create_task(run_avalon(
                     state_manager=state_manager,
                     num_players=num_players,

@@ -172,7 +172,9 @@ AgentEvolver is designed to support **end-to-end training of AI agents in social
 
 **Example:** Training curve for the assassin role in Avalon
 
+<p align="center">
 <img src="../docs/img/games/training_curve.jpg" alt="Training Curve" width="80%">
+</p>
 
 *The training curve above shows the performance of the **assassin** role in Avalon. The assassin uses **qwen2.5-14B** as the base model, while all other roles use **qwen-plus**. All roles use the default **ThinkingReActAgent**, which follows a think-then-speak pattern.*
 

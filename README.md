@@ -159,7 +159,9 @@ Key capabilities include:
 
 **Training Example:** Training curve for the assassin role in Avalon
 
+<p align="center">
 <img src="docs/img/games/training_curve.jpg" alt="Training Curve" width="80%">
+</p>
 
 For detailed documentation, quick start guides, and configuration examples, see the **[Game Arena README](games/README.md)**.
 
