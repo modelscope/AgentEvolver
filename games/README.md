@@ -53,113 +53,35 @@ AgentEvolver provides a built-in evaluation framework to **systematically compar
 
 > **Total Games:** `200` | **Update Time:** `2025-12-18 16:50:15`｜**Game Balance:** `94.7%` (Min: 162, Max: 171)
 
-<table style="width: 100%; border-collapse: collapse; border: 2px solid #333; margin: 20px 0;">
-<thead>
-<tr style="background-color: #f0f0f0; border-bottom: 2px solid #333;">
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>Rank</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>Model Name</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>Overall WR</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>Games</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>🧙‍♂️ Merlin</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>🛡️ Servant</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>🗡️ Assassin</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>😈 Minion</strong></th>
-<th style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>📈 Avg</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr style="background-color: #fff9e6;">
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">🥇</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>qwen3-max</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>61.4%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">171</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">28.6%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>48.3%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>90.2%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">72.7%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>60.0%</strong></td>
-</tr>
-<tr>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">🥈</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>qwen3-235b-a22b</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>51.5%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">165</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>42.4%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">30.3%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">80.0%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">75.0%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">56.9%</td>
-</tr>
-<tr>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">🥉</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>qwen-plus</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>49.1%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">169</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">37.1%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">27.0%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">81.8%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">68.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">53.6%</td>
-</tr>
-<tr>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">4</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">qwen2.5-32b-instruct</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">45.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">163</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">27.3%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">25.8%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">64.7%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">79.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">49.3%</td>
-</tr>
-<tr>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">5</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">qwen3-30b-a3b</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">39.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">170</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">20.0%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">28.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">61.1%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>83.3%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">48.2%</td>
-</tr>
-<tr>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">6</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">qwen2.5-14b-instruct</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">25.9%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">162</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">13.9%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">11.4%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">46.2%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">56.7%</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">32.0%</td>
-</tr>
-<tr style="border-top: 2px solid #333;">
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">---</td>
-</tr>
-<tr style="background-color: #f5f5f5; font-weight: bold;">
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;">💡</td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>Average (Avg)</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>45.5%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>166</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>28.0%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>28.0%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>72.0%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>72.0%</strong></td>
-<td style="padding: 10px; text-align: center; border: 1px solid #ddd;"><strong>50.0%</strong></td>
-</tr>
-</tbody>
-</table>
+| **Rank** |    **Model Name**    | **Overall WR** | **Games** | **🧙‍♂️ Merlin** | **🛡️ Servant** | **🗡️ Assassin** | **😈 Minion** | **📈 Avg** |
+| :------: | :------------------: | :------------: | :-------: | :-----------: | :-----------: | :------------: | :----------: | :-------: |
+|    🥇     |    **qwen3-max**     |   **61.4%**    |    171    |     28.6%     |   **48.3%**   |   **90.2%**    |    72.7%     | **60.0%** |
+|    🥈     | **qwen3-235b-a22b**  |   **51.5%**    |    165    |   **42.4%**   |     30.3%     |     80.0%      |    75.0%     |   56.9%   |
+|    🥉     |    **qwen-plus**     |   **49.1%**    |    169    |     37.1%     |     27.0%     |     81.8%      |    68.4%     |   53.6%   |
+|    4     | qwen2.5-32b-instruct |     45.4%      |    163    |     27.3%     |     25.8%     |     64.7%      |    79.4%     |   49.3%   |
+|    5     |    qwen3-30b-a3b     |     39.4%      |    170    |     20.0%     |     28.4%     |     61.1%      |  **83.3%**   |   48.2%   |
+|    6     | qwen2.5-14b-instruct |     25.9%      |    162    |     13.9%     |     11.4%     |     46.2%      |    56.7%     |   32.0%   |
+|   ---    |         ---          |      ---       |    ---    |      ---      |      ---      |      ---       |     ---      |    ---    |
+|    💡     |  **Average (Avg)**   |   **45.5%**    |  **166**  |   **28.0%**   |   **28.0%**   |   **72.0%**    |  **72.0%**   | **50.0%** |
 
 
+
+#### ⚔️ DIPLOMACY ARENA LEADERBOARD
+
+> **Total Games:** `100` | **Update Time:** `2025-12-22 19:28:32` ｜ **Game Balance:** `1.000` (Min: 1.000, Max: 1.000)
+>
+> We use each power’s number of supply centers at game end divided by 18 (solo-victory threshold) as the game score.
+
+| **Rank** |    **Model Name**    | **Overall** | **Games** | **AUSTRIA** | **ENGLAND** | **FRANCE** | **GERMANY** | **ITALY** | **RUSSIA** | **TURKEY** |  **Avg**  |
+| :------: | :------------------: | :---------: | :-------: | :---------: | :---------: | :--------: | :---------: | :-------: | :--------: | :--------: | :-------: |
+|    🥇     |    **qwen3-max**     |  **0.316**  |    100    |    0.265    |  **0.363**  |   0.324    |  **0.296**  | **0.246** | **0.384**  | **0.318**  | **0.314** |
+|    🥈     | **qwen3-235b-a22b**  |    0.306    |    100    |  **0.306**  |    0.306    |   0.312    |    0.294    |   0.243   |   0.340    |   0.309    |   0.301   |
+|    🥉     |    **qwen-plus**     |    0.298    |    100    |    0.235    |    0.325    | **0.359**  |    0.286    |   0.230   |   0.366    |   0.274    |   0.296   |
+|    4     |    qwen3-30b-a3b     |    0.247    |    100    |    0.272    |    0.204    |   0.231    |    0.286    |   0.200   |   0.298    |   0.231    |   0.246   |
+|    5     | qwen2.5-32b-instruct |    0.200    |    100    |    0.190    |    0.203    |   0.229    |    0.184    |   0.163   |   0.213    |   0.208    |   0.199   |
+|    6     | qwen2.5-14b-instruct |    0.178    |    100    |    0.150    |    0.185    |   0.211    |    0.160    |   0.185   |   0.170    |   0.183    |   0.178   |
+|   ---    |         ---          |     ---     |    ---    |     ---     |     ---     |    ---     |     ---     |    ---    |    ---     |    ---     |    ---    |
+|    💡     |  **Average (Avg)**   |  **0.257**  |  **100**  |  **0.238**  |  **0.266**  | **0.283**  |  **0.251**  | **0.206** | **0.297**  | **0.254**  | **0.256** |
 
 ---
 
