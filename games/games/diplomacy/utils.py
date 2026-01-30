@@ -122,7 +122,7 @@ async def save_game_logs(
     Save game logs, including agent memories and game process logs.
     """
     def convert_to_serializable(obj: Any) -> Any:
-        """Convert numpy types to Python native types."""
+        """Convert numpy types and complex objects to Python native types."""
         if isinstance(obj, (np.integer, np.floating, np.bool_)):
             return obj.item()
         if isinstance(obj, np.ndarray):
@@ -131,6 +131,9 @@ async def save_game_logs(
             return {k: convert_to_serializable(v) for k, v in obj.items()}
         if isinstance(obj, (list, tuple)):
             return [convert_to_serializable(item) for item in obj]
+        # Handle objects with to_dict() method (e.g., agentscope Msg objects)
+        if hasattr(obj, 'to_dict'):
+            return convert_to_serializable(obj.to_dict())
         return obj
     
     # Extract model names from agents if available
@@ -166,23 +169,50 @@ async def save_game_logs(
         json.dump(game_log_data, f, ensure_ascii=False, indent=2)
     # print(f"{Colors.OKBLUE}Game log saved to {game_log_path}{Colors.ENDC}")
     
-    # Save each agent's memory
+    # Save each agent's memory and model call history
     for agent in agents:
         try:
+            memory_data = {
+                "agent_name": agent.name,
+                "power_name": getattr(agent, 'power_name', 'Unknown'),
+            }
+            
+            # Save memory if available
             if hasattr(agent, 'memory') and agent.memory is not None:
                 agent_memory = await agent.memory.get_memory()
-                memory_data = {
-                    "agent_name": agent.name,
-                    "power_name": getattr(agent, 'power_name', 'Unknown'),
-                    "memory_count": len(agent_memory),
-                    "memory": [msg.to_dict() for msg in agent_memory],
-                }
+                memory_data["memory_count"] = len(agent_memory)
+                memory_data["memory"] = [msg.to_dict() for msg in agent_memory]
+            
+            # Save model call history if available (for ThinkingReActAgent)
+            if hasattr(agent, 'model_call_history'):
+                # Convert model call history to serializable format
+                serializable_history = []
+                for call_record in agent.model_call_history:
+                    serializable_record = {
+                        "prompt": call_record.get("prompt", ""),
+                        "response": call_record.get("response", ""),
+                        "response_msg": convert_to_serializable(call_record.get("response_msg", {})),
+                    }
+                    # If call_record has tokens field, also save it
+                    if "tokens" in call_record:
+                        serializable_record["tokens"] = call_record.get("tokens")
+                    serializable_history.append(serializable_record)
+                memory_data["model_call_history"] = serializable_history
+                memory_data["model_call_count"] = len(serializable_history)
                 
+                # Log model call history to logger
+                # logger.info(f"Agent {agent.name} model call history: {memory_data['model_call_count']} calls")
+                # for idx, call_record in enumerate(serializable_history):
+                #     logger.debug(f"Agent {agent.name} call {idx + 1}: prompt length={len(call_record.get('prompt', ''))}, response length={len(call_record.get('response', ''))}")
+            
+            # Only save if we have data (memory or model_call_history)
+            if "memory" in memory_data or "model_call_history" in memory_data:
                 memory_path = os.path.join(game_log_dir, f"{agent.name}_memory.json")
                 with open(memory_path, 'w', encoding='utf-8') as f:
                     json.dump(memory_data, f, ensure_ascii=False, indent=2)
+                logger.info(f"Agent {agent.name} memory and model calls saved to {memory_path}")
         except Exception as e:
-            print(f"{Colors.WARNING}Failed to save memory for agent {agent.name}: {e}{Colors.ENDC}")
+            logger.warning(f"Failed to save memory for agent {agent.name}: {e}")
 
 # Extract message parsing logic as independent method
 def parse_negotiation_messages(raw: str, power_name: str, power_names: List[str]) -> List[Dict]:
@@ -571,9 +601,9 @@ class GameLogger:
                     agent_data["model_call_count"] = len(serializable_history)
                     
                     # Log model call history to logger
-                    logger.info(f"Agent {agent.name} model call history: {agent_data['model_call_count']} calls")
-                    for idx, call_record in enumerate(serializable_history):
-                        logger.debug(f"Agent {agent.name} call {idx + 1}: prompt length={len(call_record.get('prompt', ''))}, response length={len(call_record.get('response', ''))}")
+                    # logger.info(f"Agent {agent.name} model call history: {agent_data['model_call_count']} calls")
+                    # for idx, call_record in enumerate(serializable_history):
+                    #     logger.debug(f"Agent {agent.name} call {idx + 1}: prompt length={len(call_record.get('prompt', ''))}, response length={len(call_record.get('response', ''))}")
                 
                 # Only save if we have data
                 if "memory" in agent_data or "model_call_history" in agent_data:

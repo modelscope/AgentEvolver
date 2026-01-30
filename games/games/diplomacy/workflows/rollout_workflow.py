@@ -126,7 +126,7 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
         # Check if trainable is explicitly set to True
         return role_config.get('trainable', False) is True
 
-    def _create_agent(self, player_id: int, indexed_role: str, base_role: str):
+    def _create_agent(self, player_id: int, indexed_role: str, base_role: str, game_id: Union[int, str], log_dir: Optional[str] = None):
         """Create an agent for a power using create_agent_from_config."""
         model_config = self._get_model_config(indexed_role, base_role)
         agent_config = self._get_agent_config(indexed_role, base_role)
@@ -149,12 +149,14 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
             model=model,
             name=f"Player{player_id}",
             actor_rollout_ref=self.config.actor_rollout_ref,
+            game_id=str(game_id),
+            log_dir=log_dir,
         )
 
-    def _create_agents(self, power_manager: PowerManager) -> List[Any]:
+    def _create_agents(self, power_manager: PowerManager, game_id: Union[int, str], log_dir: Optional[str] = None) -> List[Any]:
         """Create all agents for the game."""
         return [
-            self._create_agent(i, power_manager.get_power_name(i), power_manager.get_power_name(i))
+            self._create_agent(i, power_manager.get_power_name(i), power_manager.get_power_name(i), game_id, log_dir)
             for i in range(len(power_manager))
         ]
 
@@ -221,22 +223,19 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
         )
         self.power_manager = PowerManager(power_names)
 
-        # Create agents
-        self.agents = self._create_agents(self.power_manager)
+        # Generate unique game_id (moved up to pass to agents)
+        if self.data_id == "0" and self.rollout_id == "0":
+            game_id = 0
+        else:
+            # Generate unique non-zero game_id by combining data_id and rollout_id
+            try:
+                data_id_int = int(self.data_id) if self.data_id.isdigit() else 9999
+                rollout_id_int = int(self.rollout_id) if self.rollout_id.isdigit() else 9999
+                game_id = data_id_int * 1000 + rollout_id_int + 1  # Ensure non-zero
+            except (ValueError, AttributeError):
+                game_id = 9999
         
-        # Identify training agents
-        self.training_indices = self._identify_training_agents()
-        
-        # Only enable console output for the first task (data_id="0" and rollout_id="0")
-        # Disable console output for all other tasks to reduce log noise
-        is_first_task = (self.data_id == "0" and self.rollout_id == "0")
-        for i in range(len(self.agents)):
-            if i in self.training_indices:
-                self.agents[i].set_console_output_enabled(is_first_task)
-            else:    
-                self.agents[i].set_console_output_enabled(False)
-
-        # Run game
+        # Calculate log_dir BEFORE creating agents so we can pass it to them
         # Generate unique timestamp for parallel rollouts by including data_id and rollout_id
         # This prevents multiple parallel rollouts from overwriting each other's logs
         base_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -255,16 +254,28 @@ class DiplomacyWorkflow(BaseAgentscopeWorkflow):
         if unique_timestamp:
             log_dir = os.path.join(log_dir, unique_timestamp)
 
+        # Create agents
+        self.agents = self._create_agents(self.power_manager, game_id, log_dir)
+        
+        # Identify training agents
+        self.training_indices = self._identify_training_agents()
+        
+        # Only enable console output for the first task (data_id="0" and rollout_id="0")
+        # Disable console output for all other tasks to reduce log noise
+        is_first_task = (self.data_id == "0" and self.rollout_id == "0")
+        for i in range(len(self.agents)):
+            if i in self.training_indices:
+                self.agents[i].set_console_output_enabled(is_first_task)
+            else:    
+                self.agents[i].set_console_output_enabled(False)
+
+        # Run game
+        # game_id and log_dir are already generated above
+        
         if self.data_id == "0" and self.rollout_id == "0":
-            game_id = 0
+            pass # game_id logic handled above
         else:
-            # Generate unique non-zero game_id by combining data_id and rollout_id
-            try:
-                data_id_int = int(self.data_id) if self.data_id.isdigit() else 9999
-                rollout_id_int = int(self.rollout_id) if self.rollout_id.isdigit() else 9999
-                game_id = data_id_int * 1000 + rollout_id_int + 1  # Ensure non-zero
-            except (ValueError, AttributeError):
-                game_id = 9999
+            pass # game_id logic handled above
         
         diplomacy_game = DiplomacyGame(
             agents=self.agents,

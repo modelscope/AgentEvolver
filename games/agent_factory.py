@@ -37,7 +37,7 @@ Example:
 import os
 import threading
 import importlib
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, Union
 
 from agentscope.model import ChatModelBase, OpenAIChatModel
 from agentscope.memory import MemoryBase, InMemoryMemory
@@ -46,7 +46,8 @@ from agentscope.token import HuggingFaceTokenCounter
 
 from games.utils import load_agent_class
 from games.agents.secure_multi_agent_formatter import SecureMultiAgentFormatter
-from games.agents.memory import SlidingWindowMemory
+# Note: SummarizedMemory and SlidingWindowMemory are imported lazily in create_memory_from_config
+# to avoid circular import issues
 
 # Lock for protecting HuggingFaceTokenCounter initialization from concurrent access
 _tokenizer_lock = threading.Lock()
@@ -130,6 +131,9 @@ def create_model_from_config(
 
 def create_memory_from_config(
     memory_config: Optional[Dict[str, Any]] = None,
+    agent_id: Optional[str] = None,
+    game_id: Optional[Union[str, int]] = None,
+    log_dir: Optional[str] = None,
 ) -> MemoryBase:
     """Create a memory instance from configuration.
     
@@ -138,6 +142,9 @@ def create_memory_from_config(
             - type: Memory class name or full path (e.g., "InMemoryMemory" or 
                     "games.agents.memory.SlidingWindowMemory")
             - kwargs: Optional keyword arguments for the memory constructor
+        agent_id: Optional agent ID (usually the agent's name) to be passed to memory constructor.
+        game_id: Optional game ID to be passed to memory constructor.
+        log_dir: Optional log directory path to be passed to memory constructor.
     
     Returns:
         A MemoryBase instance. Defaults to InMemoryMemory if config is None.
@@ -155,14 +162,23 @@ def create_memory_from_config(
             'type': 'SlidingWindowMemory',
             'kwargs': {}
         }
-        memory = create_memory_from_config(memory_config)
+        memory = create_memory_from_config(memory_config, agent_id="Player1", game_id="game_123")
         ```
     """
     if memory_config is None:
         return InMemoryMemory()
     
     memory_type = memory_config.get('type', 'InMemoryMemory')
-    memory_kwargs = memory_config.get('kwargs') or {}
+    memory_kwargs = (memory_config.get('kwargs') or {}).copy()
+
+    # Inject contextual parameters if provided
+    # Only if they are not already in kwargs (to allow config override)
+    if agent_id is not None and 'agent_id' not in memory_kwargs:
+        memory_kwargs['agent_id'] = agent_id
+    if game_id is not None and 'game_id' not in memory_kwargs:
+        memory_kwargs['game_id'] = game_id
+    if log_dir is not None and 'log_dir' not in memory_kwargs:
+        memory_kwargs['log_dir'] = log_dir
     
     # Try to import from agentscope.memory first
     try:
@@ -314,6 +330,8 @@ def create_agent_from_config(
     model: ChatModelBase,
     name: str,
     actor_rollout_ref: Optional[Any] = None,
+    game_id: Optional[Union[str, int]] = None,
+    log_dir: Optional[str] = None,
 ) -> Any:
     """Create an agent instance from configuration.
     
@@ -340,6 +358,8 @@ def create_agent_from_config(
             and formatter settings. Can be:
             - `config.actor_rollout_ref` (for rollout workflow)
             - None: Use defaults (for eval workflow)
+        game_id: Optional game ID to be passed to memory constructor.
+        log_dir: Optional log directory path to be passed to memory constructor.
     
     Returns:
         An agent instance.
@@ -415,7 +435,7 @@ def create_agent_from_config(
     # Parse and create memory
     if 'memory' in agent_kwargs:
         memory_config = agent_kwargs.pop('memory')
-        agent_kwargs['memory'] = create_memory_from_config(memory_config)
+        agent_kwargs['memory'] = create_memory_from_config(memory_config, agent_id=name, game_id=game_id, log_dir=log_dir)
     else:
         # Default memory if not specified
         agent_kwargs['memory'] = InMemoryMemory()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unified web server for Avalon + Diplomacy."""
 import asyncio
+import copy
 import json
 import uuid
 from typing import Optional, Dict, Any
@@ -18,6 +19,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from games.web.game_state_manager import GameStateManager
 from games.web.run_web_game import start_game_thread
 from games.utils import load_config
+from games.evaluation.leaderboard.leaderboard_db import LeaderboardDB
+import os
 state_manager = GameStateManager()
 
 app = FastAPI(title="Games Web Interface")
@@ -282,27 +285,32 @@ async def get_options(game: str | None = None):
             web_cfg = load_config(web_config_path)
             
             if isinstance(web_cfg, dict):
-                result["portraits"] = web_cfg.get('portraits', {})
+                portraits_cfg = web_cfg.get('portraits', {}) or {}
+                sanitized_portraits = {}
+                for pid, pdata in portraits_cfg.items():
+                    if not isinstance(pdata, dict):
+                        continue
+                    portrait_copy = copy.deepcopy(pdata)
+                    model_cfg = portrait_copy.get("model")
+                    if isinstance(model_cfg, dict):
+                        model_cfg["api_key"] = ""
+                    sanitized_portraits[pid] = portrait_copy
+                result["portraits"] = sanitized_portraits
+
                 default_role = web_cfg.get("default_role", {})
-                
                 default_model = {}
                 if isinstance(default_role, dict):
-                    model_cfg = default_role.get("model", {})
-                    agent_cfg = default_role.get("agent", {})
+                    model_cfg = default_role.get("model", {}) or {}
+                    agent_cfg = default_role.get("agent", {}) or {}
                     
                     default_model["model_name"] = model_cfg.get("model_name", "")
-                    default_model["api_base"] = model_cfg.get("url", "") or model_cfg.get("api_base", "")
-                    default_model["api_key"] = model_cfg.get("api_key", "")
+                    default_model["api_base"] = model_cfg.get("url", "") or model_cfg.get("api_base", "") or os.getenv("OPENAI_BASE_URL", "")
+                    default_model["api_key"] = ""
                     default_model["temperature"] = model_cfg.get("temperature", 0.7)
                     default_model["max_tokens"] = model_cfg.get("max_tokens", 2048)
                     
                     if agent_cfg:
                         default_model["agent_class"] = agent_cfg.get("type", "")
-                    
-                    if not default_model.get("api_key"):
-                        default_model["api_key"] = os.getenv("OPENAI_API_KEY", "")
-                    if not default_model.get("api_base"):
-                        default_model["api_base"] = os.getenv("OPENAI_BASE_URL", "")
                 
                 result["default_model"] = default_model
         return result
@@ -337,6 +345,118 @@ async def get_options(game: str | None = None):
         }
 
     raise HTTPException(status_code=404, detail="options only for avalon/diplomacy")
+
+
+@app.get("/api/leaderboard/{game}")
+async def get_leaderboard(game: str):
+    """Get leaderboard data for a specific game."""
+    if game not in ["avalon", "diplomacy"]:
+        raise HTTPException(status_code=400, detail="game must be 'avalon' or 'diplomacy'")
+    
+    try:
+        # Load arena config to get models list
+        if game == "avalon":
+            yaml_path = os.environ.get("AVALON_CONFIG_YAML", "games/games/avalon/configs/arena_config.yaml")
+        else:  # diplomacy
+            yaml_path = os.environ.get("DIPLOMACY_CONFIG_YAML", "games/games/diplomacy/configs/arena_config.yaml")
+        
+        config_dict = load_config(yaml_path)
+        arena_config = config_dict.get('arena', {})
+        models = arena_config.get('models', [])
+        
+        # Load leaderboard database
+        project_root = Path(__file__).parent.parent.parent
+        db_path = project_root / f"games/evaluation/leaderboard/leaderboard_{game}.json"
+        
+        if not db_path.exists():
+            # Return empty leaderboard if database doesn't exist
+            # Get role names based on game type
+            if game == "avalon":
+                role_names = ['Merlin', 'Servant', 'Assassin', 'Minion']
+            elif game == "diplomacy":
+                role_names = []  # Will be populated when games are played
+            else:
+                role_names = []
+            
+            return {
+                "game": game,
+                "total_games": 0,
+                "updated_at": "",
+                "balance": {
+                    "min": 0,
+                    "max": 0,
+                    "mean": 0,
+                    "std": 0,
+                    "balance_ratio": 1.0
+                },
+                "role_names": role_names,
+                "models": []
+            }
+        
+        leaderboard_db = LeaderboardDB(str(db_path))
+        leaderboard_data = leaderboard_db.get_leaderboard_data()
+        
+        # Get role names based on game type
+        if game == "avalon":
+            role_names = ['Merlin', 'Servant', 'Assassin', 'Minion']
+        elif game == "diplomacy":
+            # Extract power names from role_stats
+            all_roles = set()
+            for model_stat in leaderboard_data.get('models', {}).values():
+                all_roles.update(model_stat.get('role_stats', {}).keys())
+            role_names = sorted(list(all_roles)) if all_roles else []
+        else:
+            role_names = []
+        
+        # Sort models by Elo (using models list from config for ordering)
+        model_stats = leaderboard_data.get('models', {})
+        config_models = models if isinstance(models, list) else []
+        all_models = list(dict.fromkeys(config_models + list(model_stats.keys())))
+        sorted_models = sorted(all_models,
+                      key=lambda m: model_stats.get(m, {}).get('elo', 0),
+                      reverse=True)
+        
+        # Format response with model names included
+        formatted_models = []
+        for model in sorted_models:
+            if model in model_stats:
+                stats = model_stats[model]
+                formatted_models.append({
+                    "name": model,
+                    "elo": stats.get('elo', 1500),
+                    "win_rate": round(stats.get('win_rate', 0), 1),
+                    "total_games": stats.get('total_games', 0),
+                    "total_wins": stats.get('total_wins', 0),
+                    "role_stats": stats.get('role_stats', {})
+                })
+        
+        return {
+            "game": game,
+            "total_games": leaderboard_data.get('total_games', 0),
+            "updated_at": leaderboard_data.get('updated_at', ''),
+            "balance": leaderboard_data.get('balance', {}),
+            "role_names": role_names,
+            "models": formatted_models
+        }
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to load leaderboard: {str(e)}")
+
+
+@app.get("/leaderboard")
+async def leaderboard_page():
+    """Leaderboard page - default to avalon"""
+    return _page("leaderboard.html")
+
+
+@app.get("/leaderboard/{game}")
+async def leaderboard_game_page(game: str):
+    """Leaderboard page for specific game"""
+    if game not in ["avalon", "diplomacy"]:
+        raise HTTPException(status_code=404, detail="game must be 'avalon' or 'diplomacy'")
+    return _page("leaderboard.html")
 
 
 def get_state_manager() -> GameStateManager:

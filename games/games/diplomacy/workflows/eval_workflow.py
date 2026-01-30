@@ -100,7 +100,7 @@ class EvalDiplomacyWorkflow:
         role_config = self._get_role_config(power_name)
         return role_config.get('agent', {})
 
-    def _create_agent(self, player_id: int, power_name: str):
+    def _create_agent(self, player_id: int, power_name: str, game_id: Union[int, str], log_dir: Optional[str] = None):
         """Create an agent for a power using create_agent_from_config."""
         model_config = self._get_model_config(power_name)
         agent_config = self._get_agent_config(power_name)
@@ -119,6 +119,8 @@ class EvalDiplomacyWorkflow:
             model=model,
             name=f"Player{player_id}",
             actor_rollout_ref=None,  # eval workflow doesn't have actor_rollout_ref
+            game_id=str(game_id),
+            log_dir=log_dir,
         )
 
 
@@ -160,7 +162,7 @@ class EvalDiplomacyWorkflow:
 
         # Create agents
         self.agents = [
-            self._create_agent(i, self.power_manager.get_power_name(i))
+            self._create_agent(i, self.power_manager.get_power_name(i), game_id, timestamp_dir)
             for i in range(len(power_names))
         ]
 

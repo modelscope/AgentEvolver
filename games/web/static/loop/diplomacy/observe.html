@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diplomacy - Participate Mode</title>
+    <title>Diplomacy - Observe Online Mode</title>
     <link rel="stylesheet" href="/static/diplomacy/css/style.css?v=20251214">
     <script>
         window.__EARLY_INIT__ = { hasGameConfig: false, isGameRunning: false, config: null, portraits: null };
@@ -12,7 +12,6 @@
                 var gameConfigStr = sessionStorage.getItem('gameConfig');
                 var portraitsStr = sessionStorage.getItem('selectedPortraits');
                 var gameRunning = sessionStorage.getItem('gameRunning') === 'true';
-                
                 if (gameConfigStr) {
                     window.__EARLY_INIT__.hasGameConfig = true;
                     window.__EARLY_INIT__.config = JSON.parse(gameConfigStr);
@@ -23,7 +22,6 @@
                 } else {
                     document.documentElement.classList.add('manual-start');
                 }
-                
                 if (portraitsStr) {
                     window.__EARLY_INIT__.portraits = JSON.parse(portraitsStr);
                 }
@@ -42,8 +40,8 @@
         <div class="header">
             <div class="header-controls">
                 <div class="header-label">Game: Diplomacy</div>
-                <div class="header-btn">Mode: Participant</div>
-                <a id="back-exit-button" class="header-btn" href="/">Back</a>
+                <div class="header-btn">Mode: Observer (Online)</div>
+                <a id="back-exit-button" class="header-btn" href="/static/loop/index.html">Back</a>
             </div>
             <div id="status-bar">
                 <span id="phase">Phase: -</span>
@@ -77,15 +75,10 @@
                     <div id="logs-container">
                         <div style="text-align: center; color: var(--muted); padding: 20px; font-size: 9px;">Waiting for messages...</div>
                     </div>
-                    <div id="user-input-area" style="display: none;">
-                        <div id="input-prompt"></div>
-                        <textarea id="user-input" placeholder="Enter your orders or messages..." rows="3"></textarea>
-                        <button id="submit-input">Send</button>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/static/diplomacy/js/main.js?v=20251212_pixel"></script>
+    <script src="/static/loop/diplomacy/js/main_loop.js?v=20251214"></script>
 </body>
 </html>

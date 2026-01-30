@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - AgentEvolver Game Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: "Ark Pixel";
+      src: url("/static/fonts/ark-pixel-font.woff2") format("woff2");
+      font-display: swap;
+    }
+    :root {
+      --bg1: #0c1424;
+      --bg2: #070c18;
+      --panel: #132238;
+      --panel2: #0d1829;
+      --border: #20314a;
+      --accent: #51f6a5;
+      --accent2: #ffdd57;
+      --text: #e9f2ff;
+      --muted: #a9bedc;
+      --grid: rgba(255,255,255,0.05);
+      --shadow: 0 6px 0 #0a0f19;
+      --shadow2: 0 10px 0 #0b1628;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, #1b2c47 0, var(--bg1) 45%, var(--bg2) 100%);
+      color: var(--text);
+      font-family: "Press Start 2P", "Ark Pixel", "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      image-rendering: pixelated;
+      overflow-x: hidden;
+    }
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 24px 32px;
+    }
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: var(--accent2);
+      text-shadow: 0 2px 0 #0b1628;
+    }
+    .subtitle {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .panel {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+    .btn {
+      font-family: "Press Start 2P", "Helvetica Neue", Arial, sans-serif;
+      font-size: 9px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 2px solid #20314a;
+      background: linear-gradient(180deg, #2b4c6d, #1d3247);
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 6px 0 #0b1628;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #0b1628; }
+    .btn:active { transform: translateY(2px); box-shadow: 0 4px 0 #0b1628; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: 0 6px 0 #0b1628; }
+    
+    .game-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .game-btn {
+      flex: 0 0 200px;
+      font-size: 10px;
+      padding: 10px 16px;
+    }
+    .game-btn.active {
+      border-color: var(--accent2);
+      background: linear-gradient(180deg, #3d5a7d, #2a4560);
+      box-shadow: var(--shadow2);
+    }
+    
+    .stats-panel {
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      color: var(--muted);
+    }
+    .stat-item strong {
+      color: var(--accent);
+      font-size: 10px;
+    }
+    .stat-item.warning {
+      color: var(--accent2);
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      padding: 12px;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8px;
+      min-width: 800px;
+    }
+    .leaderboard-table th {
+      background: var(--panel2);
+      color: var(--accent2);
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .leaderboard-table th.role-stat {
+      text-align: right;
+    }
+    .leaderboard-table th:hover {
+      background: rgba(81, 246, 165, 0.1);
+    }
+    .leaderboard-table th.sort-asc::after {
+      content: " ▲";
+      color: var(--accent);
+    }
+    .leaderboard-table th.sort-desc::after {
+      content: " ▼";
+      color: var(--accent);
+    }
+    .leaderboard-table td {
+      padding: 8px;
+      border-bottom: 1px solid rgba(32, 49, 74, 0.5);
+      color: var(--text);
+    }
+    .leaderboard-table tr:hover {
+      background: rgba(81, 246, 165, 0.05);
+    }
+    .leaderboard-table .rank {
+      text-align: center;
+      color: var(--accent2);
+      font-weight: bold;
+      width: 60px;
+    }
+    .leaderboard-table .model-name {
+      color: var(--text);
+      width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .leaderboard-table .model-name.insufficient::after {
+      content: "*";
+      color: var(--accent2);
+      margin-left: 4px;
+    }
+    .leaderboard-table .elo {
+      text-align: right;
+      color: var(--accent);
+      font-weight: bold;
+      width: 80px;
+    }
+    .leaderboard-table .win-rate {
+      text-align: right;
+      color: var(--text);
+      width: 80px;
+    }
+    .leaderboard-table .games {
+      text-align: right;
+      color: var(--muted);
+      width: 70px;
+    }
+    .leaderboard-table .role-stat {
+      text-align: right;
+      color: var(--muted);
+      width: 75px;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+    .leaderboard-table .role-stat.na {
+      color: rgba(169, 190, 220, 0.3);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: var(--accent2);
+      font-size: 10px;
+    }
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    
+    .refresh-btn {
+      margin-left: auto;
+    }
+    
+    @media (max-width: 768px) {
+      .page {
+        padding: 12px 16px 24px;
+      }
+      .leaderboard-table {
+        font-size: 7px;
+      }
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 6px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div class="title">Leaderboard</div>
+        <div class="subtitle">AgentEvolver Game Arena Rankings</div>
+      </div>
+      <div class="subtitle">
+        <a href="/" style="color: var(--accent2); text-decoration: none;">Back to Arena</a>
+      </div>
+    </header>
+
+    <div class="game-selector panel">
+      <button class="btn game-btn active" data-game="avalon">Avalon</button>
+      <button class="btn game-btn" data-game="diplomacy">Diplomacy</button>
+    </div>
+
+    <div id="stats-panel" class="panel stats-panel" style="display: none;">
+      <div class="stat-item">
+        <strong>Total Games:</strong>
+        <span id="total-games">0</span>
+      </div>
+      <div class="stat-item">
+        <strong>Updated:</strong>
+        <span id="updated-at">-</span>
+      </div>
+      <div class="stat-item" id="balance-stat" style="display: none;">
+        <strong>Balance:</strong>
+        <span id="balance-ratio">-</span>
+      </div>
+      <button class="btn refresh-btn" id="refresh-btn">Refresh</button>
+    </div>
+
+    <div class="panel table-container">
+      <div id="loading" class="loading">Loading leaderboard...</div>
+      <div id="error" class="error" style="display: none;"></div>
+      <div id="empty" class="empty" style="display: none;">No data available</div>
+      <table id="leaderboard-table" class="leaderboard-table" style="display: none;">
+        <thead>
+          <tr id="table-header-row">
+            <th class="rank" data-sort="rank">Rank</th>
+            <th class="model-name" data-sort="name">Model</th>
+            <th class="elo" data-sort="elo">Elo</th>
+            <th class="win-rate" data-sort="win_rate">Overall</th>
+            <th class="games" data-sort="games">Games</th>
+            <th class="win-rate" data-sort="avg">Avg</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let currentGame = 'avalon';
+    let currentSort = { field: 'elo', direction: 'desc' };
+    let leaderboardData = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check URL for game parameter
+      const pathParts = window.location.pathname.split('/');
+      if (pathParts.length > 2 && pathParts[2] === 'leaderboard' && pathParts[3]) {
+        currentGame = pathParts[3];
+      }
+      
+      // Set active game button
+      document.querySelectorAll('.game-btn').forEach(btn => {
+        if (btn.dataset.game === currentGame) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Game selector
+      document.querySelectorAll('.game-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentGame = btn.dataset.game;
+          document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          loadLeaderboard();
+        });
+      });
+
+      // Refresh button
+      document.getElementById('refresh-btn').addEventListener('click', () => {
+        loadLeaderboard();
+      });
+
+      // Sort headers
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.addEventListener('click', () => {
+          const field = th.dataset.sort;
+          if (currentSort.field === field) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            currentSort.field = field;
+            currentSort.direction = 'desc';
+          }
+          updateSortIndicators();
+          renderTable();
+        });
+      });
+
+      // Load initial data
+      loadLeaderboard();
+    });
+
+    function updateSortIndicators() {
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.sort === currentSort.field) {
+          th.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+      });
+    }
+
+    async function loadLeaderboard() {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const empty = document.getElementById('empty');
+      const table = document.getElementById('leaderboard-table');
+      const statsPanel = document.getElementById('stats-panel');
+
+      loading.style.display = 'block';
+      error.style.display = 'none';
+      empty.style.display = 'none';
+      table.style.display = 'none';
+      statsPanel.style.display = 'none';
+
+      try {
+        const response = await fetch(`/api/leaderboard/${currentGame}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        leaderboardData = data;
+
+        if (!data.models || data.models.length === 0) {
+          loading.style.display = 'none';
+          empty.style.display = 'block';
+          return;
+        }
+
+        // Update stats panel
+        document.getElementById('total-games').textContent = data.total_games || 0;
+        const updatedAt = data.updated_at ? new Date(data.updated_at).toLocaleString() : '-';
+        document.getElementById('updated-at').textContent = updatedAt;
+
+        // Balance stat
+        const balanceStat = document.getElementById('balance-stat');
+        const balanceRatio = document.getElementById('balance-ratio');
+        if (data.balance && data.balance.max > 0) {
+          const ratio = data.balance.balance_ratio || 1.0;
+          balanceRatio.textContent = `${(ratio * 100).toFixed(1)}% (min=${data.balance.min}, max=${data.balance.max})`;
+          balanceStat.classList.toggle('warning', ratio < 0.8);
+          balanceStat.style.display = 'flex';
+        } else {
+          balanceStat.style.display = 'none';
+        }
+
+        statsPanel.style.display = 'flex';
+        loading.style.display = 'none';
+        table.style.display = 'table';
+
+        renderTable();
+      } catch (err) {
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        error.textContent = `Error loading leaderboard: ${err.message}`;
+        console.error('Failed to load leaderboard:', err);
+      }
+    }
+
+    function renderTable() {
+      if (!leaderboardData || !leaderboardData.models) return;
+
+      // Render role headers - insert before the "Avg" column
+      const headerRow = document.getElementById('table-header-row');
+      // Remove existing role headers
+      const existingRoleHeaders = headerRow.querySelectorAll('.role-stat');
+      existingRoleHeaders.forEach(th => th.remove());
+      
+      // Add role headers before the "Avg" column (which is the last column)
+      if (leaderboardData.role_names && leaderboardData.role_names.length > 0) {
+        const avgHeader = headerRow.querySelector('th[data-sort="avg"]');
+        leaderboardData.role_names.forEach(role => {
+          const th = document.createElement('th');
+          th.className = 'role-stat';
+          th.textContent = role;
+          headerRow.insertBefore(th, avgHeader);
+        });
+      }
+
+      // Sort models
+      const sortedModels = [...leaderboardData.models].sort((a, b) => {
+        let aVal, bVal;
+        switch (currentSort.field) {
+          case 'rank':
+          case 'elo':
+            aVal = a.elo || 0;
+            bVal = b.elo || 0;
+            break;
+          case 'win_rate':
+            aVal = a.win_rate || 0;
+            bVal = b.win_rate || 0;
+            break;
+          case 'games':
+            aVal = a.total_games || 0;
+            bVal = b.total_games || 0;
+            break;
+          case 'avg':
+            // Calculate average win rate across roles
+            const aRoles = Object.values(a.role_stats || {}).filter(r => r.games > 0);
+            const bRoles = Object.values(b.role_stats || {}).filter(r => r.games > 0);
+            aVal = aRoles.length > 0 ? aRoles.reduce((sum, r) => sum + r.win_rate, 0) / aRoles.length : 0;
+            bVal = bRoles.length > 0 ? bRoles.reduce((sum, r) => sum + r.win_rate, 0) / bRoles.length : 0;
+            break;
+          case 'name':
+            aVal = a.name || '';
+            bVal = b.name || '';
+            break;
+          default:
+            return 0;
+        }
+
+        if (typeof aVal === 'string') {
+          return currentSort.direction === 'asc' 
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+        } else {
+          return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+      });
+
+      // Render table body
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      const maxGames = Math.max(...leaderboardData.models.map(m => m.total_games || 0), 0);
+      const minGamesThreshold = maxGames * 0.8;
+
+      sortedModels.forEach((model, index) => {
+        const tr = document.createElement('tr');
+        
+        // Rank
+        const rankTd = document.createElement('td');
+        rankTd.className = 'rank';
+        rankTd.textContent = index + 1;
+        tr.appendChild(rankTd);
+
+        // Model name
+        const nameTd = document.createElement('td');
+        nameTd.className = 'model-name';
+        const isInsufficient = maxGames > 0 && (model.total_games || 0) < minGamesThreshold;
+        if (isInsufficient) {
+          nameTd.classList.add('insufficient');
+        }
+        nameTd.textContent = model.name || 'Unknown';
+        tr.appendChild(nameTd);
+
+        // Elo
+        const eloTd = document.createElement('td');
+        eloTd.className = 'elo';
+        eloTd.textContent = Math.round(model.elo || 1500);
+        tr.appendChild(eloTd);
+
+        // Overall win rate
+        const winRateTd = document.createElement('td');
+        winRateTd.className = 'win-rate';
+        winRateTd.textContent = `${(model.win_rate || 0).toFixed(1)}%`;
+        tr.appendChild(winRateTd);
+
+        // Games
+        const gamesTd = document.createElement('td');
+        gamesTd.className = 'games';
+        gamesTd.textContent = model.total_games || 0;
+        tr.appendChild(gamesTd);
+
+        // Role stats
+        if (leaderboardData.role_names) {
+          leaderboardData.role_names.forEach(role => {
+            const roleTd = document.createElement('td');
+            roleTd.className = 'role-stat';
+            const roleStat = model.role_stats?.[role];
+            if (roleStat && roleStat.games > 0) {
+              roleTd.textContent = `${roleStat.win_rate.toFixed(1)}%`;
+            } else {
+              roleTd.textContent = 'N/A';
+              roleTd.classList.add('na');
+            }
+            tr.appendChild(roleTd);
+          });
+        }
+
+        // Average
+        const avgTd = document.createElement('td');
+        avgTd.className = 'win-rate';
+        const roleStats = Object.values(model.role_stats || {}).filter(r => r.games > 0);
+        const avg = roleStats.length > 0 
+          ? roleStats.reduce((sum, r) => sum + r.win_rate, 0) / roleStats.length 
+          : 0;
+        avgTd.textContent = `${avg.toFixed(1)}%`;
+        tr.appendChild(avgTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
+

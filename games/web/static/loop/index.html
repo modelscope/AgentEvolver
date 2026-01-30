@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentEvolver Game Arena - Observe Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    @font-face { font-family: "Ark Pixel"; src: url("/static/fonts/ark-pixel-font.woff2") format("woff2"); font-display: swap; }
+    :root { --bg1: #0c1424; --bg2: #070c18; --panel: #132238; --panel2: #0d1829; --border: #20314a; --accent: #51f6a5; --accent2: #ffdd57; --text: #e9f2ff; --muted: #a9bedc; --grid: rgba(255,255,255,0.05); --shadow: 0 6px 0 #0a0f19; --shadow2: 0 10px 0 #0b1628; --portraits-strip-width: 220px; --game-card-min-width: 180px; --portrait-card-padding: 6px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 20% 20%, #1b2c47 0, var(--bg1) 45%, var(--bg2) 100%); color: var(--text); font-family: "Press Start 2P", "Ark Pixel", "Helvetica Neue", Arial, sans-serif; font-size: 13px; image-rendering: pixelated; overflow-x: hidden; }
+    .page { max-width: 1400px; margin: 0 auto; padding: 20px 24px 32px; }
+    header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .title { font-size: 18px; letter-spacing: 1px; color: var(--accent2); text-shadow: 0 2px 0 #0b1628; }
+    .subtitle { font-size: 10px; color: var(--muted); line-height: 1.5; }
+    .panel { background: var(--panel); border: 2px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+    #portraits-strip { display: flex; flex-direction: column; min-width: var(--portraits-strip-width); max-width: var(--portraits-strip-width); height: 580px; }
+    .portraits-header { padding: 8px 10px 6px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); }
+    .portraits-title { font-size: 10px; color: var(--accent2); }
+    #portraits-grid { padding: 8px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; overflow-y: auto; flex: 1; }
+    #portraits-grid::-webkit-scrollbar { width: 5px; }
+    #portraits-grid::-webkit-scrollbar-track { background: transparent; }
+    #portraits-grid::-webkit-scrollbar-thumb { background: rgba(81,246,165,0.25); border-radius: 3px; }
+    #random-select-btn { font-size: 7px; padding: 4px 8px; }
+    .portrait-card { position: relative; border: 2px solid var(--border); background: var(--panel2); border-radius: 8px; padding: var(--portrait-card-padding); cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; user-select: none; }
+    .portrait-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 0 #0b1628; }
+    .portrait-card.active { border-color: var(--accent2); box-shadow: var(--shadow2); }
+    .portrait-card img { width: 100%; display: block; image-rendering: pixelated; border-radius: 8px; background: #0b1626; border: 1px solid rgba(255,255,255,0.06); }
+    .portrait-name { margin-top: 4px; font-size: 8px; text-align: center; color: #d6e6ff; }
+    .portrait-model { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); padding: 2px 6px; border-radius: 6px; border: 2px solid #1a2d44; background: rgba(13, 24, 41, 0.95); box-shadow: 0 3px 0 rgba(11,22,40,0.55); font-size: 7px; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90%; z-index: 100; pointer-events: none; }
+    .layout { display: grid; grid-template-columns: 1fr var(--portraits-strip-width); gap: 10px; align-items: start; }
+    #scene { position: relative; height: 580px; overflow: hidden; border-radius: 12px; border: 2px solid var(--border); background: linear-gradient(180deg, #143458 0%, #0f223b 45%, #0c192c 60%, #0a1221 100%); box-shadow: var(--shadow); }
+    #scene::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(90deg, var(--grid) 1px, transparent 1px), linear-gradient(var(--grid) 1px, transparent 1px); background-size: 32px 32px; mix-blend-mode: screen; opacity: 0.35; pointer-events: none; z-index: 0; }
+    #table-preview { position: absolute; left: 240px; right: 0; top: 120px; bottom: 100px; pointer-events: none; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 15; }
+    #table-preview.has-game { display: flex; }
+    #table-stage { position: relative; width: 100%; height: 100%; pointer-events: none; }
+    #table-players { pointer-events: auto; }
+    .table { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(580px, 80%); height: 280px; border-radius: 20px; background: linear-gradient(145deg, #263f52, #1c2f44); border: 2px solid #1a3048; box-shadow: inset 0 8px 0 rgba(255,255,255,0.03), 0 8px 0 rgba(11,22,40,0.5); opacity: 0.9; }
+    .table::after { content: ""; position: absolute; inset: 14px; border-radius: 14px; border: 2px dashed rgba(255,255,255,0.08); }
+    .table-role-stats { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: rgba(13, 24, 41, 0.95); border: 2px solid #1a2d44; border-radius: 10px; padding: 8px 12px; box-shadow: 0 4px 0 rgba(11,22,40,0.6); z-index: 20; display: none; flex-direction: column; gap: 4px; min-width: 180px; }
+    .table-role-stats.show { display: flex; }
+    .table-role-stats .role-stat-item { font-size: 7px; color: #cfe0ff; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .table-role-stats .role-stat-item .role-name { color: var(--accent2); flex-shrink: 0; }
+    .table-role-stats .role-stat-item .role-count { color: var(--accent); font-weight: bold; }
+    .table-controls { display: flex; align-items: center; justify-content: center; margin-top: 20px; pointer-events: auto; z-index: 15; }
+    .step-hint { cursor: pointer; transition: color 0.2s ease; color: var(--muted); }
+    .step-hint:hover { color: var(--accent); }
+    .step-separator { color: var(--muted); margin: 0 4px; }
+    #games.highlight, #portraits-strip.highlight, #scene.highlight, #start-btn.highlight { box-shadow: 0 0 20px rgba(81, 246, 165, 0.6), 0 0 40px rgba(81, 246, 165, 0.4) !important; border-color: var(--accent) !important; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+    .btn-start { font-size: 12px !important; padding: 12px 24px !important; background: linear-gradient(180deg, #51f6a5, #3dd88a) !important; color: #0a0f19 !important; border: 3px solid #51f6a5 !important; box-shadow: 0 8px 0 #0b1628, 0 0 20px rgba(81, 246, 165, 0.4) !important; font-weight: bold !important; text-transform: uppercase !important; letter-spacing: 1px !important; }
+    .btn-start:hover { transform: translateY(-3px) !important; box-shadow: 0 10px 0 #0b1628, 0 0 30px rgba(81, 246, 165, 0.6) !important; background: linear-gradient(180deg, #5fffb5, #4de89a) !important; }
+    .btn-start:active { transform: translateY(4px) !important; box-shadow: 0 6px 0 #0b1628, 0 0 15px rgba(81, 246, 165, 0.3) !important; }
+    .btn-start:disabled { background: linear-gradient(180deg, #3a3a3a, #2a2a2a) !important; border-color: #20314a !important; color: #6b8299 !important; box-shadow: 0 6px 0 #0b1628 !important; opacity: 0.6 !important; }
+    #table-players { position: absolute; inset: 0; pointer-events: auto; }
+    .seat { position: absolute; width: 70px; height: 70px; border-radius: 10px; overflow: visible; border: 2px solid var(--border); background: var(--panel2); box-shadow: 0 8px 0 rgba(10,15,28,0.7); transition: left 420ms ease, top 420ms ease, transform 420ms ease, opacity 220ms ease; opacity: 0.96; pointer-events: auto; }
+    .seat img { border-radius: 10px; overflow: hidden; }
+    .seat.enter { transform: scale(0.85); opacity: 0.0; }
+    .seat.leave { opacity: 0.0; transform: scale(0.8); }
+    .seat img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; border-radius: 10px; display: block; }
+    .seat .seat-label { position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%); min-width: 80px; max-width: 200px; padding: 0; border-radius: 7px; border: 2px solid #1a2d44; background: rgba(13, 24, 41, 0.92); box-shadow: 0 3px 0 rgba(11,22,40,0.55); font-size: 7px; color: #cfe0ff; line-height: 1.1; pointer-events: auto; opacity: 0; transition: opacity 160ms ease; z-index: 1000; }
+    .seat .seat-label select { width: 100%; padding: 3px 6px; border: none; background: transparent; color: #cfe0ff; font-family: "Press Start 2P", "Helvetica Neue", Arial, sans-serif; font-size: 7px; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: linear-gradient(45deg, transparent 50%, rgba(207,224,255,0.8) 50%), linear-gradient(135deg, rgba(207,224,255,0.8) 50%, transparent 50%); background-position: calc(100% - 8px) 50%, calc(100% - 4px) 50%; background-size: 3px 3px, 3px 3px; background-repeat: no-repeat; }
+    .seat .seat-label select:hover { background-color: rgba(13, 24, 41, 0.95); }
+    .seat.has-label .seat-label { opacity: 1; }
+    .seat .seat-model { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); padding: 2px 6px; border-radius: 6px; border: 2px solid #1a2d44; background: rgba(13, 24, 41, 0.95); box-shadow: 0 3px 0 rgba(11,22,40,0.55); font-size: 7px; color: var(--accent); white-space: nowrap; min-width: 60px; max-width: 200px; z-index: 1000; pointer-events: none; }
+    #hud { position: absolute; inset: 0; padding: 14px; display: flex; flex-direction: column; pointer-events: none; z-index: 10; }
+    .hud-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; pointer-events: auto; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(13, 24, 41, 0.92); padding: 8px 10px; border-radius: 8px; border: 2px solid #1a2d44; font-size: 9px; color: #d9e7ff; box-shadow: 0 4px 0 rgba(11,22,40,0.6); min-width: 100px; }
+    .pill strong { color: var(--accent); }
+    .pill.pill-game { min-width: 130px; }
+    .pill.pill-mode { min-width: 140px; cursor: pointer; }
+    .pill.pill-mode:hover { border-color: rgba(81,246,165,0.5); }
+    .mode-toggle { position: relative; display: none; pointer-events: none; }
+    .mode-top-right { position: absolute; top: 14px; right: 14px; z-index: 20; }
+    .btn { font-family: "Press Start 2P", "Helvetica Neue", Arial, sans-serif; font-size: 9px; padding: 8px 12px; border-radius: 8px; border: 2px solid #20314a; background: linear-gradient(180deg, #2b4c6d, #1d3247); color: var(--text); cursor: pointer; box-shadow: 0 6px 0 #0b1628; transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease; white-space: nowrap; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #0b1628; }
+    .btn:active { transform: translateY(2px); box-shadow: 0 4px 0 #0b1628; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: 0 6px 0 #0b1628; }
+    .hud-config-inline { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px; margin-left: 6px; padding-left: 6px; border-left: 2px solid rgba(255,255,255,0.08); pointer-events: auto; }
+    .config-extra { display: none; }
+    .config-extra.show { display: flex; gap: 6px; align-items: flex-start; }
+    .config-item { display: flex; flex-direction: column; gap: 4px; }
+    .config-item label { font-size: 7px; color: #a0b8d8; }
+    .hud-config-inline select, .hud-config-inline input[type="number"] { font-family: "Press Start 2P", "Helvetica Neue", Arial, sans-serif; font-size: 7px; padding: 6px 18px 6px 8px; border-radius: 6px; border: 2px solid #1a2d44; background: #0b1626; color: #e9f2ff; outline: none; min-width: 60px; box-shadow: 0 3px 0 rgba(11,22,40,0.55); cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: linear-gradient(45deg, transparent 50%, rgba(169,190,220,0.95) 50%), linear-gradient(135deg, rgba(169,190,220,0.95) 50%, transparent 50%); background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+    .hud-config-inline input[type="number"]{ padding-right: 8px; background-image: none; cursor: text; }
+    #diplomacy-max-phases, #diplomacy-negotiation-rounds { min-width: 60px; width: 60px; }
+    .hud-config-inline select:focus, .hud-config-inline input[type="number"]:focus { border-color: var(--accent); }
+    .hud-config-inline select:hover, .hud-config-inline input[type="number"]:hover { transform: translateY(-1px); box-shadow: 0 4px 0 rgba(11,22,40,0.55); }
+    #status-log { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; padding: 10px 4px 10px 0; margin-top: 10px; pointer-events: auto; }
+    #status-log::-webkit-scrollbar { width: 5px; }
+    #status-log::-webkit-scrollbar-track { background: transparent; }
+    #status-log::-webkit-scrollbar-thumb { background: rgba(81,246,165,0.25); border-radius: 3px; }
+    .status-bubble { font-size: 9px; color: #c8daf0; background: rgba(13, 24, 41, 0.88); padding: 8px 10px; border-radius: 8px; border: 2px solid #1a2d44; box-shadow: 0 3px 0 rgba(11,22,40,0.5); animation: bubbleIn 0.2s ease; line-height: 1.5; max-width: 240px; }
+    @keyframes bubbleIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .power-models { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .power-models .pm-title { font-size: 8px; color: #a0b8d8; margin-bottom: 6px; }
+    .pm-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    #games { display: flex; flex-direction: column; }
+    .games-header { padding: 8px 10px 6px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); }
+    .games-title { font-size: 10px; color: var(--accent2); }
+    .games-content { display: flex; flex-direction: row; gap: 8px; padding: 8px; }
+    .game-card { position: relative; flex: 0 0 20%; min-width: var(--game-card-min-width); padding: 8px; border-radius: 10px; background: var(--panel2); border: 2px solid var(--border); cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; min-height: 80px; overflow: visible; box-shadow: var(--shadow); }
+    .game-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow2); }
+    .game-card.active { border-color: var(--accent2); box-shadow: var(--shadow2); }
+    .game-card .label { font-size: 10px; color: var(--accent2); margin-bottom: 4px; }
+    .game-card .hint { font-size: 8px; color: #adc5e6; line-height: 1.4; }
+    .game-icon { position: absolute; right: 8px; bottom: 8px; width: 48px; height: 48px; border-radius: 8px; border: 2px solid #102132; background: linear-gradient(145deg, rgba(255,221,87,0.15), rgba(81,246,165,0.10)); box-shadow: 0 4px 0 #0b1628; display: grid; place-items: center; font-size: 16px; color: rgba(255,255,255,0.85); }
+    @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } #games { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } #scene { height: 480px; } #portraits-strip { max-width: 100%; min-width: 100%; height: 480px; } }
+    .avalon-participate-only, .diplomacy-participate-only { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+        <div>
+          <div class="title">AgentEvolver Game Arena (Observe Online)</div>
+          <div class="subtitle">
+            <span class="step-hint" data-target="games">Select Game</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="agents">Select Agent</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="scene">Fill Config</span>
+            <span class="step-separator"> >> </span>
+            <span class="step-hint" data-target="start-btn">Start Arena</span>
+          </div>
+        </div>
+      <div class="subtitle">
+        <a id="open-config" href="/static/character_config.html" style="color: var(--accent2); text-decoration: none; margin-right: 12px;">AgentConfig</a>
+        <a href="/leaderboard" style="color: var(--accent2); text-decoration: none;">Leaderboard</a>
+      </div>
+    </header>
+
+    <div id="games" class="panel" style="margin-bottom: 10px;">
+      <div class="games-header">
+        <div class="games-title">Games</div>
+      </div>
+      <div class="games-content">
+        <div class="game-card" data-game="avalon">
+          <div class="label">Avalon</div>
+          <div class="hint">Campus deduction </br> Task Decision </br> Round table</div>
+          <div class="game-icon">🗡</div>
+        </div>
+        <div class="game-card" data-game="diplomacy">
+          <div class="label">Diplomacy</div>
+          <div class="hint">Negotiation </br> Alliance betrayal </br> European chessboard</div>
+          <div class="game-icon">♟</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div id="scene">
+        <div class="mode-toggle mode-top-right" style="display:none;"></div>
+        <div id="hud">
+          <div class="hud-top">
+            <div class="pill" style="min-width: 80px;"><strong>Team</strong><span id="counter">0/0</span></div>
+            <div class="pill" id="selection-hint-pill" style="display: none; min-width: 120px; border-color: var(--accent2);">
+              <span id="selection-hint">Hint</span>
+            </div>
+            <div class="hud-config-inline">
+              <div class="config-extra" id="avalon-fields">
+                <div class="config-item">
+                  <label for="avalon-num-players">players</label>
+                  <select id="avalon-num-players">
+                    <option value="5">5</option>
+                    <option value="6" disabled style="color: #666;">6</option>
+                    <option value="7" disabled style="color: #666;">7</option>
+                    <option value="8" disabled style="color: #666;">8</option>
+                    <option value="9" disabled style="color: #666;">9</option>
+                    <option value="10" disabled style="color: #666;">10</option>
+                  </select>
+                </div>
+                <div class="config-item" style="display:none;">
+                  <label for="avalon-user-agent-id">player ID</label>
+                  <select id="avalon-user-agent-id">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </div>
+                <div class="config-item">
+                  <label for="avalon-language">language</label>
+                  <select id="avalon-language">
+                    <option value="en">EN</option>
+                    <option value="zh">ZH</option>
+                  </select>
+                </div>
+                <button class="btn secondary" type="button" id="avalon-reroll-roles" style="font-size: 7px; padding: 6px 8px;">random</button>
+              </div>
+
+              <div class="config-extra" id="diplomacy-fields">
+                <div class="config-item" style="display:none;">
+                  <label for="diplomacy-human-power">Power</label>
+                  <select id="diplomacy-human-power"></select>
+                </div>
+                <div class="config-item">
+                  <label for="diplomacy-max-phases">Round</label>
+                  <input type="number" id="diplomacy-max-phases" min="1" value="20">
+                </div>
+                <div class="config-item">
+                  <label for="diplomacy-negotiation-rounds">Negotiation</label>
+                  <input type="number" id="diplomacy-negotiation-rounds" min="0" value="3">
+                </div>
+                <div class="config-item">
+                  <label for="diplomacy-language">language</label>
+                  <select id="diplomacy-language">
+                    <option value="en">EN</option>
+                    <option value="zh">ZH</option>
+                  </select>
+                </div>
+                <button class="btn secondary" type="button" id="diplomacy-shuffle-powers" style="font-size: 7px; padding: 6px 8px;">random</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="status-log"></div>
+        </div>
+
+        <div id="table-preview">
+          <div id="table-stage">
+            <div class="table">
+              <div class="table-role-stats" id="table-role-stats"></div>
+            </div>
+            <div id="table-players"></div>
+          </div>
+          <div class="table-controls">
+            <button class="btn btn-start" id="start-btn">start</button>
+          </div>
+        </div>
+        
+        <div id="ground"></div>
+      </div>
+
+      <div id="portraits-strip" class="panel">
+        <div class="portraits-header">
+          <div class="portraits-title">Agents</div>
+          <button class="btn" id="random-select-btn">random</button>
+        </div>
+        <div id="portraits-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/main.js"></script>
+  <script>
+    window.computeRedirectUrl = function(game) {
+      if (!game) return '/';
+      return `/static/loop/${game}/observe.html`;
+    };
+    const originalSetMode = window.setMode;
+    window.setMode = function() {
+      if (originalSetMode) originalSetMode('observe');
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.setMode) window.setMode('observe');
+      const modeToggle = document.querySelector('.mode-toggle');
+      if (modeToggle) modeToggle.style.display = 'none';
+      document.querySelectorAll('.avalon-participate-only, .diplomacy-participate-only').forEach((el) => el.style.display = 'none');
+
+      // Prevent starting a new Avalon game while one is running; redirect to existing session.
+      const isGameRunning = sessionStorage.getItem('gameRunning') === 'true';
+      let runningGame = null;
+      try {
+        const cfgStr = sessionStorage.getItem('gameConfig');
+        if (cfgStr) {
+          const cfg = JSON.parse(cfgStr);
+          runningGame = cfg.game || null;
+        }
+      } catch (e) {
+        runningGame = null;
+      }
+
+      const avalonCard = document.querySelector('.game-card[data-game="avalon"]');
+      const startBtn = document.getElementById('start-btn');
+
+      function redirectToAvalon() {
+        window.location.href = '/static/loop/avalon/observe.html';
+      }
+
+      if (isGameRunning && runningGame === 'avalon') {
+        if (startBtn) {
+          startBtn.disabled = true;
+          startBtn.textContent = 'Avalon running';
+          startBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            redirectToAvalon();
+          });
+        }
+        if (avalonCard) {
+          avalonCard.classList.add('active');
+          avalonCard.addEventListener('click', function(e) {
+            e.preventDefault();
+            redirectToAvalon();
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

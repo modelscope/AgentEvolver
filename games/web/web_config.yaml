@@ -19,6 +19,8 @@ default_role:
 portraits:
   1:
     name: Agent1
+    model:
+      model_name: qwen-max
   
   2:
     name: Agent2
@@ -28,17 +30,19 @@ portraits:
   
   4:
     name: Agent4
+    model:
+      model_name: qwen3-30b-a3b-instruct-2507
   
   5:
     name: Agent5
-    model:
-      model_name: qwen-max
   
   6:
     name: Agent6
-  
+
   7:
     name: Agent7
+    model:
+      model_name: qwen2.5-32b-instruct
   
   8:
     name: Agent8
@@ -51,9 +55,13 @@ portraits:
   
   11:
     name: Agent11
+    model:
+      model_name: qwen-max
   
   12:
     name: Agent12
+    model:
+      model_name: qwen-turbo
   
   13:
     name: Agent13

@@ -1,0 +1,2233 @@
+{
+  "version": "1.0",
+  "created_at": "2025-12-22T12:25:18.403904",
+  "updated_at": "2025-12-22T19:28:32.151178",
+  "models": {
+    "qwen-plus": {
+      "elo": 1626.3119712143537,
+      "total_games": 100,
+      "total_wins": 29.777777777777782,
+      "role_stats": {
+        "AUSTRIA": {
+          "wins": 3.0555555555555554,
+          "games": 13
+        },
+        "ENGLAND": {
+          "wins": 4.5555555555555545,
+          "games": 14
+        },
+        "ITALY": {
+          "wins": 3.4444444444444438,
+          "games": 15
+        },
+        "RUSSIA": {
+          "wins": 6.222222222222222,
+          "games": 17
+        },
+        "FRANCE": {
+          "wins": 4.666666666666666,
+          "games": 13
+        },
+        "TURKEY": {
+          "wins": 3.833333333333333,
+          "games": 14
+        },
+        "GERMANY": {
+          "wins": 4.0,
+          "games": 14
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.403938",
+      "last_updated": "2025-12-22T19:28:32.151118"
+    },
+    "qwen3-max": {
+      "elo": 1502.7153667396642,
+      "total_games": 100,
+      "total_wins": 31.555555555555554,
+      "role_stats": {
+        "FRANCE": {
+          "wins": 3.8888888888888893,
+          "games": 12
+        },
+        "TURKEY": {
+          "wins": 7.000000000000002,
+          "games": 22
+        },
+        "AUSTRIA": {
+          "wins": 2.3888888888888884,
+          "games": 9
+        },
+        "GERMANY": {
+          "wins": 4.444444444444445,
+          "games": 15
+        },
+        "RUSSIA": {
+          "wins": 4.222222222222222,
+          "games": 11
+        },
+        "ITALY": {
+          "wins": 3.444444444444444,
+          "games": 14
+        },
+        "ENGLAND": {
+          "wins": 6.166666666666667,
+          "games": 17
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.408441",
+      "last_updated": "2025-12-22T19:28:32.151130"
+    },
+    "qwen2.5-14b-instruct": {
+      "elo": 1385.226357914301,
+      "total_games": 100,
+      "total_wins": 17.777777777777757,
+      "role_stats": {
+        "ITALY": {
+          "wins": 4.444444444444445,
+          "games": 24
+        },
+        "GERMANY": {
+          "wins": 2.555555555555556,
+          "games": 16
+        },
+        "RUSSIA": {
+          "wins": 2.5555555555555554,
+          "games": 15
+        },
+        "ENGLAND": {
+          "wins": 2.7777777777777777,
+          "games": 15
+        },
+        "AUSTRIA": {
+          "wins": 1.5,
+          "games": 10
+        },
+        "FRANCE": {
+          "wins": 2.111111111111111,
+          "games": 10
+        },
+        "TURKEY": {
+          "wins": 1.8333333333333333,
+          "games": 10
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.415644",
+      "last_updated": "2025-12-22T19:28:32.151137"
+    },
+    "qwen2.5-32b-instruct": {
+      "elo": 1376.7271254664417,
+      "total_games": 100,
+      "total_wins": 19.999999999999993,
+      "role_stats": {
+        "TURKEY": {
+          "wins": 4.166666666666666,
+          "games": 20
+        },
+        "FRANCE": {
+          "wins": 3.666666666666667,
+          "games": 16
+        },
+        "ENGLAND": {
+          "wins": 3.444444444444444,
+          "games": 17
+        },
+        "ITALY": {
+          "wins": 2.4444444444444446,
+          "games": 15
+        },
+        "GERMANY": {
+          "wins": 2.3888888888888893,
+          "games": 13
+        },
+        "AUSTRIA": {
+          "wins": 1.3333333333333333,
+          "games": 7
+        },
+        "RUSSIA": {
+          "wins": 2.5555555555555554,
+          "games": 12
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.421175",
+      "last_updated": "2025-12-22T19:28:32.151145"
+    },
+    "qwen3-30b-a3b-instruct-2507": {
+      "elo": 1556.0271652134954,
+      "total_games": 100,
+      "total_wins": 24.666666666666657,
+      "role_stats": {
+        "RUSSIA": {
+          "wins": 6.555555555555555,
+          "games": 22
+        },
+        "ENGLAND": {
+          "wins": 1.8333333333333335,
+          "games": 9
+        },
+        "FRANCE": {
+          "wins": 2.7777777777777777,
+          "games": 12
+        },
+        "TURKEY": {
+          "wins": 5.777777777777779,
+          "games": 25
+        },
+        "ITALY": {
+          "wins": 3.0,
+          "games": 15
+        },
+        "GERMANY": {
+          "wins": 2.0000000000000004,
+          "games": 7
+        },
+        "AUSTRIA": {
+          "wins": 2.722222222222222,
+          "games": 10
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.426429",
+      "last_updated": "2025-12-22T19:28:32.151134"
+    },
+    "qwen3-235b-a22b-instruct-2507": {
+      "elo": 1552.992013451744,
+      "total_games": 100,
+      "total_wins": 30.611111111111104,
+      "role_stats": {
+        "ENGLAND": {
+          "wins": 3.0555555555555554,
+          "games": 10
+        },
+        "ITALY": {
+          "wins": 1.9444444444444442,
+          "games": 8
+        },
+        "GERMANY": {
+          "wins": 6.166666666666665,
+          "games": 21
+        },
+        "RUSSIA": {
+          "wins": 6.111111111111111,
+          "games": 18
+        },
+        "TURKEY": {
+          "wins": 2.7777777777777777,
+          "games": 9
+        },
+        "AUSTRIA": {
+          "wins": 3.0555555555555554,
+          "games": 10
+        },
+        "FRANCE": {
+          "wins": 7.5,
+          "games": 24
+        }
+      },
+      "first_seen": "2025-12-22T12:25:18.431711",
+      "last_updated": "2025-12-22T19:28:32.151141"
+    }
+  },
+  "games_history": [
+    {
+      "timestamp": "2025-12-22T13:06:03.993213",
+      "models": [
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:07:57.085899",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:08:14.196293",
+      "models": [
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:08:30.472633",
+      "models": [
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:08:52.740606",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.2777777777777778,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:09:39.660521",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.4444444444444444,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-max": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:10:00.334778",
+      "models": [
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.5,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:10:30.612467",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:10:37.480218",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:14:00.600915",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:48:22.304083",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen-plus": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:49:20.246864",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.4444444444444444,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:51:56.261106",
+      "models": [
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:55:54.215635",
+      "models": [
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.05555555555555555,
+        "qwen3-max": 0.5,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:56:08.750576",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:58:02.703565",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.4444444444444444,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T13:58:32.928729",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.0,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3888888888888889,
+        "qwen-plus": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:00:18.320372",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:01:58.421467",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:03:54.618663",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.0,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:28:52.780542",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-max": 0.2777777777777778,
+        "qwen-plus": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:31:34.997130",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3888888888888889,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:32:05.634633",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen-plus": 0.4444444444444444,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:37:24.737648",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-max": 0.3888888888888889,
+        "qwen-plus": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:38:12.860557",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:39:41.871963",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:40:01.305094",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.0,
+        "qwen3-30b-a3b-instruct-2507": 0.6111111111111112,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:42:40.486611",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen-plus": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:46:24.188136",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.4444444444444444,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T14:48:35.002863",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-max": 0.2777777777777778,
+        "qwen-plus": 0.4444444444444444,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:11:25.209143",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.5,
+        "qwen2.5-14b-instruct": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.1111111111111111,
+        "qwen-plus": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:13:37.609691",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:14:24.354756",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:15:01.628786",
+      "models": [
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:16:28.022359",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:16:39.005652",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:25:08.796109",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.5,
+        "qwen2.5-14b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:25:33.596523",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:25:37.385087",
+      "models": [
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:26:22.012206",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-max": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111,
+        "qwen2.5-14b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:50:31.540313",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.1111111111111111,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:51:11.280971",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-max": 0.2222222222222222,
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:53:58.771455",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:56:21.663197",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen3-max": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:58:43.859026",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T15:59:15.819704",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:02:17.518367",
+      "models": [
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-max": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:04:28.703014",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.4444444444444444
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:10:25.893746",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:11:09.900753",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.4444444444444444,
+        "qwen2.5-32b-instruct": 0.05555555555555555,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:26:43.880079",
+      "models": [
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.2222222222222222,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:29:32.583327",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.5,
+        "qwen2.5-32b-instruct": 0.05555555555555555,
+        "qwen3-235b-a22b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:33:30.602464",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-max": 0.2222222222222222,
+        "qwen-plus": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:37:44.272377",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.05555555555555555,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:42:16.083233",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.05555555555555555
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:42:28.172056",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:44:19.649632",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:45:03.033106",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.5,
+        "qwen3-max": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.0,
+        "qwen2.5-14b-instruct": 0.05555555555555555,
+        "qwen-plus": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:52:44.194643",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T16:53:20.417868",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen-plus": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:11:15.094135",
+      "models": [
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.3333333333333333,
+        "qwen3-max": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:14:00.496854",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.05555555555555555,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:20:55.304698",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.4444444444444444,
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-max": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:22:51.968782",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.05555555555555555,
+        "qwen3-max": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen-plus": 0.4444444444444444,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:27:00.581088",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:27:27.778579",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-max": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:29:18.748026",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.2222222222222222,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:30:54.230689",
+      "models": [
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:32:18.604462",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen-plus": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:34:33.581970",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.1111111111111111,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.5,
+        "qwen3-max": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:50:21.289473",
+      "models": [
+        "qwen-plus",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T17:54:48.582989",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333,
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:01:44.213454",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:01:45.794355",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.05555555555555555,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.5,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:05:45.077264",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.4444444444444444,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:08:54.683342",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-max": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:11:35.338002",
+      "models": [
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen-plus": 0.1111111111111111,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:12:40.891524",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen-plus": 0.5,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:12:44.851240",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:15:34.287875",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:28:07.156194",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen3-max": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:32:38.558612",
+      "models": [
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-30b-a3b-instruct-2507": 0.5,
+        "qwen3-max": 0.4444444444444444,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen-plus": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.0,
+        "qwen2.5-32b-instruct": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:39:28.319093",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.05555555555555555,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen3-max": 0.2777777777777778,
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:41:41.254656",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.0,
+        "qwen-plus": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.6111111111111112,
+        "qwen3-max": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:44:46.699564",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:46:16.787917",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen-plus": 0.5555555555555556,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:49:04.675822",
+      "models": [
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen-plus": 0.3888888888888889,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.1111111111111111,
+        "qwen3-max": 0.4444444444444444
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:50:02.287596",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.3888888888888889,
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:51:03.574832",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.16666666666666666,
+        "qwen3-max": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.3333333333333333,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.1111111111111111
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T18:51:20.504563",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.4444444444444444,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen-plus": 0.1111111111111111,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:06:53.606132",
+      "models": [
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen3-max": 0.3888888888888889,
+        "qwen-plus": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.16666666666666666,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:09:20.703518",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.5,
+        "qwen3-235b-a22b-instruct-2507": 0.1111111111111111,
+        "qwen3-max": 0.1111111111111111,
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.3333333333333333
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:16:03.048666",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-max"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.3888888888888889,
+        "qwen3-max": 0.3888888888888889
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:17:59.461202",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen-plus": 0.3333333333333333,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.4444444444444444,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:19:25.042127",
+      "models": [
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct",
+        "qwen-plus",
+        "qwen3-30b-a3b-instruct-2507"
+      ],
+      "results": {
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-235b-a22b-instruct-2507": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.5,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:23:54.464499",
+      "models": [
+        "qwen-plus",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-max",
+        "qwen2.5-14b-instruct",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.3333333333333333,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen3-max": 0.16666666666666666,
+        "qwen2.5-14b-instruct": 0.1111111111111111,
+        "qwen2.5-32b-instruct": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:25:13.616179",
+      "models": [
+        "qwen3-max",
+        "qwen-plus",
+        "qwen2.5-32b-instruct",
+        "qwen2.5-14b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "results": {
+        "qwen3-max": 0.16666666666666666,
+        "qwen-plus": 0.3888888888888889,
+        "qwen2.5-32b-instruct": 0.2777777777777778,
+        "qwen2.5-14b-instruct": 0.0,
+        "qwen3-30b-a3b-instruct-2507": 0.3888888888888889,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:25:57.986206",
+      "models": [
+        "qwen3-max",
+        "qwen2.5-32b-instruct",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen3-max": 0.2777777777777778,
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.3333333333333333,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen-plus": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:28:23.639420",
+      "models": [
+        "qwen2.5-32b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen2.5-32b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.2222222222222222,
+        "qwen3-max": 0.2777777777777778,
+        "qwen3-30b-a3b-instruct-2507": 0.2777777777777778,
+        "qwen-plus": 0.2777777777777778
+      },
+      "language": "en"
+    },
+    {
+      "timestamp": "2025-12-22T19:28:32.151173",
+      "models": [
+        "qwen-plus",
+        "qwen3-max",
+        "qwen3-30b-a3b-instruct-2507",
+        "qwen2.5-14b-instruct",
+        "qwen3-235b-a22b-instruct-2507",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0.3888888888888889,
+        "qwen3-max": 0.16666666666666666,
+        "qwen3-30b-a3b-instruct-2507": 0.2222222222222222,
+        "qwen2.5-14b-instruct": 0.16666666666666666,
+        "qwen3-235b-a22b-instruct-2507": 0.4444444444444444,
+        "qwen2.5-32b-instruct": 0.1111111111111111
+      },
+      "language": "en"
+    }
+  ],
+  "elo_initial": 1500,
+  "elo_k": 32
+}

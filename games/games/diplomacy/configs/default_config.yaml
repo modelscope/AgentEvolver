@@ -11,10 +11,10 @@ default_role:
     stream: false
     language: en
   agent:
-    type: ThinkingReActAgent
+    type: CacheRetrievalAgent
     kwargs:
       memory:
-        type: SlidingWindowMemory
+        type: CachedSummarizedMemory
         kwargs: null
 
 # Default game configuration
@@ -29,10 +29,10 @@ game:
     - RUSSIA
     - TURKEY
   map_name: standard
-  max_phases: 20
+  max_phases: 30
   negotiation_rounds: 3
   seed: 42
-  language: en  # zh: Chinese, en: English
+  language: zh  # zh: Chinese, en: English
   log_dir: logs
 
 # Power-specific configuration (empty by default, can be overridden in child configs)

@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "created_at": "2026-01-30T14:36:43.798491",
+  "updated_at": "2026-01-30T14:52:34.513647",
+  "models": {
+    "qwen-plus": {
+      "elo": 1469.4695015289756,
+      "total_games": 4,
+      "total_wins": 0,
+      "role_stats": {
+        "Servant": {
+          "wins": 0,
+          "games": 4
+        }
+      },
+      "first_seen": "2026-01-30T14:36:43.811904",
+      "last_updated": "2026-01-30T14:52:34.513631"
+    },
+    "qwen2.5-32b-instruct": {
+      "elo": 1530.5304984710244,
+      "total_games": 2,
+      "total_wins": 2,
+      "role_stats": {
+        "Assassin": {
+          "wins": 2,
+          "games": 2
+        }
+      },
+      "first_seen": "2026-01-30T14:36:43.811915",
+      "last_updated": "2026-01-30T14:48:00.150343"
+    }
+  },
+  "games_history": [
+    {
+      "timestamp": "2026-01-30T14:36:43.811936",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0,
+        "qwen2.5-32b-instruct": 1
+      },
+      "language": "zh"
+    },
+    {
+      "timestamp": "2026-01-30T14:40:40.349390",
+      "models": [
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen-plus": 0
+      },
+      "language": "zh"
+    },
+    {
+      "timestamp": "2026-01-30T14:48:00.150356",
+      "models": [
+        "qwen-plus",
+        "qwen2.5-32b-instruct"
+      ],
+      "results": {
+        "qwen-plus": 0,
+        "qwen2.5-32b-instruct": 1
+      },
+      "language": "zh"
+    },
+    {
+      "timestamp": "2026-01-30T14:52:34.513643",
+      "models": [
+        "qwen-plus"
+      ],
+      "results": {
+        "qwen-plus": 0
+      },
+      "language": "zh"
+    }
+  ],
+  "elo_initial": 1500,
+  "elo_k": 32
+}

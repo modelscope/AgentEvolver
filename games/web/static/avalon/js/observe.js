@@ -26,10 +26,68 @@ const startGameBtn = document.getElementById('start-game-btn');
 const numPlayersSelect = document.getElementById('num-players');
 const languageSelect = document.getElementById('language');
 const tablePlayers = document.getElementById('table-players');
+const backExitButton = document.getElementById('back-exit-button');
 
 let messageCount = 0;
 let gameStarted = false;
 let numPlayers = 5;
+
+const AVALON_SESSION_CLEAR_KEYS = new Set([
+    'gameconfig',
+    'selectedportraits',
+    'gamelanguage',
+    'gamerunning',
+    'previewroles',
+    'presetroles',
+    'preview_roles',
+    'preset_roles',
+    'avalonpreviewroles',
+    'avalonpresetroles',
+    'avalonroleorder',
+    'avalonrolepreview',
+    'avalonroleselection',
+]);
+
+function clearAvalonSessionStorage() {
+    Object.keys(sessionStorage).forEach((key) => {
+        const lowerKey = key.toLowerCase();
+        if (AVALON_SESSION_CLEAR_KEYS.has(lowerKey) || lowerKey.startsWith('avalon')) {
+            sessionStorage.removeItem(key);
+        }
+    });
+}
+
+function updateBackExitButton(gameStatus) {
+    if (!backExitButton) return;
+    const goHome = () => { window.location.href = '/'; };
+    
+    if (gameStatus === 'running') {
+        backExitButton.textContent = 'Exit';
+        backExitButton.title = 'Exit Game';
+        backExitButton.href = '#';
+        backExitButton.onclick = async (e) => {
+            e.preventDefault();
+            try {
+                await fetch('/api/stop-game', { method: 'POST' });
+            } catch (error) {
+                console.error('Error stopping game:', error);
+            }
+            clearAvalonSessionStorage();
+            goHome();
+        };
+    } else {
+        if (gameStatus === 'stopped' || gameStatus === 'finished' || gameStatus === 'waiting') {
+            clearAvalonSessionStorage();
+        }
+        backExitButton.textContent = '← Back';
+        backExitButton.title = 'Back to Home';
+        backExitButton.href = '/';
+        backExitButton.onclick = (e) => {
+            e.preventDefault();
+            goHome();
+        };
+    }
+}
 
 const gameLanguage = sessionStorage.getItem('gameLanguage') || 'en';
 document.body.classList.add(`lang-${gameLanguage}`);
@@ -269,6 +327,7 @@ wsClient.onMessage('message', (message) => {
 
 wsClient.onMessage('game_state', (state) => {
     updateGameState(state);
+    updateBackExitButton(state.status);
     
     if (state.roles && Array.isArray(state.roles)) {
         updateRoleLabels(state.roles);
@@ -281,7 +340,7 @@ wsClient.onMessage('game_state', (state) => {
     }
     if (state.status === 'stopped') {
         gameStarted = false;
-        sessionStorage.removeItem('gameRunning');
+        clearAvalonSessionStorage();
         gameSetup.style.display = 'block';
         messagesContainer.style.display = 'none';
         messageCount = 0;
@@ -289,11 +348,11 @@ wsClient.onMessage('game_state', (state) => {
     }
     if (state.status === 'finished') {
         gameStarted = false;
-        sessionStorage.removeItem('gameRunning');
+        clearAvalonSessionStorage();
     }
     if (state.status === 'waiting') {
         gameStarted = false;
-        sessionStorage.removeItem('gameRunning');
+        clearAvalonSessionStorage();
         gameSetup.style.display = 'block';
         messagesContainer.style.display = 'none';
     }

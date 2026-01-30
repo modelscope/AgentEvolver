@@ -8,6 +8,7 @@ import threading
 from pathlib import Path
 from typing import Dict, Any
 from games.utils import load_config
+from games.evaluation.leaderboard.leaderboard_db import LeaderboardDB
 # Add repo root for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
@@ -106,6 +107,54 @@ def _get_role_config(
             role_config = deep_merge(role_config, frontend_role_config)
     
     return role_config
+
+
+def _update_avalon_leaderboard(
+    assigned_roles: list[tuple[int, str, bool]] | None,
+    agents: list,
+    good_wins: bool | None,
+    language: str,
+):
+    """Persist a single Avalon game result to the leaderboard database."""
+    if good_wins is None:
+        return
+
+    try:
+        base_dir = Path(__file__).parent.parent
+        db_path = base_dir / "evaluation" / "leaderboard" / "leaderboard_avalon.json"
+        leaderboard_db = LeaderboardDB(str(db_path))
+
+        roles_payload = []
+        for idx, role in enumerate(assigned_roles or []):
+            try:
+                role_id, role_name, is_good = role
+            except Exception:
+                role_id, role_name, is_good = None, f"player_{idx}", True
+
+            agent = agents[idx] if idx < len(agents) else None
+            model_name = None
+            if agent is not None:
+                model = getattr(agent, "model", None)
+                if model and getattr(model, "model_name", None):
+                    model_name = getattr(model, "model_name", None)
+                if not model_name and getattr(agent, "name", None):
+                    model_name = getattr(agent, "name", None)
+            model_name = model_name or f"Player{idx}"
+
+            winner = (bool(is_good) and bool(good_wins)) or (not bool(is_good) and not bool(good_wins))
+            roles_payload.append({
+                "role_name": str(role_name),
+                "model_name": str(model_name),
+                "score": 1 if winner else 0,
+            })
+
+        if roles_payload:
+            leaderboard_db.update_from_game_results([
+                {"roles": roles_payload, "language": language}
+            ])
+            print(f"[web] Updated Avalon leaderboard at {db_path} (models: {[r['model_name'] for r in roles_payload]})")
+    except Exception as e:
+        print(f"[web] Failed to update Avalon leaderboard: {e}")
 
 async def run_avalon(
     state_manager: GameStateManager,
@@ -219,6 +268,8 @@ async def run_avalon(
         role="assistant",
     )
     await state_manager.broadcast_message(result_msg)
+
+    _update_avalon_leaderboard(assigned_roles, agents, good_wins, language)
 
 
 async def run_diplomacy(

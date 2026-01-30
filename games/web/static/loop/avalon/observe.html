@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avalon Game - Observe Mode</title>
+    <title>Avalon Game - Observe Online Mode</title>
     <link rel="stylesheet" href="/static/avalon/css/style.css?v=20251214">
     <script>
         window.__EARLY_INIT__ = { hasGameConfig: false, isGameRunning: false, config: null, portraits: null };
@@ -12,7 +12,6 @@
                 var gameConfigStr = sessionStorage.getItem('gameConfig');
                 var portraitsStr = sessionStorage.getItem('selectedPortraits');
                 var gameRunning = sessionStorage.getItem('gameRunning') === 'true';
-                
                 if (gameConfigStr) {
                     window.__EARLY_INIT__.hasGameConfig = true;
                     window.__EARLY_INIT__.config = JSON.parse(gameConfigStr);
@@ -23,7 +22,6 @@
                 } else {
                     document.documentElement.classList.add('manual-start');
                 }
-                
                 if (portraitsStr) {
                     window.__EARLY_INIT__.portraits = JSON.parse(portraitsStr);
                 }
@@ -33,7 +31,6 @@
         })();
     </script>
     <style>
-        /* Hide/show elements based on initial state to avoid flickering */
         html.auto-start #game-setup { display: none !important; }
         html.auto-start #messages-container { display: flex !important; }
         html.manual-start #game-setup { display: block !important; }
@@ -47,8 +44,8 @@
         <div class="header">
             <div class="header-controls">
                 <div class="header-label">Game: Avalon</div>
-                <div class="header-btn">Mode: Observer</div>
-                <a id="back-exit-button" class="header-btn" href="/">Back</a>
+                <div class="header-btn">Mode: Observer (Online)</div>
+                <a id="back-exit-button" class="header-btn" href="/static/loop/index.html">Back</a>
             </div>
             <div id="status-bar">
                 <span id="phase-display">Phase: -</span>
@@ -60,7 +57,6 @@
         
         <div class="main-content">
             <div class="map-container" id="game-visual-container">
-                <!-- Game Setup Form (Overlay) -->
                 <div id="game-setup" class="game-setup" style="display: none;">
                     <h3>👁 Observer Setup</h3>
                     <div class="setup-form">
@@ -86,8 +82,8 @@
                     </div>
                 </div>
 
-                <!-- Pixel Table Scene -->
                 <div class="table-scene">
+                    <div class="mission-progress" id="mission-progress" aria-label="Mission progress"></div>
                     <div class="pixel-table"></div>
                     <div class="table-players" id="table-players"></div>
                 </div>
@@ -107,6 +103,6 @@
     </div>
 
     <script src="/static/avalon/js/websocket.js"></script>
-    <script src="/static/avalon/js/observe.js"></script>
+    <script src="/static/loop/avalon/js/observe_loop.js"></script>
 </body>
 </html>

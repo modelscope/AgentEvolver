@@ -203,7 +203,7 @@ class DiplomacyGame:
             self.state_manager.update_game_state(status="running")
 
         await self._initialize_agents()
-        await self._render_map(f"init_{self.game.get_current_phase()}")
+        await self._render_map(f"init_{self.game.get_current_phase()}",save=False)
         if self.state_manager:
             self.state_manager.save_history_snapshot(kind="init")
 
@@ -263,13 +263,11 @@ class DiplomacyGame:
                 sc_msg = f"{Colors.HEADER}Supply Centers: {sc_counts}{Colors.ENDC}"
             self._debug_print(sc_msg)
 
-            await self._render_map(f"result_{current_phase}")
+            await self._render_map(f"result_{current_phase}",save=False)
             if self.state_manager:
                 self.state_manager.save_history_snapshot(kind="result")
 
-            # Write logs in real-time
-            if self.game_log_dir:
-                await save_game_logs(self.agents, self.game, self.game_log, self.game_log_dir)
+            # Note: Logs are saved only at game end to align with avalon behavior
 
         # Display game end based on language
         if self.is_zh:

@@ -194,12 +194,8 @@ def load_agent_class(agent_class_path: str | None = None) -> Type[Any]:
 
 
 # Import factory functions for backward compatibility and convenience
-from games.agent_factory import (
-    create_agent_from_config,
-    create_model_from_config,
-    create_memory_from_config,
-    create_formatter_from_config,
-)
+# Use lazy imports to avoid circular import issues
+# These functions are imported on-demand when accessed
 
 __all__ = [
     "load_config",
@@ -211,4 +207,18 @@ __all__ = [
     "create_memory_from_config",
     "create_formatter_from_config",
 ]
+
+
+def __getattr__(name):
+    """Lazy import factory functions to avoid circular imports."""
+    if name in ['create_agent_from_config', 'create_model_from_config', 
+               'create_memory_from_config', 'create_formatter_from_config']:
+        # Import the function lazily
+        from games import agent_factory
+        func = getattr(agent_factory, name)
+        # Cache the function in this module's namespace for future access
+        import sys
+        setattr(sys.modules[__name__], name, func)
+        return func
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
