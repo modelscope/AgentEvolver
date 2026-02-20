@@ -99,8 +99,17 @@ def parse_args():
 
 
 def pty_launch(service_name: str, success_std_string="Starting server on"):
-    service_path = os.environ.get(f'{service_name.upper()}_PATH')
-    service_script = os.environ.get(f'{service_name.upper()}_SCRIPT')
+    path_var = f'{service_name.upper()}_PATH'
+    script_var = f'{service_name.upper()}_SCRIPT'
+    service_path = os.environ.get(path_var)
+    service_script = os.environ.get(script_var)
+    if not service_path or not service_script:
+        missing = [v for v in (path_var, script_var)
+                   if not os.environ.get(v)]
+        raise EnvironmentError(
+            f"Required environment variable(s) not set: {', '.join(missing)}. "
+            f"Please define them in your .env file or environment before launching '{service_name}'."
+        )
     companion = LaunchCommandWhenAbsent(
         full_argument_list=[service_script],
         dir=service_path,
