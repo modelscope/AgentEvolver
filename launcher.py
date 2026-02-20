@@ -106,7 +106,7 @@ def pty_launch(service_name: str, success_std_string="Starting server on"):
     if not service_path or not service_script:
         missing = [v for v in (path_var, script_var)
                    if not os.environ.get(v)]
-        raise EnvironmentError(
+        raise RuntimeError(
             f"Required environment variable(s) not set: {', '.join(missing)}. "
             f"Please define them in your .env file or environment before launching '{service_name}'."
         )
