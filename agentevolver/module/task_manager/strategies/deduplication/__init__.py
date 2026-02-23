@@ -5,6 +5,7 @@ from typing import Callable, NotRequired, Optional, Sequence, TypedDict, Unpack
 from loguru import logger
 
 from agentevolver.module.agent_flow.base_agent_flow import BaseAgentFlow
+from agentevolver.module.env_manager.env_worker import EnvWorker
 from agentevolver.module.task_manager.strategies.common.prompts.prompt_explore import get_agent_interaction_system_prompt
 from agentevolver.module.task_manager.strategies.common.prompts.prompt_summarize import (
     get_task_summarize_prompt,
@@ -53,11 +54,11 @@ class LlmDedupSamplingExploreStrategy(TaskExploreStrategy):
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
-        env_worker = EnvWorkerWithPrompt(
-            env_type=task.env_type,
-            task_id=task.task_id,
+        env_worker = EnvWorker(
+            task=task,
             instance_id=None,
-            env_service_url=self._env_service_url,
+            tokenizer=self._tokenizer,
+            config=self._config,
         )
         llm_chat_fn = self._get_llm_chat_fn(
             sampling_params={
