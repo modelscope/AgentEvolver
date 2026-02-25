@@ -538,7 +538,7 @@ class AgentEvolverRayPPOTrainer(RayPPOTrainer):
                 for split in ['val','dev']:
                     try:
                         num_loaded_val_tasks += self.val_task_manager.load_tasks_from_environment(env_client,env_type=self.config.env_service.env_type,split=split)
-                    except:
+                    except Exception:
                         logger.warning(f"failed to load val dataset from environment, split={split}. this may be *normal* if your dataset is split into train/dev")    
             
             assert num_loaded_val_tasks > 0, "failed to load val/dev dataset from environment"

@@ -362,7 +362,7 @@ def main():
             # make dir
             os.makedirs(final_log_path)
             webbrowser.open("http://127.0.0.1:8181/"+"?path="+os.path.abspath(final_log_path))
-        except:
+        except Exception:
             pass
 
     if args.conf:

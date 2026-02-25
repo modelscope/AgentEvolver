@@ -135,7 +135,7 @@ class DashScopeClient:
                     raise LlmException("hit limit")
             except LlmException as e:
                 raise
-            except:
+            except Exception:
                 logger.error(f"API request failed: {response.text}")
                 response.raise_for_status()
         
@@ -168,7 +168,7 @@ class DashScopeClient:
                     raise LlmException("hit limit")
             except LlmException as e:
                 raise
-            except:
+            except Exception:
                 logger.error(f"API request failed: {response.text}")
                 response.raise_for_status()
         

@@ -14,7 +14,7 @@ class TokenAndProb:
         self.logprob = t.logprob
         try:
             self.decoded_string = bytes(t.bytes).decode('utf-8')
-        except:
+        except Exception:
             self.decoded_string = '<cannot decode>' + str(t.bytes)
 
 

@@ -44,12 +44,12 @@ def clip_state_content_correctly(tokenizer, state_content: str, max_env_len: int
         try:
             truncated_content = tokenizer.decode(truncated_tokens, skip_special_tokens=False)
             return truncated_content
-        except:
+        except Exception:
             # If failed, truncation position may be inappropriate, try removing special tokens
             try:
                 truncated_content = tokenizer.decode(truncated_tokens, skip_special_tokens=True)
                 return truncated_content
-            except:
+            except Exception:
                 # Final fallback: manual processing
                 pass
 
@@ -61,7 +61,7 @@ def clip_state_content_correctly(tokenizer, state_content: str, max_env_len: int
             truncated_content = tokenizer.decode(test_tokens, skip_special_tokens=False)
             logger.warning(f"Had to reduce token count by {i} to successfully decode")
             return truncated_content
-        except:
+        except Exception:
             continue
 
     # Final fallback: use original character truncation method
