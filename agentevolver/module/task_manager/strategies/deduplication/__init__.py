@@ -16,6 +16,8 @@ from agentevolver.schema.trajectory import Trajectory
 
 from .embedding import StateRecorder
 from .controlled_agent_flow import ControlledAgentFlow
+from agentevolver.module.env_manager.env_worker import EnvWorker
+from agentevolver.module.exp_manager.exp_manager import TrajExpConfig
 
 
 class LlmDedupExploreStrategyProps(TypedDict):
@@ -53,11 +55,11 @@ class LlmDedupSamplingExploreStrategy(TaskExploreStrategy):
         
     
     def explore(self, task: Task, data_id: str, rollout_id: str) -> list[Trajectory]:
-        env_worker = EnvWorkerWithPrompt(
-            env_type=task.env_type,
-            task_id=task.task_id,
-            instance_id=None,
-            env_service_url=self._env_service_url,
+        env_worker = EnvWorker(
+            task=task,
+            config=self._config,
+            thread_index=0,
+            tokenizer=self._tokenizer,
         )
         llm_chat_fn = self._get_llm_chat_fn(
             sampling_params={
@@ -78,8 +80,14 @@ class LlmDedupSamplingExploreStrategy(TaskExploreStrategy):
         traj = env_worker.execute(
             data_id=data_id,
             rollout_id=rollout_id,
-            system_prompt=get_agent_interaction_system_prompt(task),
+            traj_exp_config=TrajExpConfig(add_exp=False),
             agent_flow=agent_flow,
+            tmux={
+                'step':[0],
+                'token':[0],
+            },
+            stop=[False],
+            system_prompt=get_agent_interaction_system_prompt(task),
         )
 
         return [traj]
