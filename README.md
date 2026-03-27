@@ -26,6 +26,7 @@ improve their capabilities, aiming for efficient, cost-effective, and continuous
 
 ## 📰 News
 
+- **[2026-03]** ⚡ [SeeUPO](https://github.com/modelscope/AgentEvolver/tree/seeupo) released — Sequence-Level Agentic RL with convergence guarantees; multi-turn training stack built on AgentEvolver
 - **[2025-12]** 🎮 [AgentEvolver Game Arena](games/README.md) released — a multi-agent social reasoning arena for interaction, evaluation, and training in games like Avalon and Diplomacy.
 - **[2025-12]** 📢 New preprint [CuES](https://www.arxiv.org/abs/2512.01311) on an extended self-questioning method released with [code](research/CuES/README.md).
 - **[2025-11]** 📄 [The AgentEvolver Technical Report is now available](https://arxiv.org/abs/2511.10395), detailing the framework's architecture, methodology, and key findings.
