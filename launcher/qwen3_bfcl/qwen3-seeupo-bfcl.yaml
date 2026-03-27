@@ -1,0 +1,142 @@
+hydra:
+  searchpath:
+    - file://external/verl/verl/trainer/config
+    - file://config
+
+defaults:
+  - ppo_trainer
+  - beyond_agent_dataflow
+  - _self_
+
+trainer:
+  experiment_name: "run-bfcl-qwen3-14b-linearthink-seeupo-reverse-Bnorm-n8-bz32"
+
+  # New: explicit checkpoint save directory (use an absolute path)
+  default_local_dir: /your/path/to/checkpoints/bfcl/run-bfcl-qwen3-14b-linearthink-seeupo-reverse-Bnorm-n8-bz32
+  default_hdfs_dir: null  # Set to null if not using HDFS
+
+  # New: checkpoint retention policy
+  max_actor_ckpt_to_keep: 3  # Keep the latest 3 actor checkpoints
+  max_critic_ckpt_to_keep: 3  # Keep the latest 3 critic checkpoints
+  del_local_ckpt_after_load: false  # Do not delete local checkpoints after load
+
+  # New: resume mode configuration
+  resume_mode: auto  # auto | disable | resume_path
+  # resume_from_path: your/path/to/checkpoint # if using resume_path mode, specify the specific path
+
+
+  val_before_train: True # NOTE
+  n_gpus_per_node: 8
+  nnodes: 1 
+  save_freq: 5
+  test_freq: 5
+  total_epochs: 50
+  logger:
+    - console
+    - swanlab
+  project_name: beyondagent-bfcl
+  validation_data_dir: "experiments/exp_default/bfcl/validation_log"
+  rollout_data_dir: "experiments/exp_default/bfcl/rollout_log"
+  critic_warmup: 0
+  eval_pass_n: 4
+
+env_service:
+  env_url: http://localhost:8080
+  env_type: bfcl
+  env_feedin_preference: code
+
+algorithm:
+  # 1. GRAE-family algorithms: use grpo
+  adv_estimator: grpo # grpo gae
+  use_kl_in_reward: False
+
+  # 2. Sequence-level algorithms: set these; otherwise comment them out
+  loss_mode: gspo 
+  loss_agg_mode: "seq-mean-token-mean"
+  
+  # 3. Sequential-update-based algorithms: set these; otherwise set to False
+  sequential_update: True 
+  update_order: "reverse" # choose from sequential/reverse/random/custom
+  
+  # 4. SeeUPO: set advantage correction; otherwise use None
+  adv_updator: seeupo # seeupo or None 
+  adv_clip_ratio_high: 0.2
+  adv_clip_ratio_low: 0.2
+
+  # 5. Advantages Normalization
+  norm_adv_by_std_in_grpo: False # should not norm, otherwise not converge
+  special_norm: True
+
+
+
+data:
+  train_batch_size: 32
+  max_prompt_length: 14000 # Dataset filtering (verl/utils/dataset/rl_dataset.py); length truncation
+  max_response_length: 4000  # Length truncation
+  return_raw_chat: True
+  # train_files: 'train(read_from_env_service)'
+  train_files: '//external/bfcl/data/BFCL_v4_multi_turn_base_train.parquet'
+  val_files: '//external/bfcl/data/BFCL_v4_multi_turn_base_test.parquet'
+  # val_files: 'val(read_from_env_service)'
+  
+actor_rollout_ref:
+  actor:
+    override_ppo_mini_batch_num: 1
+    ppo_epochs: 1
+    ppo_mini_batch_size: 16
+    optim:
+      lr: 1e-6
+    use_kl_loss: True
+    kl_loss_coef: 0.002
+    kl_loss_type: low_var_kl
+    ppo_micro_batch_size_per_gpu: 1
+    ppo_max_token_len_per_gpu: 18000
+    use_dynamic_bsz: True
+    # ulysses_sequence_parallel_size: 1
+    fsdp_config:
+      param_offload: True
+      optimizer_offload: True
+  rollout:
+    multi_turn:
+      max_steps: 10
+      max_sample_per_task: 32
+    debug_llm_io: False 
+    max_num_seqs: 48
+    n: 8
+    name: vllm
+    mode: async
+    max_env_len: 3000     # Truncate environment feedback
+    response_length: 4000 # Serves as max_completion_tokens
+    prompt_length: 14000   
+    max_model_len: 18000  # Respect max_model_len; end multi-turn early when appropriate
+    temperature: 0.9
+    max_env_worker: 128
+    context_template: linear_think # NOTE: SeeUPO-family algorithms should use linear_think
+    gpu_memory_utilization: 0.8
+    log_prob_micro_batch_size_per_gpu: 2
+    log_prob_max_token_len_per_gpu: 18000
+    tensor_model_parallel_size: 1
+    enable_oversample: False # This for dynamic_rollout
+    submit_oversample_multiplier: 2
+    magnify_success: True
+    train_history_infer_token: False
+  ref:
+    use_dynamic_bsz: True
+    log_prob_micro_batch_size_per_gpu: 4
+    log_prob_max_token_len_per_gpu: 40960
+    fsdp_config:
+      param_offload: True
+  model:
+    path: your/path/to/Qwen3-14B
+    use_qwen3: True
+    use_remove_padding: True
+    enable_gradient_checkpointing: True
+
+critic:
+  ppo_max_token_len_per_gpu: 18000
+  forward_max_token_len_per_gpu: 18000
+  # For critic-free algorithms, comment out the block below
+  # model:
+  #   path: your/path/to/Qwen2.5-14B-Instruct # Thinking models are poor choices for critic
+  #   use_remove_padding: True
+  #   enable_gradient_checkpointing: True
