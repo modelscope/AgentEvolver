@@ -1,41 +1,24 @@
 <p align="center">
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10-blue" alt="Python 3.10"></a>
-  <a href="./LICENSE.txt"><img src="https://img.shields.io/badge/license-Apache--2.0-black" alt="License"></a>
   <a href="https://modelscope.github.io/AgentEvolver/"><img src="https://img.shields.io/badge/docs-online-blue?logo=markdown" alt="Documentation"></a>
   <a href="https://github.com/modelscope/AgentEvolver"><img src="https://img.shields.io/badge/repository-AgentEvolver-181717?logo=github" alt="GitHub repository"></a>
   <a href="https://arxiv.org/abs/2602.06554"><img src="https://img.shields.io/badge/arXiv-2602.06554-b31b1b.svg" alt="arXiv"></a>
   <a href="https://deepwiki.com/modelscope/AgentEvolver"><img src="https://deepwiki.com/badge.svg" alt="deepwiki"></a>
   <a href="https://github.com/modelscope/AgentEvolver"><img src="https://img.shields.io/github/stars/modelscope/AgentEvolver?style=social" alt="GitHub Stars"></a>
 </p>
-<p align="center"><sub><strong>Branch</strong>: <code>seeupo</code> · <strong>Upstream</strong>: <a href="https://github.com/modelscope/AgentEvolver">modelscope/AgentEvolver</a> — Docs / repository / stars above follow that upstream (this README is the SeeUPO implementation track).</sub></p>
-
-<p align="center">
-  <a href="https://arxiv.org/pdf/2602.06554" title="PDF">
-    <img src="https://img.shields.io/badge/PDF-Download-E74C3C?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Download PDF"/>
-  </a>
-  <a href="LICENSE.txt" title="License">
-    <img src="https://img.shields.io/badge/License-Apache%202.0-3DDC84?style=for-the-badge&logo=apache&logoColor=white" alt="Apache 2.0"/>
-  </a>
-</p>
-<p align="center">
-  <a href="https://www.python.org/" title="Python">
-    <img src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10"/>
-  </a>
-  <a href="https://www.ray.io/" title="Ray">
-    <img src="https://img.shields.io/badge/Distributed-Ray-028CF0?style=for-the-badge&logo=ray&logoColor=white" alt="Ray"/>
-  </a>
-  <a href="https://github.com/volcengine/verl" title="verl">
-    <img src="https://img.shields.io/badge/Built%20on-verl-F97316?style=for-the-badge" alt="Built on verl"/>
-  </a>
-  <a href="https://doi.org/10.48550/arXiv.2602.06554" title="DOI">
-    <img src="https://img.shields.io/badge/DOI-10.48550%2FarXiv.2602.06554-0066CC?style=for-the-badge" alt="DOI"/>
-  </a>
-</p>
 
 <h1 align="center">
   <img src="https://github.com/QwenLM.png?size=96" width="44" height="44" alt="Tongyi Qwen"/>
   &nbsp;SeeUPO
 </h1>
+
+<p align="center"><em>Sequence-Level Agentic-RL with Convergence Guarantees</em></p>
+
+<p align="center">
+  <strong>✨ Official implementation</strong> &nbsp;·&nbsp;
+  <strong>🤖 Multi-turn agentic RL</strong> &nbsp;·&nbsp;
+  <strong>⚡ Critic-free sequence-level updates</strong> &nbsp;·&nbsp;
+  <strong>✅ Convergence guarantees</strong>
+</p>
 
 <p align="center">
   <a href="https://www.alibabagroup.com/en-US/" title="Alibaba Group">
@@ -45,18 +28,17 @@
   <a href="https://tongyi.aliyun.com/" title="Tongyi">
     <img src="https://img.shields.io/badge/通义-Tongyi-7C3AED?style=for-the-badge" alt="通义 Tongyi"/>
   </a>
+  &nbsp;
+  <a href="https://arxiv.org/pdf/2602.06554" title="PDF">
+    <img src="https://img.shields.io/badge/PDF-Download-E74C3C?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Download PDF"/>
+  </a>
 </p>
 
-<p align="center">
-  <strong>✨ Official implementation</strong> &nbsp;·&nbsp;
-  <strong>🤖 Multi-turn agentic RL</strong> &nbsp;·&nbsp;
-  <strong>⚡ Critic-free sequence-level updates</strong> &nbsp;·&nbsp;
-  <strong>✅ Convergence guarantees</strong>
-</p>
+<p align="center"><sub><strong>Implementation track</strong>: <code>seeupo</code> · <strong>Upstream</strong>: <a href="https://github.com/modelscope/AgentEvolver">modelscope/AgentEvolver</a></sub></p>
 
 ---
 
-This repository implements the multi-turn agentic reinforcement learning training pipeline from **SeeUPO: Sequence-Level Agentic-RL with Convergence Guarantees**, built on the **BeyondAgent** framework and a **project-vendored [verl](https://github.com/volcengine/verl) tree under `external/verl/`** (this codebase **does not** use the `verl` package from PyPI). Training **requires** that copy: install it with **`pip install -e external/verl`** (see **Quick start (SeeUPO)** → **Environment setup**). A standalone **env_service** handles environment interaction.
+This repository implements the multi-turn agentic reinforcement learning training pipeline from **SeeUPO**, built on the **BeyondAgent** framework and a **project-vendored [verl](https://github.com/volcengine/verl) tree under `external/verl/`** (this codebase **does not** use the `verl` package from PyPI). Training **requires** that vendored copy — install it with **`pip install -e external/verl`** (see **Quick start (SeeUPO)** → **Environment setup**). A standalone **env_service** handles environment interaction.
 
 ## Contents
 
@@ -72,15 +54,8 @@ This repository implements the multi-turn agentic reinforcement learning trainin
 <a id="toc-paper"></a>
 ## 📄 Paper
 
-<p align="center">
-  <a href="https://arxiv.org/abs/2602.06554" title="SeeUPO on arXiv">
-    <img src="https://img.shields.io/badge/arXiv-2602.06554-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white" alt="arXiv 2602.06554"/>
-  </a>
-</p>
-
 **Authors:** Tianyi Hu, Qingxu Fu, Yanxi Chen, Zhaoyang Liu, Bolin Ding  
-
-**Submitted:** 2026-02-06 (arXiv:2602.06554)
+**Submitted:** 2026-02-06 &nbsp;|&nbsp; [arXiv:2602.06554](https://arxiv.org/abs/2602.06554)
 
 ### 🔬 What the paper proposes (and how it maps to this code)
 
