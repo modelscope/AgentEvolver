@@ -7,17 +7,16 @@
 </p>
 
 <h1 align="center">
-  <img src="https://github.com/QwenLM.png?size=96" width="44" height="44" alt="Tongyi Qwen"/>
+  <img src="https://github.com/QwenLM.png?size=96" width="44" height="44" alt="Tongyi Qwen" style="vertical-align: middle;"/>
   &nbsp;SeeUPO
 </h1>
 
 <p align="center"><em>Sequence-Level Agentic-RL with Convergence Guarantees</em></p>
 
 <p align="center">
-  <strong>✨ Official implementation</strong> &nbsp;·&nbsp;
-  <strong>🤖 Multi-turn agentic RL</strong> &nbsp;·&nbsp;
-  <strong>⚡ Critic-free sequence-level updates</strong> &nbsp;·&nbsp;
-  <strong>✅ Convergence guarantees</strong>
+  <strong>✨ Multi-turn Agentic RL</strong> &nbsp;·&nbsp;
+  <strong>⚡ Critic-free Sequence-level Updates</strong> &nbsp;·&nbsp;
+  <strong>✅ Convergence Guarantees</strong>
 </p>
 
 <p align="center">
@@ -38,9 +37,12 @@
 
 ---
 
-This repository implements the multi-turn agentic reinforcement learning training pipeline from **SeeUPO**, built on the **BeyondAgent** framework and a **project-vendored [verl](https://github.com/volcengine/verl) tree under `external/verl/`** (this codebase **does not** use the `verl` package from PyPI). Training **requires** that vendored copy — install it with **`pip install -e external/verl`** (see **Quick start (SeeUPO)** → **Environment setup**). A standalone **env_service** handles environment interaction.
+> **SeeUPO** is a multi-turn agentic reinforcement learning training pipeline built on **BeyondAgent** with a **vendored [verl](https://github.com/volcengine/verl) tree under `external/verl/`**.
+> Training **requires** that vendored copy — install it with **`pip install -e external/verl`**. Environment interaction is served by the standalone **`env_service`**.
 
 ## Contents
+
+Use the roadmap below to jump directly to the paper summary, repository structure, setup instructions, or training entry points.
 
 - [Paper](#toc-paper)
 - [Repository layout](#toc-repository-layout)
@@ -59,7 +61,7 @@ This repository implements the multi-turn agentic reinforcement learning trainin
 
 ### 🔬 What the paper proposes (and how it maps to this code)
 
-> **TL;DR** — The paper studies **advantage estimation** (GAE vs. GRAE) × **policy updates** (REINFORCE vs. proximal / HAML-style). In **multi-turn** settings, common **critic-free** backbones lack **joint** critic-free + convergence guarantees; **SeeUPO** uses **reverse-order, turn-wise sequential updates** (HAML) so **backward induction** can target **global optimality**, still **without a critic**.
+> **TL;DR.** The paper studies **advantage estimation** (GAE vs. GRAE) together with **policy updates** (REINFORCE vs. proximal / HAML-style). In **multi-turn** settings, standard **critic-free** recipes usually do not provide both critic-free training and convergence guarantees. **SeeUPO** addresses this with **reverse-order, turn-wise sequential updates** so that **backward induction** can target **global optimality** while remaining **critic-free**.
 
 #### Takeaways (from §3 of the paper)
 
@@ -67,14 +69,11 @@ This repository implements the multi-turn agentic reinforcement learning trainin
 - **Multi-turn** exposes a **trade-off**: mainstream recipes rarely achieve **both** **critic-free training** **and** strong **convergence-style guarantees**.
 - **SeeUPO** treats a multi-turn trajectory as **sequential single-turn bandits / virtual agents**, updates **turn-by-turn in reverse order (T → T−1 → … → 1)**, and in practice instantiates **GRAE + PPO-style mirror updates** (paper: **SeeUPPO-GRAE**).
 
-#### Table 1 (informal; from the paper): backbones × convergence sketch
+#### Table 1. Backbones and convergence sketch
 
-**ST** = single-turn, **MT** = multi-turn. The sketch condenses claims from §3; **each entry is backed by formal analysis** (definitions, assumptions, lemmas/theorems, and proofs). For **full statements and derivations**, see **[arXiv:2602.06554](https://arxiv.org/abs/2602.06554) and the paper appendices** (e.g. GAE/GRAE bias, PPO-style objectives, multi-turn bandit modeling, HAML/monotonic improvement, backward induction / global optimality for SeeUPO).
+**ST** = single-turn, **MT** = multi-turn. The table below condenses the claims in §3. **Each entry is backed by formal analysis** in the paper and appendices, including definitions, assumptions, lemmas, theorems, and proofs.
 
-<details>
-<summary><strong>Table 1 — full grid</strong> (advantage / update / level / examples / ST–MT / repo mapping)</summary>
-
-**Columns:** **Advantage** and **Update** name the estimator and policy-update family; **Level** is token vs. sequence; **Example** cites a representative method; **ST** / **MT** indicate whether the paper’s convergence sketch covers single-turn vs. multi-turn; **In this repo** points to config knobs when applicable.
+**Reading guide:** **Advantage** and **Update** name the estimator and policy-update family; **Level** is token vs. sequence; **Example** gives a representative method; **ST** / **MT** indicate whether the paper’s convergence sketch covers single-turn vs. multi-turn; **In this repo** points to relevant config knobs.
 
 | Advantage | Update | Level | Example | ST | MT | In this repo |
 |:----------|:-------|:------|:--------|:--:|:--:|:----------|
@@ -84,15 +83,12 @@ This repository implements the multi-turn agentic reinforcement learning trainin
 | GRAE | PPU | Sequence | GSPO | ✓ | ✗ | `loss_mode: gspo` (sequence baseline) |
 | GRAE | HAML / sequential | Sequence | **SeeUPO** | — | ✓ | `sequential_update`, `update_order: reverse`, `adv_updator: seeupo` |
 
-</details>
-
 **Configs in this repo:** `launcher/qwen3_appworld/`, `launcher/qwen3_bfcl/`, `launcher/qwen25_bfcl/` (YAML + shell helpers).
 
 <a id="toc-repository-layout"></a>
 ## 🗂️ Repository layout
 
-<details>
-<summary><strong>Path → description</strong> (click to expand)</summary>
+The repository is organized around four pieces: the training core, the vendored `verl` dependency, the environment service, and benchmark-specific launch/config files.
 
 | Path | Description |
 |:-----|:------------|
@@ -105,25 +101,26 @@ This repository implements the multi-turn agentic reinforcement learning trainin
 | `requirements_NewVerl.txt` | Ultra-short install reminder; the English walkthrough lives under **Quick start (SeeUPO)** / **Environment setup** below. |
 | `sync_env_with_yaml.py` | Compare / align an activated Conda env with `seeupo_env.yaml` (strict version sync). |
 
-</details>
-
 HTTP API details for environments are documented in `env_service/interface.md` (ports depend on your setup; training YAMLs typically set `env_service.env_url`).
 
 <a id="toc-quick-start-seeupo"></a>
 ## 🚀 Quick start (SeeUPO)
 
-Use this as the entry point: it points to the **same** end-to-end steps as **Environment setup** immediately below — benchmark sandboxes **(A)** plus the training Conda stack **(B)** with **`pip install -e external/verl`**, FlashAttention, vLLM, and optional **`sync_env_with_yaml.py`**. Follow **Environment setup** for commands and version pins; nothing here replaces that section.
+Use this section as the shortest path into the project. The full setup still has **two layers**: **(A)** benchmark sandboxes under `env_service/environments/` and **(B)** the training Conda stack with **`pip install -e external/verl`**, FlashAttention, vLLM, and optional **`sync_env_with_yaml.py`**. Exact commands and version pins are given in **Environment setup** below.
 
 <a id="toc-environment-setup"></a>
 ## 🧰 Environment setup
 
-Set things up in two layers: **(A)** per-benchmark sandboxes under `env_service/environments/`, and **(B)** the **agentic RL training stack** (Python, **this repo’s `external/verl`**, FlashAttention, vLLM) used by `launcher.py`.
+Set up the project in **two layers**:
 
-**verl (mandatory):** You must use the **verl sources included in this repository** (`external/verl/`). Do **not** install verl from PyPI or substitute another Git clone unless it matches the project-pinned tree. The supported install is **`pip install -e external/verl`** from the repo root (see step 3 below; `--no-deps` is recommended so Conda/`seeupo_env.yaml` control dependencies).
+- **(A) Benchmark sandboxes:** local benchmark dependencies under `env_service/environments/`
+- **(B) Training infrastructure:** Python plus **this repo’s `external/verl`**, FlashAttention, and vLLM for `launcher.py`
+
+> **Important.** You must use the **verl sources vendored in this repository** at `external/verl/`. Do **not** install `verl` from PyPI or swap in another clone unless it matches the project-pinned tree. The supported install is **`pip install -e external/verl`** from the repo root; `--no-deps` is recommended so Conda and `seeupo_env.yaml` remain the source of truth.
 
 ### A) `env_service` benchmark sandboxes
 
-Each benchmark ships a small **`setup.sh`** that installs or prepares its local dependencies (datasets, Python env hints, etc.). From the repo root, run the script for the benchmark you need:
+Each benchmark provides a small **`setup.sh`** that prepares its local dependencies, datasets, and environment hints. From the repo root, run the script for the benchmark you need:
 
 <details>
 <summary><strong>Benchmark <code>setup.sh</code> commands</strong></summary>
@@ -141,13 +138,11 @@ bash env_service/environments/openworld/setup.sh
 
 </details>
 
-Read any messages the script prints (paths, extra Conda envs, data downloads). **BFCL** in particular may require running preprocessing steps mentioned inside `env_service/launch_script/bfcl.sh` / the BFCL README so that `BFCL_DATA_PATH` and related files exist. After setup, start the HTTP env service with `env_service/launch_script/appworld.sh`, `bfcl.sh`, etc., or use the launcher shell scripts in `launcher/`, which start the service for you.
+**After setup:** read the script output carefully for paths, extra Conda envs, and data downloads. **BFCL** may additionally require preprocessing steps referenced in `env_service/launch_script/bfcl.sh` or the BFCL README so that `BFCL_DATA_PATH` and related files exist. Once ready, start the HTTP environment service with `env_service/launch_script/appworld.sh`, `bfcl.sh`, and related scripts, or let the launcher scripts in `launcher/` start it for you.
 
 ### B) Agentic RL infrastructure (training Conda env)
 
-The **canonical version pin** is **`seeupo_env.yaml`** (a full Conda export). The steps below are the recommended **high-level recipe**; if anything conflicts, **prefer the exact versions in `seeupo_env.yaml`**.
-
-Same intent as `requirements_NewVerl.txt`; **exact pins** are in **`seeupo_env.yaml`**.
+The **canonical version pin** is **`seeupo_env.yaml`**. The recipe below is the recommended high-level path; if anything conflicts, **prefer the exact versions in `seeupo_env.yaml`**. This serves the same purpose as `requirements_NewVerl.txt`, but the YAML is the authoritative source of exact pins.
 
 <details>
 <summary><strong>Conda env recipe</strong> (create → <code>seeupo_env.yaml</code> → editable <code>external/verl</code> → flash-attn / vLLM → <code>sync_env_with_yaml.py</code>)</summary>
@@ -177,7 +172,7 @@ python sync_env_with_yaml.py seeupo_env.yaml -n seeupo --install
 <a id="toc-seeupo-training-settings"></a>
 ## ⚙️ SeeUPO-related training settings
 
-The snippets below track the current **`launcher/qwen3_bfcl/qwen3-seeupo-bfcl.yaml`**. Other benchmarks mirror the same **`algorithm`** block; adjust **`env_service`**, **`trainer.nnodes`**, paths, and model checkpoints for your run.
+The snippets below summarize the checked-in **`launcher/qwen3_bfcl/qwen3-seeupo-bfcl.yaml`**. Other benchmarks reuse the same **`algorithm`** block; in practice you mainly adjust **`env_service`**, **`trainer.nnodes`**, dataset paths, and model checkpoints.
 
 ### Algorithm (`algorithm`)
 
@@ -243,43 +238,42 @@ data:
 
 ### `trainer` — hardware & logging (abridged)
 
-Set **`default_local_dir`**, **`experiment_name`**, **`n_gpus_per_node`**, **`nnodes`**, **`total_epochs`**, loggers (`swanlab`, etc.). BFCL reference run: **50 epochs**, **8×1 GPUs** in the checked-in YAML.
+Use this block to set hardware scale, experiment naming, and logging. In particular, configure **`default_local_dir`**, **`experiment_name`**, **`n_gpus_per_node`**, **`nnodes`**, **`total_epochs`**, and your loggers (`swanlab`, etc.). The checked-in BFCL reference run uses **50 epochs** on **8×1 GPUs**.
 
 ### `actor_rollout_ref` — optimization, rollout, model
+
+This block controls optimization, rollout behavior, and model wiring for training.
 
 - **`actor`:** LR **1e-6**, **KL** penalty (`kl_loss_coef: 0.002`, `low_var_kl`), **FSDP offload** flags, **dynamic batch** tokens (`ppo_max_token_len_per_gpu`, etc.).
 - **`rollout`:** **`vllm`** + **`mode: async`**, **`n: 8`** rollouts per prompt, **`multi_turn.max_steps: 10`**, temperature **0.9**, **`context_template: linear_think`** (SeeUPO family uses linear thinking template), lengths aligned to data (`prompt_length` / `response_length` / `max_model_len`).
 - **`model`:** set **`path`** to your **Qwen3** checkpoint; **`use_qwen3: True`**, gradient checkpointing / padding as in the YAML.
 - **`critic`:** for critic-free runs, keep the **`critic.model`** block **commented** as in the file.
 
-For AppWorld, copy the same **`algorithm`** block and point **`env_service.env_type`** / URLs to the AppWorld service; see `launcher/qwen3_appworld/qwen3-seeupo-appworld.yaml`.
+For AppWorld, keep the same **`algorithm`** block and switch **`env_service.env_type`** and URLs to the AppWorld service; see `launcher/qwen3_appworld/qwen3-seeupo-appworld.yaml`.
 
 <a id="toc-run-training"></a>
 ## 🚀 Run training
 
-**Prerequisites:** complete **Quick start (SeeUPO)** / **Environment setup** (benchmark sandboxes + training Conda env, optionally **`sync_env_with_yaml.py`**) in the sections above. Activate your **training** environment (`conda activate seeupo` or your name), `cd` to the repo root, and ensure CUDA/driver match your vLLM build.
+> **Prerequisites.** Complete **Quick start (SeeUPO)** / **Environment setup** first, including benchmark sandboxes, the training Conda environment, and optionally **`sync_env_with_yaml.py`**. Before launching, activate your training environment (`conda activate seeupo` or your own name), `cd` to the repo root, and verify that your CUDA/driver stack matches the installed vLLM build.
 
 ### Single-node (GRPO / GSPO / SeeUPO)
 
-The scripts under **`launcher/qwen3_bfcl/`** and **`launcher/qwen3_appworld/`** are the fastest path: start the env service with **`nohup`**, wait, then call **`launcher.py`** with the matching YAML.
-
-<details>
-<summary><strong>Launcher scripts</strong> (environment × GRPO / GSPO / SeeUPO)</summary>
+This is the fastest path for single-node experiments. The scripts under **`launcher/qwen3_bfcl/`** and **`launcher/qwen3_appworld/`** start the environment service with **`nohup`**, wait for readiness, and then invoke **`launcher.py`** with the matching YAML.
 
 | Environment | GRPO | GSPO | SeeUPO |
 |:------------|:-----|:-----|:-------|
 | BFCL | `bash launcher/qwen3_bfcl/qwen3-grpo-bfcl.sh` | `bash launcher/qwen3_bfcl/qwen3-gspo-bfcl.sh` | `bash launcher/qwen3_bfcl/qwen3-seeupo-bfcl.sh` |
 | AppWorld | `bash launcher/qwen3_appworld/qwen3-grpo-appworld.sh` | `bash launcher/qwen3_appworld/qwen3-gspo-appworld.sh` | `bash launcher/qwen3_appworld/qwen3-seeupo-appworld.sh` |
 
-</details>
-
-**Required env vars:** **`CONDA_SH`**, **`SWANLAB_API_KEY`**. **Optional:** **`BFCL_CONDA_ENV`** / **`APPWORLD_CONDA_ENV`** (defaults `bfcl` / `appworld`), **`TRAIN_CONDA_ENV`** (default `seeupo`), **`BFCL_ENV_DIR`**, **`BFCL_STARTUP_SLEEP`** / **`APPWORLD_STARTUP_SLEEP`**, **`APPWORLD_ROOT`**. If you use the context-template alien LLM path, set **`DASHSCOPE_API_KEY`** (or **`DASHSCOPE_API_KEYS`** / **`DASHSCOPE_API_KEYS_REGULAR`** + **`DASHSCOPE_API_KEYS_BACKUP`** as comma-separated lists). Details are in the header comments of each script.
+**Required env vars:** **`CONDA_SH`**, **`SWANLAB_API_KEY`**.  
+**Optional env vars:** **`BFCL_CONDA_ENV`** / **`APPWORLD_CONDA_ENV`** (defaults `bfcl` / `appworld`), **`TRAIN_CONDA_ENV`** (default `seeupo`), **`BFCL_ENV_DIR`**, **`BFCL_STARTUP_SLEEP`** / **`APPWORLD_STARTUP_SLEEP`**, **`APPWORLD_ROOT`**.  
+If you use the context-template alien LLM path, set **`DASHSCOPE_API_KEY`** or provide **`DASHSCOPE_API_KEYS`** / **`DASHSCOPE_API_KEYS_REGULAR`** together with **`DASHSCOPE_API_KEYS_BACKUP`** as comma-separated lists. Full details are documented in the header comments of each script.
 
 **Logs:** `bfcl_service.log` / `appworld_service.log` at the **repository root**.
 
 ### Manual flow
 
-If you already run the env service by hand, skip the `nohup` block and run from the repo root:
+Use this path if the environment service is already running. In that case, skip the launcher script’s `nohup` block and call `launcher.py` directly from the repo root:
 
 <details>
 <summary><strong>Example — manual <code>launcher.py</code> (BFCL SeeUPO)</strong></summary>
@@ -290,11 +284,11 @@ python launcher.py --conf launcher/qwen3_bfcl/qwen3-seeupo-bfcl.yaml
 
 </details>
 
-For AppWorld you may also use **`python launcher.py --conf <yaml> --with-appworld`** so the launcher starts AppWorld instead of a pre-started service.
+For AppWorld, you may also use **`python launcher.py --conf <yaml> --with-appworld`** so the launcher starts AppWorld instead of expecting a pre-started service.
 
 ### Multi-node (PPO baseline)
 
-Use **`launcher_multinode.py`** with **`launcher/qwen3_bfcl/qwen3-ppo-bfcl.sh`** or **`launcher/qwen3_appworld/qwen3-ppo-appworld.sh`**. Your scheduler must set **`RANK`**, **`WORLD_SIZE`**, **`MASTER_ADDR`**, **`MASTER_PORT`**, plus **`CONDA_SH`** and **`SWANLAB_API_KEY`**. Optional: **`TRAIN_CONDA_ENV`**, **`BFCL_CONDA_ENV`** / **`APPWORLD_CONDA_ENV`**, **`NUM_GPUS_PER_NODE`**, **`NUM_CPUS_PER_NODE`**, **`OBJECT_STORE_MEMORY`**, **`NCCL_*` / `GLOO_*`**. Service logs: **`logs/bfcl/`** / **`logs/appworld/`** under the repo root.
+Use **`launcher_multinode.py`** together with **`launcher/qwen3_bfcl/qwen3-ppo-bfcl.sh`** or **`launcher/qwen3_appworld/qwen3-ppo-appworld.sh`** for distributed PPO baselines. Your scheduler must provide **`RANK`**, **`WORLD_SIZE`**, **`MASTER_ADDR`**, **`MASTER_PORT`**, **`CONDA_SH`**, and **`SWANLAB_API_KEY`**. Optional knobs include **`TRAIN_CONDA_ENV`**, **`BFCL_CONDA_ENV`** / **`APPWORLD_CONDA_ENV`**, **`NUM_GPUS_PER_NODE`**, **`NUM_CPUS_PER_NODE`**, **`OBJECT_STORE_MEMORY`**, and **`NCCL_*` / `GLOO_*`**. Service logs are written under **`logs/bfcl/`** or **`logs/appworld/`** at the repo root.
 
 `launcher.py` backs up `config/`, `beyondagent/`, and the chosen YAML under the experiment directory for reproducibility.
 
@@ -303,10 +297,12 @@ Use **`launcher_multinode.py`** with **`launcher/qwen3_bfcl/qwen3-ppo-bfcl.sh`**
 <a id="toc-license"></a>
 ## 📜 License
 
-`LICENSE.txt` in this repository is **Apache License 2.0** (see the file for the full text).
+This repository is released under **Apache License 2.0**. See `LICENSE.txt` for the full text.
 
 <a id="toc-citation"></a>
 ## 📚 Citation (BibTeX)
+
+Use the following BibTeX entry to cite the paper.
 
 <details>
 <summary><strong>BibTeX</strong> (click to expand)</summary>
