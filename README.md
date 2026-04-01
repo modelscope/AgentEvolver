@@ -37,8 +37,8 @@
 
 ---
 
-> **SeeUPO** is a multi-turn agentic reinforcement learning training pipeline built on **BeyondAgent** with a **vendored [verl](https://github.com/volcengine/verl) tree under `external/verl/`**.
-> Training **requires** that vendored copy — install it with **`pip install -e external/verl`**. Environment interaction is served by the standalone **`env_service`**.
+> **SeeUPO** is a multi-turn agentic reinforcement learning training pipeline built on **BeyondAgent** with a **modified and vendored verl** under `external/verl/`.
+> This verl has been approved for open source. Training **requires** using this vendored copy — install it with `pip install -e external/verl --no-deps`. Environment interaction is served by the standalone **`env_service`**.
 
 ## Contents
 
@@ -93,7 +93,7 @@ The repository is organized around four pieces: the training core, the vendored 
 | Path | Description |
 |:-----|:------------|
 | `beyondagent/` | Main training loop and Ray trainer; `module/trainer/ba_ray_trainer.py` implements **SeeUPO-style sequential updates, ratio computation, and `adv_updator: seeupo`**. |
-| `external/verl/` | **Required** SeeUPO/BeyondAgent fork of verl shipped in-repo — **not** interchangeable with **`pip install verl`** from PyPI. After cloning this repo, install with **`pip install -e external/verl`** (optionally `--no-deps` per **Environment setup**). Use the revision bundled here; other forks/commits may break training. |
+| `external/verl/` | **Required** SeeUPO modified version of verl (approved for open source). Install with `pip install -e external/verl --no-deps`. You must use the version included here. |
 | `env_service/` | Environment service for **AppWorld**, **BFCL**, **OpenWorld**, etc.; launch scripts live in `env_service/launch_script/`. |
 | `launcher/` | Hydra/YAML experiment entry points; e.g. SeeUPO on BFCL: `launcher/qwen3_bfcl/qwen3-seeupo-bfcl.yaml`. |
 | `config/` | Shared Hydra fragments for defaults and dataflow. |
@@ -116,7 +116,7 @@ Set up the project in **two layers**:
 - **(A) Benchmark sandboxes:** local benchmark dependencies under `env_service/environments/`
 - **(B) Training infrastructure:** Python plus **this repo’s `external/verl`**, FlashAttention, and vLLM for `launcher.py`
 
-> **Important.** You must use the **verl sources vendored in this repository** at `external/verl/`. Do **not** install `verl` from PyPI or swap in another clone unless it matches the project-pinned tree. The supported install is **`pip install -e external/verl`** from the repo root; `--no-deps` is recommended so Conda and `seeupo_env.yaml` remain the source of truth.
+> **Important.** You must use the **modified verl** vendored in this repository at `external/verl/`. This version has been reviewed and approved for open-sourcing. Do **not** install `verl` from PyPI or use another clone. Run `pip install -e external/verl --no-deps`.
 
 ### A) `env_service` benchmark sandboxes
 
