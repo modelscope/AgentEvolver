@@ -7,6 +7,7 @@ import sys
 import os
 import signal
 import shlex
+from pathlib import Path
 from dotenv import load_dotenv
 from agentevolver.utils.daemon import LaunchCommandWhenAbsent
 
@@ -98,9 +99,32 @@ def parse_args():
     return parser.parse_args()
 
 
+def _require_service_env(service_name: str):
+    """Return (path, script) for the companion service, validating env vars."""
+    env_prefix = service_name.upper()
+    service_path = os.environ.get(f'{env_prefix}_PATH')
+    service_script = os.environ.get(f'{env_prefix}_SCRIPT')
+    missing = []
+    if not service_path:
+        missing.append(f'{env_prefix}_PATH')
+    if not service_script:
+        missing.append(f'{env_prefix}_SCRIPT')
+    if missing:
+        example_hint = ""
+        example_env = Path("example.env")
+        if example_env.exists():
+            example_hint = (
+                f" Copy the relevant entries from {example_env} into your .env file."
+            )
+        raise RuntimeError(
+            f"Missing environment variable(s) required to launch '{service_name}': "
+            f"{', '.join(missing)}.{example_hint}"
+        )
+    return service_path, service_script
+
+
 def pty_launch(service_name: str, success_std_string="Starting server on"):
-    service_path = os.environ.get(f'{service_name.upper()}_PATH')
-    service_script = os.environ.get(f'{service_name.upper()}_SCRIPT')
+    service_path, service_script = _require_service_env(service_name)
     companion = LaunchCommandWhenAbsent(
         full_argument_list=[service_script],
         dir=service_path,
