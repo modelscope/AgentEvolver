@@ -98,9 +98,36 @@ def parse_args():
     return parser.parse_args()
 
 
+def _require_service_env(service_name: str) -> tuple[str, str]:
+    env_prefix = service_name.upper()
+    service_path = os.environ.get(f'{env_prefix}_PATH')
+    service_script = os.environ.get(f'{env_prefix}_SCRIPT')
+
+    missing_vars = [
+        name
+        for name, value in (
+            (f'{env_prefix}_PATH', service_path),
+            (f'{env_prefix}_SCRIPT', service_script),
+        )
+        if not value
+    ]
+    if missing_vars:
+        joined = ', '.join(missing_vars)
+        raise ValueError(
+            f"Missing required environment variable(s) for {service_name}: {joined}. "
+            f"Set them in your shell or .env before using --with-{service_name}."
+        )
+
+    if not os.path.exists(service_path):
+        raise ValueError(
+            f"Configured {env_prefix}_PATH does not exist: {service_path}"
+        )
+
+    return service_path, service_script
+
+
 def pty_launch(service_name: str, success_std_string="Starting server on"):
-    service_path = os.environ.get(f'{service_name.upper()}_PATH')
-    service_script = os.environ.get(f'{service_name.upper()}_SCRIPT')
+    service_path, service_script = _require_service_env(service_name)
     companion = LaunchCommandWhenAbsent(
         full_argument_list=[service_script],
         dir=service_path,
