@@ -11,7 +11,7 @@ class Task(BaseModel):
     env_type: str = Field(default="appworld")
     
     # whether this task is open query. open query has no clear stop condition.
-    open_query: bool = Field() # FIXME debug, check if every instance handles this new attr. default False.
+    open_query: bool = Field(default=False)
 
     metadata: dict = Field(default_factory=dict)
     
