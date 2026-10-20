@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "parallel-search": {
+      "type": "streamable_http",
+      "url": "https://search.parallel.ai/mcp",
+      "headers": {
+        "User-Agent": "AgentEvolver/0.1.0 (+https://github.com/modelscope/AgentEvolver)"
+      }
+    }
+  }
+}

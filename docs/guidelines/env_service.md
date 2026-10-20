@@ -41,6 +41,14 @@ cd env_service/environments/appworld
 bash setup.sh
 ```
 
+### OpenWorld
+
+The [OpenWorld MCP environment](../../env_service/environments/openworld/openworld.md)
+provides web search and page fetching through Parallel Search MCP by default,
+without an account or API key. Explicit MCP server configurations and edits to the
+legacy finance configuration remain selected. See its guide for installation,
+custom server files, disabling tools and the existing evaluation limitations.
+
 ### BFCL
 To install the `BFCL` environment, navigate to the following directory and run the setup script. This script will configure environment variables, create a Conda environment with Python 3.11, install necessary dependencies, initialize BFCL, and download required data:
 
