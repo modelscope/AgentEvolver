@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>ProMedia — abrir Control</title>
+    <!--
+      Abre Control en el puerto real de Vite (prueba 5173–5178).
+      Nunca usa bare "/" (HomePage se ve como app “vieja” mínima).
+      Preferí el launcher (Abrir-ProMedia.*) que detecta el puerto al arrancar.
+      En producción/hosteado, editá FALLBACK_URL abajo.
+    -->
+    <script>
+      var PORTS = [5173, 5174, 5175, 5176, 5177, 5178];
+      var FALLBACK_URL = "http://localhost:5173/control";
+
+      function setLink(url) {
+        var a = document.getElementById("link");
+        if (a) {
+          a.href = url;
+          a.textContent = url;
+        }
+        var status = document.getElementById("status");
+        if (status) status.textContent = "Abriendo " + url + "…";
+      }
+
+      function openControl(url) {
+        setLink(url);
+        location.replace(url);
+      }
+
+      // Vite sirve index.html en /control (SPA). Probar cada puerto.
+      async function findControl() {
+        for (var i = 0; i < PORTS.length; i++) {
+          var port = PORTS[i];
+          var url = "http://127.0.0.1:" + port + "/control";
+          try {
+            var res = await Promise.race([
+              fetch(url, { cache: "no-store" }),
+              new Promise(function (_, rej) {
+                setTimeout(function () {
+                  rej(new Error("timeout"));
+                }, 800);
+              }),
+            ]);
+            if (res && res.ok) {
+              return url.replace("127.0.0.1", "localhost");
+            }
+          } catch (e) {
+            /* try next */
+          }
+        }
+        return null;
+      }
+
+      findControl().then(function (url) {
+        openControl(url || FALLBACK_URL);
+      });
+    </script>
+  </head>
+  <body>
+    <p id="status">Buscando Control en localhost:5173–5178…</p>
+    <p>
+      <a id="link" href="http://localhost:5173/control">ProMedia Control</a>
+    </p>
+    <p style="color: #555; font-size: 0.9rem">
+      Si no redirige, hacé clic en el enlace. Preferí
+      <code>Abrir-ProMedia.command</code> / <code>.bat</code> / <code>.sh</code>
+      para arrancar hub+web y abrir el puerto correcto. Un atajo del Escritorio
+      debe apuntar a la carpeta <code>promedia/</code> de este repo.
+    </p>
+  </body>
+</html>

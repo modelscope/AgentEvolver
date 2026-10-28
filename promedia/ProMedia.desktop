@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Abrir ProMedia
+Comment=Arranca hub + web y abre Control (/control, puerto real Vite)
+# Dejá este archivo dentro de promedia/ y hacé doble clic,
+# o copialo al Escritorio y editá Exec/Path con la ruta ABSOLUTA a ESTE repo.
+# Si abre UI vieja, el atajo apunta a un clone viejo — re-copiá tras git pull.
+# Primera vez en GNOME: clic derecho → Permitir iniciar / Mark as Trusted.
+TryExec=pnpm
+Exec=bash -c 'cd "$(dirname "$(readlink -f "%k")")" && exec ./start-linux.sh'
+Path=
+Terminal=true
+Categories=AudioVideo;Utility;
+StartupNotify=true
+Keywords=ProMedia;proyeccion;culto;

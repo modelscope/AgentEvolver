@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ProMedia">
+  <defs>
+    <linearGradient id="pm-bg" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4a9bff"/>
+      <stop offset="1" stop-color="#2a6fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0c1219"/>
+  <rect x="6" y="6" width="52" height="52" rx="12" fill="url(#pm-bg)"/>
+  <path d="M22 20 L42 32 L22 44 Z" fill="#e8eef6"/>
+  <path d="M22 20 L32 32 L22 44 Z" fill="#c5d8f0" opacity="0.55"/>
+</svg>

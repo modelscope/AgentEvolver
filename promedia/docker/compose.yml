@@ -1,0 +1,37 @@
+# ProMedia — LAN / hosting smoke
+# From promedia/: docker compose -f docker/compose.yml up --build
+services:
+  hub:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8787:8787"
+    environment:
+      PORT: "8787"
+      PROMEDIA_MODE: ${PROMEDIA_MODE:-lan}
+      MEDIA_ADAPTER: ${MEDIA_ADAPTER:-local}
+      MEDIA_ROOT: /data/media
+      PLAYLISTS_PATH: /data/playlists.json
+      # Cloud stub (optional): set MEDIA_ADAPTER=s3 and S3_* — falls back to local if incomplete
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+    volumes:
+      - promedia-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  promedia-data:

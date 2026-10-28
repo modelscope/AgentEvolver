@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-label="ProMedia">
+  <defs>
+    <linearGradient id="pm-mark" x1="24" y1="36" x2="112" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4a9bff"/>
+      <stop offset="1" stop-color="#2a6fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="160" rx="12" fill="#0c1219"/>
+  <rect x="24" y="36" width="88" height="88" rx="18" fill="url(#pm-mark)"/>
+  <path d="M48 52 L88 80 L48 108 Z" fill="#e8eef6"/>
+  <path d="M48 52 L68 80 L48 108 Z" fill="#c5d8f0" opacity="0.55"/>
+  <text x="140" y="98" font-family="Georgia, 'Times New Roman', serif" font-size="56" fill="#e8eef6" letter-spacing="2">ProMedia</text>
+</svg>

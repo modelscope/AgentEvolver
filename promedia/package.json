@@ -1,0 +1,29 @@
+{
+  "name": "promedia",
+  "private": true,
+  "version": "0.0.0",
+  "description": "ProMedia — proyección multimedia (scaffold MVP)",
+  "packageManager": "pnpm@10.33.4",
+  "scripts": {
+    "build:packages": "pnpm --filter @promedia/shared build && pnpm --filter @promedia/i18n build && pnpm --filter @promedia/media build && pnpm --filter @promedia/item-types build",
+    "dev": "node scripts/dev.mjs",
+    "dev:all": "node scripts/dev.mjs",
+    "dev:web": "pnpm run build:packages && pnpm --filter @promedia/web dev",
+    "dev:hub": "pnpm run build:packages && pnpm --filter @promedia/hub dev",
+    "build": "pnpm run build:packages && pnpm -r --filter @promedia/hub --filter @promedia/web build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "onnxruntime-node",
+      "protobufjs",
+      "sharp"
+    ]
+  }
+}
