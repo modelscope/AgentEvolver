@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Tiny public-domain-style fixture for parser tests. Not a full Bible. -->
+<bible>
+  <b n="Juan">
+    <c n="3">
+      <v n="16">Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.</v>
+      <v n="17">Porque no envió Dios a su Hijo al mundo para condenar al mundo, sino para que el mundo sea salvo por él.</v>
+    </c>
+  </b>
+</bible>

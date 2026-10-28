@@ -1,0 +1,28 @@
+<song>
+  <title>Amazing Grace (fixture)</title>
+  <author>John Newton</author>
+  <ccli></ccli>
+  <copyright>Public domain</copyright>
+  <year>1779</year>
+  <publisher></publisher>
+  <key></key>
+  <capo></capo>
+  <notes>Minimal public-domain smoke fixture — not a real Quelea pack song.</notes>
+  <sequence></sequence>
+  <lyrics>
+    <section title="Verse 1" capitalise="true">
+      <theme></theme>
+      <smalllines>Amazing Grace</smalllines>
+      <lyrics>Amazing grace! how sweet the sound
+That saved a wretch like me.
+</lyrics>
+    </section>
+    <section title="Verse 2" capitalise="true">
+      <theme></theme>
+      <smalllines>Amazing Grace</smalllines>
+      <lyrics>I once was lost, but now am found
+Was blind, but now I see.
+</lyrics>
+    </section>
+  </lyrics>
+</song>
