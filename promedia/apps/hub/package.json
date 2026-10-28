@@ -1,0 +1,31 @@
+{
+  "name": "@promedia/hub",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.1",
+    "@huggingface/transformers": "^4.3.1",
+    "@promedia/item-types": "workspace:*",
+    "@promedia/media": "workspace:*",
+    "@promedia/shared": "workspace:*",
+    "hono": "^4.7.5",
+    "jszip": "^3.10.2",
+    "pdf-parse": "^2.4.5",
+    "wavefile": "^11.0.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/jszip": "^3.4.1",
+    "@types/node": "^22.13.10",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/ws": "^8.18.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

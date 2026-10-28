@@ -23,6 +23,20 @@
 **AgentEvolver** is an end-to-end, self-evolving training framework that unifies self-questioning, self-navigating, and self-attributing into a cohesive system. It empowers agents to autonomously
 improve their capabilities, aiming for efficient, cost-effective, and continuous capability evolution.
 
+## ProMedia (MVP en este monorepo)
+
+Proyección multimedia (culto / evento) vive en **`promedia/`**.
+
+```bash
+cd promedia
+pnpm install && pnpm build && pnpm dev
+```
+
+- Control: http://localhost:5173/control  
+- Output: Abrir salida (o http://localhost:5173/output?code=…)  
+- Hub: http://localhost:8787  
+
+Detalle: [promedia/README.md](./promedia/README.md) · checklist QA: [promedia/scripts/qa-church-event.md](./promedia/scripts/qa-church-event.md)
 
 ## 📰 News
 
